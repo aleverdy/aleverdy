@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EAF1E4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1B1420" media="(prefers-color-scheme: dark)">
-<meta name="description" content="Lima misi kecil tentang bunga, untuk Piya.">
+<meta name="description" content="Lima misi kecil tentang bunga, untuk Piyaa.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Kebun Piya">
+<meta name="apple-mobile-web-app-title" content="Kebun Piyaa">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23D6336C' stroke='%239C2350' stroke-width='2'%3E%3Cellipse cx='50' cy='27' rx='12' ry='23'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(72 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(144 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(216 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(288 50 50)'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='12' fill='%23F2B134'/%3E%3C/svg%3E">
 <!--/WRAP-->
-<title>Kebun Piya</title>
+<title>Kebun Piyaa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&display=swap">
@@ -321,7 +321,7 @@
 <main class="app">
   <section class="vase" aria-label="Progres kebun">
     <div class="vase-head">
-      <span class="vase-name">Kebun Piya</span>
+      <span class="vase-name">Kebun Piyaa</span>
       <span class="step" id="step">Belum mulai</span>
     </div>
     <div class="slots" id="slots"></div>
@@ -511,7 +511,7 @@
   /* ---------- misi 2: kuis ---------- */
   var QUIZ = [
     {
-      q: 'Bunga apa yang paling cocok buat Piya?',
+      q: 'Bunga apa yang paling cocok buat Piyaa?',
       a: ['Mawar merah', 'Bunga bank', 'Bunga tidur', 'Kembang api'],
       benar: 0,
       salah: ['Itu mah bikin pusing, bukan bikin senang.', 'Itu jam 9 malam kamu banget, tapi bukan jawabannya.', 'Meledak, terus habis. Jangan.']
@@ -526,7 +526,7 @@
       q: 'Biar bunga di vas awet seminggu, kuncinya?',
       a: ['Airnya diganti tiap dua hari', 'Disiram kopi biar melek', 'Difoto tiap pagi', 'Diajak ngobrol'],
       benar: 0,
-      salah: ['Bunganya nggak lembur, Piya.', 'Fotonya awet, bunganya nggak.', 'Nggak salah, tapi tetap kalah sama air bersih.']
+      salah: ['Bunganya nggak lembur, Piyaa.', 'Fotonya awet, bunganya nggak.', 'Nggak salah, tapi tetap kalah sama air bersih.']
     }
   ];
 
@@ -718,7 +718,7 @@
     titleEl.textContent = 'Susun kalimatnya';
     textEl.textContent = 'Kata-katanya berantakan kena angin. Tekan berurutan sampai jadi satu kalimat.';
 
-    var target = ['Piya','lebih','cantik','dari','semua','bunga','di','taman','ini'];
+    var target = ['Piyaa','lebih','cantik','dari','semua','bunga','di','taman','ini'];
     var pool = target.slice();
     for (var i = pool.length - 1; i > 0; i--){
       var j = Math.floor(Math.random() * (i + 1));
@@ -782,7 +782,7 @@
     var fin = document.createElement('p');
     fin.className = 'final';
     fin.style.zIndex = '1';
-    fin.innerHTML = 'Ale akan memberikan <b>Bunga</b> Ke Piya';
+    fin.innerHTML = 'Ale akan memberikan <b>Bunga</b> Ke Piyaa';
     stage.appendChild(fin);
 
     var sig = document.createElement('p');
@@ -908,7 +908,7 @@
 
     var hint = document.createElement('p');
     hint.style.textAlign = 'center';
-    hint.textContent = 'Untuk Piya. Dari Ale.';
+    hint.textContent = 'Untuk Piyaa. Dari Ale.';
     stage.appendChild(hint);
 
     var b = button('Mulai menanam', 'primary', function(){ earned = 0; start(); });

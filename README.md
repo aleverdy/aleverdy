@@ -1,10 +1,10 @@
-# Kebun Piya
+# Kebun Piyaa
 
-Mini-game web untuk Piya, dari Ale. Lima misi kecil tentang bunga; setiap misi
+Mini-game web untuk Piyaa, dari Ale. Lima misi kecil tentang bunga; setiap misi
 yang selesai menambah satu bunga ke vas di atas layar. Begitu kelima slotnya
 penuh, buketnya dirangkai dan muncul kalimat terakhirnya:
 
-> Ale akan memberikan Bunga Ke Piya
+> Ale akan memberikan Bunga Ke Piyaa
 
 ## Misinya
 
