@@ -4,313 +4,204 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#EAF1E4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1B1420" media="(prefers-color-scheme: dark)">
-<meta name="description" content="Lima misi kecil tentang bunga, untuk Piyaa.">
+<meta name="theme-color" content="#F3EFE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1E1A20" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Lima ronde cari sapi gemes, untuk Piyaa.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Kebun Piyaa">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23D6336C' stroke='%239C2350' stroke-width='2'%3E%3Cellipse cx='50' cy='27' rx='12' ry='23'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(72 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(144 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(216 50 50)'/%3E%3Cellipse cx='50' cy='27' rx='12' ry='23' transform='rotate(288 50 50)'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='12' fill='%23F2B134'/%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-title" content="Cari Sapi">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='15' cy='45' rx='13' ry='8.5' transform='rotate(-18 15 45)' fill='%23FBF7F0' stroke='%23D8CDBC' stroke-width='3'/%3E%3Cellipse cx='85' cy='45' rx='13' ry='8.5' transform='rotate(18 85 45)' fill='%23FBF7F0' stroke='%23D8CDBC' stroke-width='3'/%3E%3Cellipse cx='50' cy='55' rx='33' ry='29' fill='%23FBF7F0' stroke='%23D8CDBC' stroke-width='3'/%3E%3Cellipse cx='29' cy='40' rx='11' ry='9' fill='%233B333A'/%3E%3Ccircle cx='37' cy='49' r='4.2' fill='%232F2A2E'/%3E%3Ccircle cx='63' cy='49' r='4.2' fill='%232F2A2E'/%3E%3Cellipse cx='50' cy='70' rx='20' ry='13.5' fill='%23F2BCC5' stroke='%23D8CDBC' stroke-width='2.6'/%3E%3C/svg%3E">
 <!--/WRAP-->
-<title>Kebun Piyaa</title>
+<title>Cari Sapi Gemesnya</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Karla:wght@400;500;700&display=swap">
 <style>
   :root{
-    --ink:#3A2033;
-    --ink-soft:#6E5066;
-    --paper:#EAF1E4;
-    --surface:#FFFDF9;
-    --surface-2:#F4F7EF;
-    --line:#D3DFCB;
-    --accent:#D6336C;
+    --ink:#2F2A2E;
+    --ink-soft:#6B5F66;
+    --paper:#F3EFE6;
+    --surface:#FFFFFF;
+    --surface-2:#FAF6EE;
+    --line:#E2D9C9;
+    --accent:#C7476A;
     --accent-ink:#FFFFFF;
-    --pollen:#F2B134;
-    --leaf:#5B8C51;
-    --soil:#7A5C43;
-    --water:#4E93C4;
-    --lift:0 8px 24px rgba(58,32,51,.10);
-    --r-card:20px;
+    --accent-soft:#F6DCE3;
+    --pasture:#8FB679;
+    --pasture-2:#7CA466;
+    --pasture-deep:#4F6F41;
+    --bell:#F4B942;
+    --lift:0 8px 24px rgba(47,42,46,.10);
+    --r-card:22px;
     --r-btn:999px;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ink:#F3E7EE;
-      --ink-soft:#BFA7B8;
-      --paper:#1B1420;
-      --surface:#271D2B;
-      --surface-2:#312435;
-      --line:#3F3145;
-      --accent:#FF83AD;
-      --accent-ink:#2B0F1D;
-      --pollen:#FFD07A;
-      --leaf:#8FBF83;
-      --soil:#A17A5B;
-      --water:#7FBEE8;
-      --lift:0 8px 24px rgba(0,0,0,.35);
+      --ink:#F2E9EC;
+      --ink-soft:#B9A8AF;
+      --paper:#1E1A20;
+      --surface:#2A242C;
+      --surface-2:#332B36;
+      --line:#3E3542;
+      --accent:#FF93A8;
+      --accent-ink:#33141F;
+      --accent-soft:#42232E;
+      --pasture:#5D7C4C;
+      --pasture-2:#4F6B41;
+      --pasture-deep:#CFE3C2;
+      --bell:#FFD07A;
+      --lift:0 8px 24px rgba(0,0,0,.38);
     }
   }
   :root[data-theme="dark"]{
-    --ink:#F3E7EE;
-    --ink-soft:#BFA7B8;
-    --paper:#1B1420;
-    --surface:#271D2B;
-    --surface-2:#312435;
-    --line:#3F3145;
-    --accent:#FF83AD;
-    --accent-ink:#2B0F1D;
-    --pollen:#FFD07A;
-    --leaf:#8FBF83;
-    --soil:#A17A5B;
-    --water:#7FBEE8;
-    --lift:0 8px 24px rgba(0,0,0,.35);
+    --ink:#F2E9EC;
+    --ink-soft:#B9A8AF;
+    --paper:#1E1A20;
+    --surface:#2A242C;
+    --surface-2:#332B36;
+    --line:#3E3542;
+    --accent:#FF93A8;
+    --accent-ink:#33141F;
+    --accent-soft:#42232E;
+    --pasture:#5D7C4C;
+    --pasture-2:#4F6B41;
+    --pasture-deep:#CFE3C2;
+    --bell:#FFD07A;
+    --lift:0 8px 24px rgba(0,0,0,.38);
   }
 
   *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
   body{
-    margin:0;
-    overscroll-behavior-y:none;
-    -webkit-tap-highlight-color:transparent;
     background:var(--paper);
     color:var(--ink);
-    font-family:"Figtree","Segoe UI",system-ui,sans-serif;
+    font-family:Karla,"Segoe UI",system-ui,-apple-system,sans-serif;
     font-size:16px;
     line-height:1.55;
-    -webkit-text-size-adjust:100%;
-    display:flex;
-    justify-content:center;
+    -webkit-font-smoothing:antialiased;
   }
+  h1,h2,.step,.wanted-label,.final{font-family:"Baloo 2",Karla,system-ui,sans-serif}
+
   .app{
-    width:100%;
     max-width:460px;
-    min-height:100svh;
-    padding:16px 16px 24px;
-    padding-left:max(16px, env(safe-area-inset-left));
-    padding-right:max(16px, env(safe-area-inset-right));
-    padding-bottom:max(24px, env(safe-area-inset-bottom));
+    margin:0 auto;
+    padding:16px 16px calc(24px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
-    gap:16px;
-  }
-
-  /* --- vas progres --- */
-  .vase{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--r-card);
-    padding:12px 14px 14px;
-    box-shadow:var(--lift);
-  }
-  .vase-head{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
     gap:12px;
-    margin-bottom:10px;
   }
-  .step{
-    font-size:14px;
-    font-weight:700;
-    color:var(--accent);
-  }
-  .vase-name{
-    font-family:"Bricolage Grotesque","Figtree",sans-serif;
-    font-weight:800;
-    font-size:21px;
-    letter-spacing:-.02em;
-  }
-  .slots{display:flex;gap:8px}
+
+  .bar{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
+  h1{margin:0;font-size:clamp(21px,6.4vw,25px);font-weight:800;letter-spacing:-.01em;line-height:1.1}
+  .step{font-size:12px;color:var(--ink-soft);font-weight:600;white-space:nowrap;flex:0 0 auto}
+
+  .pen{display:flex;gap:8px}
   .slot{
-    flex:1;
-    aspect-ratio:1;
+    flex:1;aspect-ratio:1;border-radius:14px;
+    background:var(--surface-2);
+    border:2px dashed var(--line);
+    display:grid;place-items:center;padding:3px;
+  }
+  .slot.filled{border-style:solid;border-color:var(--pasture);background:var(--surface)}
+  .slot svg{width:100%;height:auto;display:block}
+  .slot.pop{animation:pop .5s ease-out}
+  @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+  .wanted{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--r-card);padding:12px 14px;
+  }
+  .wanted-cow{width:76px;flex:0 0 76px}
+  .wanted-text{min-width:0;flex:1 1 auto}
+  .wanted-cow svg{width:100%;height:auto;display:block}
+  .wanted-label{
+    margin:0 0 6px;font-size:12px;font-weight:600;color:var(--ink-soft);
+    letter-spacing:.06em;text-transform:uppercase;
+  }
+  .traits{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  .traits li{
+    font-size:14px;font-weight:700;
+    background:var(--accent-soft);color:var(--accent);
+    border-radius:var(--r-btn);padding:4px 11px;
+  }
+
+  .field{
+    position:relative;
+    border-radius:var(--r-card);
+    background:linear-gradient(180deg,var(--pasture),var(--pasture-2));
+    padding:10px;
+    min-height:190px;
+    overflow:hidden;
+  }
+  .field::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(94deg,rgba(255,255,255,.06) 0 3px,transparent 3px 13px);
+  }
+  .grid{display:grid;gap:5px;grid-template-columns:repeat(var(--cols,3),1fr);position:relative;z-index:1}
+  .cow{
+    position:relative;aspect-ratio:1;
+    display:grid;place-items:center;
+    background:none;border:0;padding:0;margin:0;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
     border-radius:14px;
-    background:var(--surface-2);
-    border:1px dashed var(--line);
-    display:grid;
-    place-items:center;
-    overflow:hidden;
   }
-  .slot.filled{border-style:solid;border-color:var(--line);background:var(--surface)}
-  .slot svg{width:78%;height:78%}
-  .slot.pop svg{animation:pop .5s cubic-bezier(.2,1.6,.4,1) both}
-  @keyframes pop{from{transform:scale(.2) rotate(-40deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+  .cow-in{width:88%;display:block;transition:transform .18s ease}
+  .cow svg{width:100%;height:auto;display:block}
+  .cow:focus-visible{outline:3px solid var(--surface);outline-offset:2px}
+  .cow:active .cow-in{transform:scale(.9)}
+  .cow.dim{opacity:.25;filter:saturate(.35);pointer-events:none}
+  .cow.wrong{animation:goyang .4s}
+  @keyframes goyang{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px) rotate(-5deg)}50%{transform:translateX(6px) rotate(5deg)}80%{transform:translateX(-3px)}}
+  .cow.found .cow-in{transform:scale(1.25)}
+  .cow.faded{opacity:.22;transition:opacity .4s}
 
-  /* --- panggung --- */
-  .stage{
-    position:relative;
-    flex:1;
-    min-height:320px;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--r-card);
-    box-shadow:var(--lift);
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    padding:18px;
-    touch-action:manipulation;
-  }
-  .stage-ground{
-    position:absolute;
-    left:0;right:0;bottom:0;
-    height:34%;
-    background:
-      radial-gradient(120% 90% at 50% 120%, color-mix(in srgb, var(--leaf) 22%, transparent), transparent 70%);
-    pointer-events:none;
-  }
+  .cow.peek{overflow:hidden}
+  .cow.peek .cow-in{transform:translateY(32%);transition:transform .38s ease}
+  .cow.peek.up .cow-in{transform:translateY(-14%)}
+  .cow.peek.found .cow-in{transform:translateY(-14%) scale(1.08)}
+  .tuft{position:absolute;left:0;right:0;bottom:0;height:52%;pointer-events:none;z-index:2}
+  .tuft svg{width:100%;height:100%;display:block}
 
-  /* --- panel --- */
-  .panel{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--r-card);
-    box-shadow:var(--lift);
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  h1,h2{
-    font-family:"Bricolage Grotesque","Figtree",sans-serif;
-    margin:0;
-    letter-spacing:-.025em;
-    text-wrap:balance;
-    line-height:1.12;
-  }
-  h1{font-size:37px;font-weight:800}
-  h2{font-size:21px;font-weight:800}
-  p{margin:0;color:var(--ink-soft);max-width:60ch}
-  .feedback{min-height:1.55em;font-weight:500}
-  .feedback.good{color:var(--leaf)}
-  .feedback.bad{color:var(--accent)}
-
-  button{
-    font:inherit;
-    font-weight:700;
-    cursor:pointer;
-    touch-action:manipulation;
-    -webkit-user-select:none;
-    user-select:none;
-    -webkit-touch-callout:none;
-    border-radius:var(--r-btn);
-    border:1px solid var(--line);
-    background:var(--surface-2);
-    color:var(--ink);
-    min-height:48px;
-    padding:12px 20px;
-    transition:transform .12s ease, background .12s ease;
-  }
-  button:hover{background:color-mix(in srgb, var(--accent) 10%, var(--surface-2))}
-  button:active{transform:scale(.97)}
-  button.primary{
-    background:var(--accent);
-    border-color:var(--accent);
-    color:var(--accent-ink);
-  }
-  button.primary:hover{background:color-mix(in srgb, var(--accent) 86%, #000)}
-  :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-
-  .choices{display:flex;flex-direction:column;gap:8px}
-  .choices button{text-align:left;min-height:52px;border-radius:14px}
-  .shake{animation:shake .38s}
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-7px)}
-    45%{transform:translateX(6px)}
-    70%{transform:translateX(-3px)}
-  }
-
-  /* --- misi 1: siram --- */
-  .pot{display:flex;align-items:flex-end;gap:18px}
-  .meter{
-    width:38px;height:180px;
-    border:2px solid var(--line);
-    border-radius:12px;
-    background:var(--surface-2);
-    position:relative;
-    overflow:hidden;
-  }
-  .meter-fill{
-    position:absolute;left:0;right:0;bottom:0;height:0%;z-index:1;
-    background:linear-gradient(180deg, color-mix(in srgb,var(--water) 70%,#fff), var(--water));
-  }
-  .meter-zone{
-    position:absolute;left:0;right:0;z-index:2;
-    bottom:62%;height:26%;
-    background:color-mix(in srgb, var(--leaf) 26%, transparent);
-    border-top:2px dashed var(--leaf);
-    border-bottom:2px dashed var(--leaf);
-  }
-  .sprout{transition:transform .3s ease}
-
-  /* --- misi 3: kumbang --- */
-  .bug{
-    position:absolute;
-    width:56px;height:56px;
-    border:none;background:none;padding:0;min-height:0;
-    border-radius:50%;
-    display:grid;place-items:center;
-    animation:bugin .18s ease-out both;
-  }
-  .bug svg{width:44px;height:44px;pointer-events:none}
-  @keyframes bugin{from{transform:scale(.4)}to{transform:scale(1)}}
-  .counter{
-    position:absolute;top:12px;right:14px;
-    font-weight:700;font-size:14px;
-    font-variant-numeric:tabular-nums;
-    color:var(--ink-soft);
-  }
-
-  /* --- misi 4: ingat urutan --- */
-  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:260px}
-  .pad{
-    aspect-ratio:1;
-    min-height:0;
-    border-radius:18px;
-    background:var(--surface-2);
-    display:grid;place-items:center;
-    padding:8px;
-    opacity:.55;
-    transition:opacity .18s ease, transform .18s ease;
-  }
-  .pad svg{width:70%;height:70%}
-  .pad.lit{opacity:1;transform:scale(1.06);background:color-mix(in srgb,var(--pollen) 30%,var(--surface))}
-
-  /* --- misi 5: susun kata --- */
-  .words{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-  .words button{min-height:44px;padding:8px 14px;font-weight:500}
-  .words button.used{opacity:.32;pointer-events:none}
-  .sentence{
-    font-family:"Bricolage Grotesque","Figtree",sans-serif;
-    font-weight:600;font-size:21px;line-height:1.3;
-    text-align:center;min-height:2.6em;
-    color:var(--ink);
-  }
-  .sentence .empty{color:var(--ink-soft);font-weight:400;font-size:16px;font-family:"Figtree",sans-serif}
-
-  /* --- akhir --- */
-  #petals{position:absolute;inset:0;pointer-events:none}
-  .bouquet{display:flex;justify-content:center;align-items:flex-end;position:relative;z-index:1}
-  .bouquet svg{width:64px;height:64px;margin:0 -8px;filter:drop-shadow(0 4px 8px rgba(58,32,51,.18))}
+  .row{position:relative;z-index:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;padding:8px 0 2px}
+  .row > span{width:19%}
+  .row svg{width:100%;height:auto;display:block}
+  #hearts{position:absolute;inset:0;width:100%;height:100%;z-index:0}
   .final{
-    font-family:"Bricolage Grotesque","Figtree",sans-serif;
-    font-weight:800;
-    font-size:28px;
-    line-height:1.15;
-    letter-spacing:-.03em;
-    text-align:center;
-    text-wrap:balance;
+    position:relative;z-index:1;margin:10px 6px 2px;text-align:center;
+    font-size:25px;font-weight:800;line-height:1.15;color:#FFFFFF;
+    text-wrap:balance;text-shadow:0 2px 10px rgba(31,45,24,.55);
   }
-  .final b{color:var(--accent);font-weight:800}
-  .signature{text-align:center;font-size:14px;color:var(--ink-soft)}
+  .signature{
+    position:relative;z-index:1;margin:8px 10px 4px;text-align:center;
+    font-size:14px;color:#F4F8EE;text-shadow:0 1px 6px rgba(31,45,24,.6);
+  }
+
+  .panel{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--r-card);padding:16px;box-shadow:var(--lift);
+  }
+  h2{margin:0 0 6px;font-size:20px;font-weight:600;line-height:1.2;text-wrap:balance}
+  .panel p{margin:0;color:var(--ink-soft);font-size:16px;max-width:36ch}
+  .feedback{margin-top:10px !important;min-height:1.55em;font-weight:700;color:var(--ink) !important}
+  .feedback.ok{color:var(--pasture-deep) !important}
+  .feedback.no{color:var(--accent) !important}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .actions:empty{margin-top:0}
+  button.act{
+    font-family:inherit;font-size:16px;font-weight:700;
+    min-height:48px;padding:0 22px;border-radius:var(--r-btn);
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+    cursor:pointer;flex:1 1 auto;
+  }
+  button.act.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+  button.act:disabled{opacity:.45;cursor:default}
+  button.act:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
   @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    *{animation:none !important;transition:none !important}
   }
 </style>
 <!--WRAP-->
@@ -319,21 +210,28 @@
 <!--/WRAP-->
 
 <main class="app">
-  <section class="vase" aria-label="Progres kebun">
-    <div class="vase-head">
-      <span class="vase-name">Kebun Piyaa</span>
-      <span class="step" id="step">Belum mulai</span>
+  <header class="bar">
+    <h1>Cari Sapi Gemesnya</h1>
+    <span class="step" id="step">Belum mulai</span>
+  </header>
+
+  <section class="pen" id="slots" aria-label="Sapi yang sudah ketemu"></section>
+
+  <section class="wanted" id="wanted" hidden>
+    <div class="wanted-cow" id="wantedCow"></div>
+    <div class="wanted-text">
+      <p class="wanted-label">Yang dicari</p>
+      <ul class="traits" id="traits"></ul>
     </div>
-    <div class="slots" id="slots"></div>
   </section>
 
-  <section class="stage" id="stage"></section>
+  <section class="field" id="field"></section>
 
   <section class="panel">
-    <h2 id="title">Ada kebun kecil buat kamu</h2>
-    <p id="text">Lima misi, semuanya soal bunga. Selesaikan semuanya dan ada satu kalimat yang nunggu di ujung.</p>
+    <h2 id="title">Ada sapi gemes yang kabur</h2>
+    <p id="text">Lima ronde, tiap ronde satu sapi harus ketemu. Nggak ada kalah di sini &mdash; salah tinggal cari lagi.</p>
     <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
-    <div id="actions"></div>
+    <div class="actions" id="actions"></div>
   </section>
 </main>
 
@@ -341,585 +239,556 @@
 (function(){
   "use strict";
 
-  var stage = document.getElementById('stage');
-  var titleEl = document.getElementById('title');
-  var textEl = document.getElementById('text');
-  var fbEl = document.getElementById('feedback');
-  var actionsEl = document.getElementById('actions');
-  var slotsEl = document.getElementById('slots');
-  var stepEl = document.getElementById('step');
+  var field    = document.getElementById('field');
+  var titleEl  = document.getElementById('title');
+  var textEl   = document.getElementById('text');
+  var fbEl     = document.getElementById('feedback');
+  var actEl    = document.getElementById('actions');
+  var slotsEl  = document.getElementById('slots');
+  var stepEl   = document.getElementById('step');
+  var wantedEl = document.getElementById('wanted');
+  var wCowEl   = document.getElementById('wantedCow');
+  var traitsEl = document.getElementById('traits');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var FLOWERS = [
-    {nama:'Melati',   petal:'#FFF6E8', edge:'#D8C7A8', center:'#F2B134', n:6,  pr:0.30},
-    {nama:'Mawar',    petal:'#D6336C', edge:'#9C2350', center:'#8E1E4A', n:8,  pr:0.32},
-    {nama:'Matahari', petal:'#F2B134', edge:'#C98C1C', center:'#8A5B1E', n:12, pr:0.26},
-    {nama:'Lavender', petal:'#8E6FD1', edge:'#6B4FAE', center:'#F2B134', n:5,  pr:0.34},
-    {nama:'Kamboja',  petal:'#FF9FB5', edge:'#E4778F', center:'#F2B134', n:5,  pr:0.36}
-  ];
+  /* ---------- bahan sapi ---------- */
 
-  function flowerSVG(f, withStem){
-    var s = '<svg viewBox="0 0 100 100" role="img" aria-label="Bunga ' + f.nama + '">';
-    if (withStem){
-      s += '<path d="M50 58 C50 74 50 82 50 96" stroke="#5B8C51" stroke-width="5" fill="none" stroke-linecap="round"/>';
-      s += '<path d="M50 78 C38 74 32 80 30 88 C40 90 47 86 50 78 Z" fill="#5B8C51"/>';
-    }
-    for (var i=0;i<f.n;i++){
-      var a = (360/f.n)*i;
-      s += '<ellipse cx="50" cy="'+(50 - 30*0.62)+'" rx="'+(f.pr*38)+'" ry="'+(0.62*38)+'"'
-         + ' transform="rotate('+a+' 50 50)" fill="'+f.petal+'" stroke="'+f.edge+'" stroke-width="1.5"/>';
-    }
-    s += '<circle cx="50" cy="50" r="11" fill="'+f.center+'"/>';
-    s += '</svg>';
-    return s;
+  var BADAN = [
+    {id:'putih',  nama:'putih',   c:'#FBF7F0', e:'#D8CDBC'},
+    {id:'krem',   nama:'krem',    c:'#F1DFC0', e:'#CDB58F'},
+    {id:'coklat', nama:'coklat',  c:'#C4855C', e:'#94603D'},
+    {id:'abu',    nama:'abu-abu', c:'#D7D3D9', e:'#A8A2AD'}
+  ];
+  var BERCAK = [
+    {id:'hati',    nama:'bercak hati'},
+    {id:'bulat',   nama:'bercak bulat'},
+    {id:'bintang', nama:'bercak bintang'},
+    {id:'polos',   nama:'tanpa bercak'}
+  ];
+  var TINTA = [
+    {id:'hitam',  nama:'hitam',  c:'#3B333A'},
+    {id:'coklat', nama:'coklat', c:'#8A5A3C'},
+    {id:'pink',   nama:'pink',   c:'#E48CA0'}
+  ];
+  var AKSESORI = [
+    {id:'pita',    nama:'pita'},
+    {id:'bunga',   nama:'bunga di telinga'},
+    {id:'lonceng', nama:'lonceng'},
+    {id:'kosong',  nama:'polosan'}
+  ];
+  var WARNA_AKS = [
+    {id:'ungu',   nama:'ungu',   c:'#8E6FD1'},
+    {id:'kuning', nama:'kuning', c:'#F4B942'},
+    {id:'biru',   nama:'biru',   c:'#5B9BD5'},
+    {id:'merah',  nama:'merah',  c:'#E05A5A'}
+  ];
+  var WAJAH = ['senyum','kedip','ngantuk','kaget'];
+  var WAJAH_NAMA = {senyum:'lagi senyum', kedip:'lagi kedip', ngantuk:'lagi ngantuk', kaget:'lagi kaget'};
+
+  function acak(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function kocok(a){
+    for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
   }
 
-  function bugSVG(){
-    return '<svg viewBox="0 0 100 100" aria-hidden="true">'
-      + '<path d="M50 12 L38 2 M50 12 L62 2" stroke="#3A2033" stroke-width="6" stroke-linecap="round"/>'
-      + '<ellipse cx="50" cy="56" rx="32" ry="36" fill="#D6336C" stroke="#8E1E4A" stroke-width="4"/>'
-      + '<path d="M50 20 L50 92" stroke="#3A2033" stroke-width="4"/>'
-      + '<circle cx="50" cy="24" r="13" fill="#3A2033"/>'
-      + '<circle cx="34" cy="46" r="6" fill="#3A2033"/><circle cx="66" cy="62" r="6" fill="#3A2033"/>'
-      + '<circle cx="64" cy="40" r="5" fill="#3A2033"/><circle cx="36" cy="68" r="5" fill="#3A2033"/>'
+  function buatSapi(kunci){
+    kunci = kunci || {};
+    return {
+      badan:  kunci.badan  || acak(BADAN),
+      bercak: kunci.bercak || acak(BERCAK),
+      tinta:  kunci.tinta  || acak(TINTA),
+      aks:    kunci.aks    || acak(AKSESORI),
+      warna:  kunci.warna  || acak(WARNA_AKS),
+      wajah:  kunci.wajah  || (kunci.wajahPool ? acak(kunci.wajahPool) : acak(WAJAH))
+    };
+  }
+
+  /* tanda tangan satu ciri, dipakai buat mencocokkan */
+  function ciri(s, k){
+    if (k === 'badan')  return s.badan.id;
+    if (k === 'bercak') return s.bercak.id;
+    if (k === 'wajah')  return s.wajah;
+    if (k === 'aks')    return s.aks.id + ((s.aks.id === 'pita' || s.aks.id === 'bunga') ? ':' + s.warna.id : '');
+    return '';
+  }
+  function samaSemua(a, b, kunci){
+    for (var i=0;i<kunci.length;i++){ if (ciri(a,kunci[i]) !== ciri(b,kunci[i])) return false; }
+    return true;
+  }
+  function labelCiri(s, k){
+    if (k === 'badan')  return 'badan ' + s.badan.nama;
+    if (k === 'bercak') return s.bercak.nama;
+    if (k === 'wajah')  return WAJAH_NAMA[s.wajah];
+    if (s.aks.id === 'pita')  return 'pita ' + s.warna.nama;
+    if (s.aks.id === 'bunga') return 'bunga ' + s.warna.nama + ' di telinga';
+    if (s.aks.id === 'lonceng') return 'pakai lonceng';
+    return 'nggak pakai apa-apa';
+  }
+  function deskripsi(s){
+    return 'Sapi ' + s.badan.nama + ', ' + s.bercak.nama + ', ' + labelCiri(s,'aks') + ', ' + WAJAH_NAMA[s.wajah] + '.';
+  }
+
+  /* ---------- gambar sapi ---------- */
+
+  function bercakSVG(kind, cx, cy, s, warna){
+    if (kind === 'bulat'){
+      return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(s*1.05)+'" ry="'+(s*0.88)+'" fill="'+warna+'"/>';
+    }
+    if (kind === 'hati'){
+      return '<path d="M'+cx+' '+(cy+s*0.55)
+        + ' C'+(cx-s*1.25)+' '+(cy-s*0.35)+' '+(cx-s*0.5)+' '+(cy-s*1.15)+' '+cx+' '+(cy-s*0.32)
+        + ' C'+(cx+s*0.5)+' '+(cy-s*1.15)+' '+(cx+s*1.25)+' '+(cy-s*0.35)+' '+cx+' '+(cy+s*0.55)
+        + ' Z" fill="'+warna+'"/>';
+    }
+    if (kind === 'bintang'){
+      var p = [];
+      for (var i=0;i<10;i++){
+        var r = (i % 2 === 0) ? s*1.2 : s*0.52;
+        var a = (Math.PI/5)*i - Math.PI/2;
+        p.push((cx + r*Math.cos(a)).toFixed(1) + ',' + (cy + r*Math.sin(a)).toFixed(1));
+      }
+      return '<polygon points="'+p.join(' ')+'" fill="'+warna+'"/>';
+    }
+    return '';
+  }
+
+  function mataSVG(wajah, ink){
+    var ki = 37, ka = 63, y = 49;
+    if (wajah === 'kedip'){
+      return '<circle cx="'+ki+'" cy="'+y+'" r="4.2" fill="'+ink+'"/>'
+           + '<circle cx="'+(ki+1.4)+'" cy="'+(y-1.5)+'" r="1.5" fill="#FFFFFF"/>'
+           + '<path d="M'+(ka-5)+' '+(y+1)+' q5 -6 10 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>';
+    }
+    if (wajah === 'ngantuk'){
+      return '<path d="M'+(ki-5)+' '+(y-1)+' q5 6 10 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>'
+           + '<path d="M'+(ka-5)+' '+(y-1)+' q5 6 10 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>';
+    }
+    if (wajah === 'kaget'){
+      return '<circle cx="'+ki+'" cy="'+y+'" r="6" fill="#FFFFFF" stroke="'+ink+'" stroke-width="2"/>'
+           + '<circle cx="'+ki+'" cy="'+y+'" r="3" fill="'+ink+'"/>'
+           + '<circle cx="'+ka+'" cy="'+y+'" r="6" fill="#FFFFFF" stroke="'+ink+'" stroke-width="2"/>'
+           + '<circle cx="'+ka+'" cy="'+y+'" r="3" fill="'+ink+'"/>';
+    }
+    return '<circle cx="'+ki+'" cy="'+y+'" r="4.2" fill="'+ink+'"/>'
+         + '<circle cx="'+(ki+1.4)+'" cy="'+(y-1.5)+'" r="1.5" fill="#FFFFFF"/>'
+         + '<circle cx="'+ka+'" cy="'+y+'" r="4.2" fill="'+ink+'"/>'
+         + '<circle cx="'+(ka+1.4)+'" cy="'+(y-1.5)+'" r="1.5" fill="#FFFFFF"/>';
+  }
+
+  function aksesoriSVG(s){
+    var garis = 'rgba(47,42,46,.32)';
+    if (s.aks.id === 'pita'){
+      return '<g transform="translate(79,26) rotate(10)">'
+        + '<path d="M0 0 L-15 -7 L-15 7 Z" fill="'+s.warna.c+'" stroke="'+garis+'" stroke-width="2" stroke-linejoin="round"/>'
+        + '<path d="M0 0 L15 -7 L15 7 Z" fill="'+s.warna.c+'" stroke="'+garis+'" stroke-width="2" stroke-linejoin="round"/>'
+        + '<circle cx="0" cy="0" r="4.5" fill="'+s.warna.c+'" stroke="'+garis+'" stroke-width="2"/>'
+        + '</g>';
+    }
+    if (s.aks.id === 'bunga'){
+      var f = '<g transform="translate(19,25)">';
+      for (var i=0;i<5;i++){
+        f += '<ellipse cx="0" cy="-6" rx="4" ry="6.5" transform="rotate('+(72*i)+' 0 0)" fill="'+s.warna.c+'" stroke="'+garis+'" stroke-width="1.6"/>';
+      }
+      return f + '<circle cx="0" cy="0" r="3.4" fill="#F6E7BE"/></g>';
+    }
+    if (s.aks.id === 'lonceng'){
+      return '<path d="M20 80 q30 17 60 0" fill="none" stroke="#8A5A3C" stroke-width="4.5" stroke-linecap="round"/>'
+        + '<path d="M50 87 c-6.5 0 -7.5 5 -8.5 8.5 h17 c-1 -3.5 -2 -8.5 -8.5 -8.5 Z" fill="#F4B942" stroke="#C08D22" stroke-width="2.2" stroke-linejoin="round"/>'
+        + '<circle cx="50" cy="97.5" r="2" fill="#C08D22"/>';
+    }
+    return '';
+  }
+
+  function sapiSVG(s, opts){
+    opts = opts || {};
+    var b = s.badan, ink = '#2F2A2E';
+    var out = '<svg viewBox="0 0 100 100" '
+      + (opts.label ? 'role="img" aria-label="' + opts.label + '"' : 'aria-hidden="true"') + '>';
+
+    out += '<ellipse cx="15" cy="45" rx="13" ry="8.5" transform="rotate(-18 15 45)" fill="'+b.c+'" stroke="'+b.e+'" stroke-width="3"/>'
+         + '<ellipse cx="16" cy="45" rx="6" ry="3.6" transform="rotate(-18 16 45)" fill="#E9A5B2"/>'
+         + '<ellipse cx="85" cy="45" rx="13" ry="8.5" transform="rotate(18 85 45)" fill="'+b.c+'" stroke="'+b.e+'" stroke-width="3"/>'
+         + '<ellipse cx="84" cy="45" rx="6" ry="3.6" transform="rotate(18 84 45)" fill="#E9A5B2"/>';
+
+    out += '<path d="M34 28 c-6 -6 -3 -13 4 -12 c-1 4 -1 8 1 11 Z" fill="#F3E3C6" stroke="'+b.e+'" stroke-width="2.4" stroke-linejoin="round"/>'
+         + '<path d="M66 28 c6 -6 3 -13 -4 -12 c1 4 1 8 -1 11 Z" fill="#F3E3C6" stroke="'+b.e+'" stroke-width="2.4" stroke-linejoin="round"/>';
+
+    out += '<ellipse cx="50" cy="55" rx="33" ry="29" fill="'+b.c+'" stroke="'+b.e+'" stroke-width="3"/>';
+    out += bercakSVG(s.bercak.id, 29, 40, 11, s.tinta.c);
+    out += '<path d="M45 29 q5 -8 10 -1" fill="none" stroke="'+b.e+'" stroke-width="3" stroke-linecap="round"/>';
+    out += mataSVG(s.wajah, ink);
+
+    out += '<ellipse cx="50" cy="70" rx="20" ry="13.5" fill="#F2BCC5" stroke="'+b.e+'" stroke-width="2.6"/>'
+         + '<ellipse cx="43" cy="67" rx="2.8" ry="3.8" fill="#C9838F"/>'
+         + '<ellipse cx="57" cy="67" rx="2.8" ry="3.8" fill="#C9838F"/>'
+         + '<path d="M44 76 q6 4.5 12 0" fill="none" stroke="#C9838F" stroke-width="2.6" stroke-linecap="round"/>';
+
+    out += aksesoriSVG(s);
+    return out + '</svg>';
+  }
+
+  function rumputSVG(){
+    return '<svg viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true">'
+      + '<path d="M0 50 L0 30 Q8 12 12 32 Q18 6 24 30 Q30 14 36 33 Q44 8 50 30'
+      + ' Q57 12 63 32 Q70 10 76 31 Q84 14 90 33 Q96 18 100 30 L100 50 Z" fill="#4F6F41"/>'
+      + '<path d="M0 50 L0 38 Q10 24 18 39 Q28 22 38 38 Q48 24 58 39 Q68 23 78 38 Q88 26 100 37 L100 50 Z" fill="#3F5B33"/>'
       + '</svg>';
   }
 
-  var earned = 0;
-  var cleanup = null;
+  /* ---------- keadaan permainan ---------- */
 
-  function resetStage(){
-    if (typeof cleanup === 'function'){ cleanup(); }
-    cleanup = null;
-    stage.innerHTML = '<div class="stage-ground"></div>';
+  var TOTAL = 5;
+  var dapat = [];
+  var bersihkan = null;
+
+  var SALAH = [
+    'Muu... salah orang.',
+    'Bukan yang itu. Cek lagi kartunya.',
+    'Dia bukan yang dicari, tapi senang juga dielus.',
+    'Deket. Coba lihat ciri satunya lagi.',
+    'Sapi itu cuma numpang lewat.'
+  ];
+  var BENAR = [
+    'Ketemu! Dia langsung nempel.',
+    'Nah itu dia. Sekali lihat langsung tahu, ya.',
+    'Betul. Dia ikut pulang sekarang.',
+    'Dapat! Dia bahkan nggak lari.',
+    'Itu sapinya. Matanya sampai menyipit senang.'
+  ];
+  var salahKe = 0, benarKe = 0;
+
+  function resetPanggung(){
+    if (typeof bersihkan === 'function'){ bersihkan(); }
+    bersihkan = null;
+    field.innerHTML = '';
     fbEl.textContent = '';
     fbEl.className = 'feedback';
-    actionsEl.innerHTML = '';
+    actEl.innerHTML = '';
   }
-
-  function say(msg, kind){
-    fbEl.textContent = msg;
-    fbEl.className = 'feedback' + (kind ? ' ' + kind : '');
+  function bilang(pesan, jenis){
+    fbEl.textContent = pesan;
+    fbEl.className = 'feedback' + (jenis ? ' ' + jenis : '');
   }
-
-  function button(label, kind, onClick){
+  function tombol(label, utama, onClick){
     var b = document.createElement('button');
     b.type = 'button';
-    b.className = kind || '';
+    b.className = 'act' + (utama ? ' primary' : '');
     b.textContent = label;
     b.addEventListener('click', onClick);
     return b;
   }
-
-  function renderSlots(popIndex){
+  function gambarSlot(popIndex){
     slotsEl.innerHTML = '';
-    for (var i=0;i<5;i++){
+    for (var i=0;i<TOTAL;i++){
       var d = document.createElement('div');
-      d.className = 'slot' + (i < earned ? ' filled' : '') + (i === popIndex ? ' pop' : '');
-      if (i < earned){ d.innerHTML = flowerSVG(FLOWERS[i], true); }
+      d.className = 'slot' + (dapat[i] ? ' filled' : '') + (i === popIndex ? ' pop' : '');
+      if (dapat[i]){ d.innerHTML = sapiSVG(dapat[i]); }
       slotsEl.appendChild(d);
     }
   }
-
-  function setStep(){
-    stepEl.textContent = earned >= 5 ? 'Kebunnya penuh' : 'Misi ' + (earned + 1) + ' dari 5';
+  function tulisLangkah(){
+    stepEl.textContent = dapat.length >= TOTAL
+      ? 'Kandang penuh'
+      : ('Ronde ' + (dapat.length + 1) + ' dari ' + TOTAL);
+  }
+  function pasangKartu(target, kunci){
+    wantedEl.hidden = false;
+    wCowEl.innerHTML = sapiSVG(target, {label: deskripsi(target)});
+    traitsEl.innerHTML = '';
+    for (var i=0;i<kunci.length;i++){
+      var li = document.createElement('li');
+      li.textContent = labelCiri(target, kunci[i]);
+      traitsEl.appendChild(li);
+    }
   }
 
-  /* ---------- misi 1: siram tanpa banjir ---------- */
-  function missionWater(done){
-    titleEl.textContent = 'Siram benihnya';
-    textEl.textContent = 'Tahan tombolnya sampai air masuk ke garis hijau, lalu lepas. Kelewatan sedikit, potnya banjir.';
+  /* ---------- inti: satu ronde cari sapi ---------- */
 
-    var wrap = document.createElement('div');
-    wrap.className = 'pot';
-    wrap.innerHTML =
-      '<div class="meter"><div class="meter-zone"></div><div class="meter-fill" id="mfill"></div></div>' +
-      '<div class="sprout" id="sprout" style="width:140px;height:140px">' + flowerSVG(FLOWERS[0], true) + '</div>';
-    stage.appendChild(wrap);
+  function ronde(cfg, selesai){
+    resetPanggung();
+    titleEl.textContent = cfg.judul;
+    textEl.textContent  = cfg.teks;
+    tulisLangkah();
 
-    var fill = wrap.querySelector('#mfill');
-    var sprout = wrap.querySelector('#sprout');
-    sprout.style.transform = 'scale(.35)';
+    var target = buatSapi(cfg.kunciTarget || {});
+    var kawanan = [target], jaga = 0;
+    while (kawanan.length < cfg.jumlah && jaga < 8000){
+      jaga++;
+      var s = buatSapi(cfg.dasar || {});
+      if (!samaSemua(s, target, cfg.ciri)) kawanan.push(s);
+    }
+    kocok(kawanan);
+    pasangKartu(target, cfg.ciri);
 
-    var btn = button('Tahan untuk menyiram', 'primary', function(){});
-    btn.style.width = '100%';
-    actionsEl.appendChild(btn);
+    var grid = document.createElement('div');
+    grid.className = 'grid';
+    grid.style.setProperty('--cols', cfg.kolom);
+    field.appendChild(grid);
 
-    var level = 0, holding = false, last = 0, raf = 0, finished = false;
+    var sel = [], timers = [], beres = false;
 
-    function tick(t){
-      if (!last) last = t;
-      var dt = Math.min((t - last) / 1000, 0.05);
-      last = t;
-      if (holding && !finished){
-        level += 44 * dt;
-        if (level >= 100){
-          level = 100;
-          holding = false;
-          flood();
+    function ketuk(el, s){
+      if (beres) return;
+
+      if (cfg.ngintip && !el.classList.contains('up')){
+        el.classList.add('up');
+        timers.push(setTimeout(function(){
+          if (!beres) el.classList.remove('up');
+        }, 1500));
+        if (!samaSemua(s, target, cfg.ciri)){
+          bilang('Bukan dia. Coba rumput sebelah.', 'no');
+          return;
         }
       }
-      fill.style.height = level + '%';
-      sprout.style.transform = 'scale(' + (0.35 + Math.min(level,100)/100 * 0.65) + ')';
-      raf = requestAnimationFrame(tick);
-    }
-    raf = requestAnimationFrame(tick);
 
-    function flood(){
-      say('Banjir! Bunganya berenang sekarang. Coba lagi pelan-pelan.', 'bad');
-      level = 0;
-    }
-
-    function press(e){
-      if (finished) return;
-      if (e) e.preventDefault();
-      holding = true;
-    }
-    function release(){
-      if (finished || !holding) return;
-      holding = false;
-      if (level >= 62 && level <= 88){
-        finished = true;
-        btn.disabled = true;
-        say('Pas. Benihnya langsung berdiri tegak.', 'good');
-        setTimeout(done, 900);
-      } else if (level < 62){
-        say('Masih haus. Airnya belum sampai garis hijau.', 'bad');
-        level = 0;
+      if (samaSemua(s, target, cfg.ciri)){
+        beres = true;
+        el.classList.add('found', 'up');
+        sel.forEach(function(o){ if (o.el !== el) o.el.classList.add('faded'); });
+        bilang(BENAR[benarKe++ % BENAR.length], 'ok');
+        dapat.push(s);
+        gambarSlot(dapat.length - 1);
+        tulisLangkah();
+        actEl.innerHTML = '';
+        timers.push(setTimeout(function(){
+          actEl.appendChild(tombol(
+            dapat.length >= TOTAL ? 'Lihat kandangnya' : 'Ronde berikutnya', true, selesai));
+        }, reduced ? 0 : 600));
       } else {
-        say('Kelewat sedikit. Akarnya kaget.', 'bad');
-        level = 0;
+        el.classList.remove('wrong');
+        void el.offsetWidth;
+        el.classList.add('wrong');
+        bilang(SALAH[salahKe++ % SALAH.length], 'no');
       }
     }
 
-    btn.addEventListener('contextmenu', function(e){ e.preventDefault(); });
-    btn.addEventListener('pointerdown', press);
-    btn.addEventListener('pointerup', release);
-    btn.addEventListener('pointercancel', release);
-    btn.addEventListener('pointerleave', release);
-    btn.addEventListener('keydown', function(e){
-      if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); press(null); }
-    });
-    btn.addEventListener('keyup', function(e){
-      if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); release(); }
+    kawanan.forEach(function(s){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cow' + (cfg.ngintip ? ' peek' : '');
+      b.setAttribute('aria-label', deskripsi(s));
+      var dalam = document.createElement('span');
+      dalam.className = 'cow-in';
+      dalam.innerHTML = sapiSVG(s);
+      b.appendChild(dalam);
+      if (cfg.ngintip){
+        var t = document.createElement('span');
+        t.className = 'tuft';
+        t.innerHTML = rumputSVG();
+        b.appendChild(t);
+      }
+      b.addEventListener('click', function(){ ketuk(b, s); });
+      grid.appendChild(b);
+      sel.push({el:b, dalam:dalam, sapi:s});
     });
 
-    cleanup = function(){ finished = true; cancelAnimationFrame(raf); };
+    var petunjuk = tombol('Kasih petunjuk', false, function(){
+      var k = cfg.ciri[0], dipakai = 0, batas = Math.floor(cfg.jumlah / 2);
+      sel.forEach(function(o){
+        if (dipakai < batas && ciri(o.sapi, k) !== ciri(target, k)){
+          o.el.classList.add('dim');
+          dipakai++;
+        }
+      });
+      petunjuk.disabled = true;
+      petunjuk.textContent = 'Petunjuk dipakai';
+      bilang('Yang jelas nggak cocok sudah saya suruh minggir.', '');
+    });
+    actEl.appendChild(petunjuk);
+
+    var raf = 0;
+    if (cfg.gerak && !reduced){
+      var fase = sel.map(function(){
+        return {a: Math.random()*Math.PI*2, b: Math.random()*Math.PI*2, s: 0.6 + Math.random()*0.6};
+      });
+      var mulai = performance.now();
+      var jalan = function(t){
+        var d = (t - mulai) / 1000;
+        for (var i=0;i<sel.length;i++){
+          var f = fase[i];
+          var x = Math.sin(d * f.s + f.a) * 8;
+          var y = Math.cos(d * f.s * 0.8 + f.b) * 6;
+          sel[i].dalam.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+        }
+        raf = requestAnimationFrame(jalan);
+      };
+      raf = requestAnimationFrame(jalan);
+    }
+
+    bersihkan = function(){
+      if (raf) cancelAnimationFrame(raf);
+      timers.forEach(clearTimeout);
+    };
   }
 
-  /* ---------- misi 2: kuis ---------- */
-  var QUIZ = [
-    {
-      q: 'Bunga apa yang paling cocok buat Piyaa?',
-      a: ['Mawar merah', 'Bunga bank', 'Bunga tidur', 'Kembang api'],
-      benar: 0,
-      salah: ['Itu mah bikin pusing, bukan bikin senang.', 'Itu jam 9 malam kamu banget, tapi bukan jawabannya.', 'Meledak, terus habis. Jangan.']
+  /* ---------- daftar ronde ---------- */
+
+  var RONDE = [
+    function(next){
+      ronde({
+        judul:'Ronde 1 · Kenalan dulu',
+        teks:'Cari sapi yang cocok sama kartu di atas. Cuma satu yang benar.',
+        jumlah:6, kolom:3, ciri:['bercak']
+      }, next);
     },
-    {
-      q: 'Ale telat bales chat. Obat paling manjur?',
-      a: ['Didiemin tiga hari', 'Dibeliin bunga', 'Disuruh push up', 'Semua di atas benar'],
-      benar: 3,
-      salah: ['Terlalu kejam, tapi lumayan.', 'Sudah pasti, tapi masih kurang lengkap.', 'Boleh juga sih, tapi belum semuanya.']
+    function(next){
+      ronde({
+        judul:'Ronde 2 · Padangnya mulai ramai',
+        teks:'Sekarang dua ciri, dan dua-duanya harus cocok.',
+        jumlah:12, kolom:4, ciri:['bercak','aks']
+      }, next);
     },
-    {
-      q: 'Biar bunga di vas awet seminggu, kuncinya?',
-      a: ['Airnya diganti tiap dua hari', 'Disiram kopi biar melek', 'Difoto tiap pagi', 'Diajak ngobrol'],
-      benar: 0,
-      salah: ['Bunganya nggak lembur, Piyaa.', 'Fotonya awet, bunganya nggak.', 'Nggak salah, tapi tetap kalah sama air bersih.']
+    function(next){
+      ronde({
+        judul:'Ronde 3 · Sapinya jalan-jalan',
+        teks:'Mereka nggak mau diam. Sabar, kejar pelan-pelan.',
+        jumlah:12, kolom:4, ciri:['badan','aks'], gerak:true
+      }, next);
+    },
+    function(next){
+      ronde({
+        judul:'Ronde 4 · Bobo di rumput tinggi',
+        teks:'Ketuk rumputnya buat ngintip. Sapinya nongol sebentar, terus tidur lagi.',
+        jumlah:9, kolom:3, ciri:['bercak','badan'], ngintip:true
+      }, next);
+    },
+    function(next){
+      ronde({
+        judul:'Ronde 5 · Sapi kembar',
+        teks:'Enam belas sapi sama persis. Cuma satu yang lagi kedipin kamu.',
+        jumlah:16, kolom:4, ciri:['wajah'],
+        dasar:      {badan:BADAN[0], bercak:BERCAK[1], tinta:TINTA[0], aks:AKSESORI[3], warna:WARNA_AKS[0], wajahPool:['senyum']},
+        kunciTarget:{badan:BADAN[0], bercak:BERCAK[1], tinta:TINTA[0], aks:AKSESORI[3], warna:WARNA_AKS[0], wajah:'kedip'}
+      }, next);
     }
   ];
 
-  function missionQuiz(done){
-    titleEl.textContent = 'Kuis kecil';
-    textEl.textContent = 'Tiga pertanyaan. Salah tidak apa-apa, cuma diketawain sedikit.';
-    var idx = 0;
+  /* ---------- penutup ---------- */
 
-    function render(){
-      stage.innerHTML = '<div class="stage-ground"></div>';
-      var q = QUIZ[idx];
-      var h = document.createElement('h2');
-      h.textContent = q.q;
-      h.style.textAlign = 'center';
-      stage.appendChild(h);
-
-      var box = document.createElement('div');
-      box.className = 'choices';
-      box.style.width = '100%';
-      var wrongSeen = 0;
-      q.a.forEach(function(opt, i){
-        var b = button(opt, '', function(){
-          if (i === q.benar){
-            b.className = 'primary';
-            idx++;
-            if (idx >= QUIZ.length){
-              say('Tiga-tiganya kena. Kamu memang paham bunga.', 'good');
-              setTimeout(done, 800);
-            } else {
-              say('Betul. Lanjut.', 'good');
-              setTimeout(render, 600);
-            }
-          } else {
-            var pesan = q.salah[Math.min(wrongSeen, q.salah.length - 1)];
-            wrongSeen++;
-            say(pesan, 'bad');
-            b.classList.remove('shake');
-            void b.offsetWidth;
-            b.classList.add('shake');
-          }
-        });
-        box.appendChild(b);
-      });
-      stage.appendChild(box);
-      actionsEl.innerHTML = '';
-      var num = document.createElement('span');
-      num.className = 'counter';
-      num.textContent = (idx + 1) + '/3';
-      stage.appendChild(num);
-    }
-    render();
-    cleanup = null;
-  }
-
-  /* ---------- misi 3: usir kumbang ---------- */
-  function missionBugs(done){
-    titleEl.textContent = 'Usir kumbangnya';
-    textEl.textContent = 'Enam kumbang lagi ngunyah daun. Tap satu-satu sebelum waktunya habis.';
-
-    var need = 6, got = 0, timeLeft = 22, over = false;
-    var counter = document.createElement('span');
-    counter.className = 'counter';
-    stage.appendChild(counter);
-
-    function updateCounter(){
-      counter.textContent = got + '/' + need + '  ·  ' + timeLeft + 's';
-    }
-    updateCounter();
-
-    var timer = setInterval(function(){
-      timeLeft--;
-      updateCounter();
-      if (timeLeft <= 0 && !over){
-        over = true;
-        clearInterval(timer);
-        clearInterval(spawner);
-        stage.querySelectorAll('.bug').forEach(function(b){ b.remove(); });
-        say('Ronde ini kumbangnya menang. Ulangi, mereka pasti kaget.', 'bad');
-        actionsEl.innerHTML = '';
-        var again = button('Usir lagi', 'primary', function(){ resetStage(); missionBugs(done); });
-        again.style.width = '100%';
-        actionsEl.appendChild(again);
-      }
-    }, 1000);
-
-    var spawner = setInterval(spawn, 850);
-    spawn();
-
-    function spawn(){
-      if (over) return;
-      var live = stage.querySelectorAll('.bug').length;
-      if (live >= 3) return;
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'bug';
-      b.setAttribute('aria-label', 'Usir kumbang');
-      b.innerHTML = bugSVG();
-      var w = stage.clientWidth - 70, h = stage.clientHeight - 70;
-      b.style.left = (18 + Math.random() * Math.max(w, 10)) + 'px';
-      b.style.top = (18 + Math.random() * Math.max(h, 10)) + 'px';
-      b.addEventListener('click', function(){
-        if (over) return;
-        b.remove();
-        got++;
-        updateCounter();
-        if (got >= need){
-          over = true;
-          clearInterval(timer);
-          clearInterval(spawner);
-          stage.querySelectorAll('.bug').forEach(function(x){ x.remove(); });
-          say('Daunnya utuh lagi. Kumbangnya pindah ke kebun tetangga.', 'good');
-          setTimeout(done, 900);
-        }
-      });
-      stage.appendChild(b);
-      setTimeout(function(){ if (b.isConnected && !over) b.remove(); }, 1900);
-    }
-
-    cleanup = function(){ over = true; clearInterval(timer); clearInterval(spawner); };
-  }
-
-  /* ---------- misi 4: ingat urutan ---------- */
-  function missionMemory(done){
-    titleEl.textContent = 'Ingat urutannya';
-    textEl.textContent = 'Empat bunga akan menyala bergantian. Ulangi urutannya dengan menekan bunga yang sama.';
-
-    var pads = [];
-    var grid = document.createElement('div');
-    grid.className = 'grid4';
-    var set = [FLOWERS[1], FLOWERS[2], FLOWERS[3], FLOWERS[4]];
-    set.forEach(function(f, i){
-      var p = document.createElement('button');
-      p.type = 'button';
-      p.className = 'pad';
-      p.innerHTML = flowerSVG(f, false);
-      p.setAttribute('aria-label', f.nama);
-      p.addEventListener('click', function(){ tap(i); });
-      grid.appendChild(p);
-      pads.push(p);
-    });
-    stage.appendChild(grid);
-
-    var seq = [];
-    for (var i=0;i<4;i++){ seq.push(Math.floor(Math.random()*4)); }
-    var pos = 0, locked = true, timers = [];
-
-    function light(i, ms){
-      pads[i].classList.add('lit');
-      timers.push(setTimeout(function(){ pads[i].classList.remove('lit'); }, ms));
-    }
-
-    function play(){
-      locked = true;
-      say('Perhatikan...', '');
-      pos = 0;
-      var gap = reduced ? 500 : 620;
-      seq.forEach(function(v, k){
-        timers.push(setTimeout(function(){ light(v, gap - 180); }, 500 + k * gap));
-      });
-      timers.push(setTimeout(function(){
-        locked = false;
-        say('Sekarang giliran kamu.', '');
-      }, 500 + seq.length * gap));
-    }
-
-    function tap(i){
-      if (locked) return;
-      light(i, 220);
-      if (seq[pos] === i){
-        pos++;
-        if (pos >= seq.length){
-          locked = true;
-          say('Urutannya tepat. Ingatanmu lebih tajam dari punya Ale.', 'good');
-          setTimeout(done, 900);
-        }
-      } else {
-        locked = true;
-        say('Bukan yang itu. Lihat sekali lagi ya.', 'bad');
-        timers.push(setTimeout(play, 900));
-      }
-    }
-
-    play();
-    cleanup = function(){ locked = true; timers.forEach(clearTimeout); };
-  }
-
-  /* ---------- misi 5: susun kalimat ---------- */
-  function missionWords(done){
-    titleEl.textContent = 'Susun kalimatnya';
-    textEl.textContent = 'Kata-katanya berantakan kena angin. Tekan berurutan sampai jadi satu kalimat.';
-
-    var target = ['Piyaa','lebih','cantik','dari','semua','bunga','di','taman','ini'];
-    var pool = target.slice();
-    for (var i = pool.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
-    }
-
-    var line = document.createElement('div');
-    line.className = 'sentence';
-    line.innerHTML = '<span class="empty">(masih kosong)</span>';
-    stage.appendChild(line);
-
-    var box = document.createElement('div');
-    box.className = 'words';
-    stage.appendChild(box);
-
-    var pos = 0;
-    var built = [];
-    pool.forEach(function(w){
-      var b = button(w, '', function(){
-        if (w === target[pos]){
-          b.classList.add('used');
-          b.disabled = true;
-          built.push(w);
-          pos++;
-          line.textContent = built.join(' ');
-          if (pos >= target.length){
-            say('Kalimatnya jadi. Dan itu bukan bohong.', 'good');
-            setTimeout(done, 1100);
-          } else {
-            say('', '');
-          }
-        } else {
-          say('Belum pas urutannya. Kata berikutnya bukan itu.', 'bad');
-          b.classList.remove('shake');
-          void b.offsetWidth;
-          b.classList.add('shake');
-        }
-      });
-      box.appendChild(b);
-    });
-
-    cleanup = null;
-  }
-
-  /* ---------- akhir ---------- */
-  function finale(){
-    resetStage();
-    titleEl.textContent = 'Lima misi, selesai';
-    textEl.textContent = 'Bunga-bunga yang kamu rawat tadi sudah dirangkai jadi satu.';
-    stepEl.textContent = 'Kebunnya penuh';
+  function penutup(){
+    resetPanggung();
+    wantedEl.hidden = true;
+    titleEl.textContent = 'Lima-limanya pulang';
+    textEl.textContent = 'Kandangnya penuh. Sapi-sapinya sekarang berjejer nunggu dielus.';
+    stepEl.textContent = 'Kandang penuh';
 
     var canvas = document.createElement('canvas');
-    canvas.id = 'petals';
-    stage.appendChild(canvas);
+    canvas.id = 'hearts';
+    field.appendChild(canvas);
 
-    var bq = document.createElement('div');
-    bq.className = 'bouquet';
-    bq.innerHTML = FLOWERS.map(function(f){ return flowerSVG(f, true); }).join('');
-    stage.appendChild(bq);
+    var baris = document.createElement('div');
+    baris.className = 'row';
+    baris.innerHTML = dapat.map(function(s){ return '<span>' + sapiSVG(s) + '</span>'; }).join('');
+    field.appendChild(baris);
 
-    var fin = document.createElement('p');
-    fin.className = 'final';
-    fin.style.zIndex = '1';
-    fin.innerHTML = 'Ale akan memberikan <b>Bunga</b> Ke Piyaa';
-    stage.appendChild(fin);
+    var akhir = document.createElement('p');
+    akhir.className = 'final';
+    akhir.textContent = 'Tapi yang paling gemes tetap Piyaa';
+    field.appendChild(akhir);
 
-    var sig = document.createElement('p');
-    sig.className = 'signature';
-    sig.textContent = 'Bukan bunga digital. Yang asli, dibawa langsung.';
-    stage.appendChild(sig);
+    var ttd = document.createElement('p');
+    ttd.className = 'signature';
+    ttd.textContent = 'Dari Ale. Kalau nanti sedih lagi, panggil aja sapinya.';
+    field.appendChild(ttd);
 
-    actionsEl.innerHTML = '';
-    var again = button('Main lagi dari awal', '', function(){
-      earned = 0;
-      renderSlots(-1);
-      setStep();
-      start();
-    });
-    again.style.width = '100%';
-    actionsEl.appendChild(again);
+    actEl.appendChild(tombol('Main lagi dari awal', true, function(){
+      dapat = [];
+      gambarSlot(-1);
+      tulisLangkah();
+      jalankan();
+    }));
 
     if (reduced) return;
 
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = 0, H = 0;
-    function size(){
-      W = stage.clientWidth; H = stage.clientHeight;
+    function ukur(){
+      W = field.clientWidth; H = field.clientHeight;
       canvas.width = W * dpr; canvas.height = H * dpr;
-      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
-    size();
-    window.addEventListener('resize', size);
+    ukur();
+    window.addEventListener('resize', ukur);
 
-    var colors = ['#D6336C','#FF9FB5','#F2B134','#8E6FD1','#FFF6E8'];
-    var petals = [];
-    for (var i=0;i<34;i++){
-      petals.push({
+    var hati = [];
+    for (var i=0;i<26;i++){
+      hati.push({
         x: Math.random()*W,
         y: Math.random()*H - H,
-        r: 4 + Math.random()*5,
-        sp: 18 + Math.random()*34,
-        sway: 0.6 + Math.random()*1.4,
-        ph: Math.random()*Math.PI*2,
-        rot: Math.random()*Math.PI,
-        vr: (Math.random()-0.5)*1.6,
-        c: colors[i % colors.length]
+        s: 5 + Math.random()*7,
+        v: 18 + Math.random()*26,
+        g: Math.random()*Math.PI*2,
+        p: 0.5 + Math.random()*0.9,
+        w: ['#FFFFFF','#FBD3DD','#F6E7BE'][Math.floor(Math.random()*3)]
       });
     }
-    var last = 0, raf = 0;
-    function draw(t){
-      if (!last) last = t;
-      var dt = Math.min((t-last)/1000, 0.05);
-      last = t;
-      ctx.clearRect(0,0,W,H);
-      for (var i=0;i<petals.length;i++){
-        var p = petals[i];
-        p.y += p.sp * dt;
-        p.ph += dt * p.sway;
-        p.rot += p.vr * dt;
-        p.x += Math.sin(p.ph) * 14 * dt;
-        if (p.y > H + 12){ p.y = -12; p.x = Math.random()*W; }
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.globalAlpha = 0.85;
-        ctx.fillStyle = p.c;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, p.r*0.6, p.r, 0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-      }
-      raf = requestAnimationFrame(draw);
+    function gambarHati(x, y, s, rot, warna){
+      ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = warna;
+      ctx.beginPath();
+      ctx.moveTo(0, s*0.42);
+      ctx.bezierCurveTo(-s*1.2, -s*0.35, -s*0.5, -s*1.1, 0, -s*0.32);
+      ctx.bezierCurveTo(s*0.5, -s*1.1, s*1.2, -s*0.35, 0, s*0.42);
+      ctx.closePath(); ctx.fill(); ctx.restore();
     }
-    raf = requestAnimationFrame(draw);
-    cleanup = function(){ cancelAnimationFrame(raf); window.removeEventListener('resize', size); };
+    var lalu = performance.now(), rafId = 0;
+    function bingkai(t){
+      var dt = Math.min((t - lalu)/1000, 0.05); lalu = t;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = 0.85;
+      for (var i=0;i<hati.length;i++){
+        var h = hati[i];
+        h.y += h.v * dt;
+        h.g += h.p * dt;
+        h.x += Math.sin(h.g) * 12 * dt;
+        if (h.y - h.s > H){ h.y = -h.s*2; h.x = Math.random()*W; }
+        gambarHati(h.x, h.y, h.s, Math.sin(h.g)*0.4, h.w);
+      }
+      ctx.globalAlpha = 1;
+      rafId = requestAnimationFrame(bingkai);
+    }
+    rafId = requestAnimationFrame(bingkai);
+    bersihkan = function(){
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', ukur);
+    };
   }
 
   /* ---------- alur ---------- */
-  var MISSIONS = [missionWater, missionQuiz, missionBugs, missionMemory, missionWords];
 
-  function runMission(i){
-    resetStage();
-    setStep();
-    MISSIONS[i](function(){
-      earned = i + 1;
-      renderSlots(i);
-      setStep();
-      if (earned >= 5){
-        setTimeout(finale, 700);
-      } else {
-        resetStage();
-        var next = button('Ambil bunganya, lanjut misi ' + (earned + 1), 'primary', function(){ runMission(earned); });
-        next.style.width = '100%';
-        actionsEl.appendChild(next);
-        titleEl.textContent = FLOWERS[i].nama + ' masuk vas';
-        textEl.textContent = 'Satu bunga aman. Tinggal ' + (5 - earned) + ' lagi.';
-        var big = document.createElement('div');
-        big.style.width = '140px';
-        big.style.height = '140px';
-        big.innerHTML = flowerSVG(FLOWERS[i], true);
-        big.className = 'sprout';
-        stage.appendChild(big);
-        var cap = document.createElement('p');
-        cap.style.textAlign = 'center';
-        cap.textContent = 'Bunga ke-' + earned + ': ' + FLOWERS[i].nama;
-        stage.appendChild(cap);
-      }
-    });
+  function jalankan(){
+    var i = dapat.length;
+    if (i >= TOTAL){ penutup(); return; }
+    RONDE[i](function(){ jalankan(); });
   }
 
-  function start(){ runMission(earned); }
-
-  function intro(){
-    resetStage();
-    renderSlots(-1);
+  function pembuka(){
+    resetPanggung();
+    wantedEl.hidden = true;
+    gambarSlot(-1);
     stepEl.textContent = 'Belum mulai';
-    titleEl.textContent = 'Ada kebun kecil buat kamu';
-    textEl.textContent = 'Lima misi, semuanya soal bunga. Selesaikan semuanya dan ada satu kalimat yang nunggu di ujung.';
 
-    var pot = document.createElement('div');
-    pot.style.width = '180px';
-    pot.style.height = '180px';
-    pot.innerHTML = flowerSVG(FLOWERS[1], true);
-    stage.appendChild(pot);
+    var sambutan = buatSapi({
+      badan:BADAN[0], bercak:BERCAK[0], tinta:TINTA[2],
+      aks:AKSESORI[0], warna:WARNA_AKS[0], wajah:'kedip'
+    });
+    var wadah = document.createElement('div');
+    wadah.className = 'row';
+    wadah.innerHTML = '<span style="width:44%">' + sapiSVG(sambutan, {label:'Sapi yang menyambut'}) + '</span>';
+    field.appendChild(wadah);
 
-    var hint = document.createElement('p');
-    hint.style.textAlign = 'center';
-    hint.textContent = 'Untuk Piyaa. Dari Ale.';
-    stage.appendChild(hint);
+    var ttd = document.createElement('p');
+    ttd.className = 'signature';
+    ttd.textContent = 'Untuk Piyaa. Dari Ale.';
+    field.appendChild(ttd);
 
-    var b = button('Mulai menanam', 'primary', function(){ earned = 0; start(); });
-    b.style.width = '100%';
-    actionsEl.appendChild(b);
+    actEl.appendChild(tombol('Mulai cari', true, jalankan));
   }
 
-  intro();
+  pembuka();
 })();
 </script>
-
 <!--WRAP-->
 </body>
 </html>

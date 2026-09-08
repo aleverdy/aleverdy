@@ -1,20 +1,21 @@
-# Kebun Piyaa
+# Cari Sapi Gemesnya
 
-Mini-game web untuk Piyaa, dari Ale. Lima misi kecil tentang bunga; setiap misi
-yang selesai menambah satu bunga ke vas di atas layar. Begitu kelima slotnya
-penuh, buketnya dirangkai dan muncul kalimat terakhirnya:
+Mini-game web untuk Piyaa, dari Ale. Lima ronde, tiap ronde satu sapi harus
+ketemu di antara kawanan yang mirip-mirip. Sapi yang ketemu masuk kandang di
+atas layar. Begitu kelimanya pulang, muncul kalimat terakhirnya:
 
-> Ale akan memberikan Bunga Ke Piyaa
+> Tapi yang paling gemes tetap Piyaa
 
-## Misinya
+## Rondenya
 
-1. **Siram benihnya** — tahan tombol sampai air berhenti di garis hijau. Kelewatan, potnya banjir.
-2. **Kuis kecil** — tiga pertanyaan, salah satunya soal cara bikin bunga di vas awet seminggu.
-3. **Usir kumbang** — enam kumbang, 22 detik.
-4. **Ingat urutan** — empat bunga menyala bergantian, ulangi urutannya.
-5. **Susun kalimatnya** — sembilan kata yang berantakan kena angin.
+1. **Kenalan dulu** — enam sapi, satu ciri. Cocokkan sama kartu "Yang dicari".
+2. **Padangnya mulai ramai** — dua belas sapi, dua ciri, dua-duanya harus cocok.
+3. **Sapinya jalan-jalan** — sapinya bergerak pelan sambil dicari.
+4. **Bobo di rumput tinggi** — cuma tanduknya yang nongol; ketuk buat ngintip.
+5. **Sapi kembar** — enam belas sapi sama persis, cuma satu yang lagi kedip.
 
-Tidak ada game over. Setiap misi bisa diulang tanpa hukuman.
+Tidak ada kalah. Salah ketuk cuma dibalas "muu", dan tiap ronde punya tombol
+**Kasih petunjuk** yang menyingkirkan separuh sapi yang jelas tidak cocok.
 
 ## Menjalankan
 
@@ -29,8 +30,10 @@ lalu buka `http://localhost:8000`.
 
 ## Catatan teknis
 
-- HTML/CSS/JS polos dalam satu berkas; bunga digambar sebagai SVG dari data
-  (jumlah kelopak, lebar kelopak, warna inti), hujan kelopak pakai canvas.
-- Mengikuti tema terang/gelap perangkat, dan menghormati `prefers-reduced-motion`.
+- HTML/CSS/JS polos dalam satu berkas. Sapi digambar sebagai SVG dari data
+  (warna badan, bentuk bercak, aksesori, ekspresi), jadi tiap sapi berbeda dan
+  pengecoh dibuat dengan menjamin minimal satu ciri kunci tidak cocok.
+- Hujan hati di layar penutup pakai canvas.
+- Mengikuti tema terang/gelap perangkat, menghormati `prefers-reduced-motion`.
 - Dirancang untuk layar HP dulu (lebar maksimum 460px), bisa dimainkan dengan
-  sentuh maupun keyboard.
+  sentuh maupun keyboard; tiap sapi punya `aria-label` yang menyebutkan ciri-cirinya.
