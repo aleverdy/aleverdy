@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#140B1C">
+<meta name="description" content="Gebuk Kelinci — game pukul-pukulan 60 detik: kelinci bertopeng burung hantu nongol dari sembilan lubang, ketuk sebelum dia kabur.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gebuk Kelinci">
+<meta property="og:title" content="Gebuk Kelinci">
+<meta property="og:description" content="Sembilan lubang, 60 detik, tiga nyawa. Jangan sampai salah gebuk om kamera.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23140B1C'/%3E%3Cellipse cx='44' cy='36' rx='9' ry='24' transform='rotate(-12 44 36)' fill='%23F6ECFF'/%3E%3Cellipse cx='76' cy='36' rx='9' ry='24' transform='rotate(12 76 36)' fill='%23F6ECFF'/%3E%3Cellipse cx='60' cy='74' rx='30' ry='29' fill='%23F6ECFF'/%3E%3Crect x='34' y='64' width='52' height='20' rx='9' fill='%23FF3D8B'/%3E%3Ccircle cx='47' cy='74' r='6.5' fill='%23FFF'/%3E%3Ccircle cx='47' cy='74' r='3' fill='%23140B1C'/%3E%3Ccircle cx='73' cy='74' r='6.5' fill='%23FFF'/%3E%3Ccircle cx='73' cy='74' r='3' fill='%23140B1C'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23140B1C'/%3E%3Cellipse cx='44' cy='36' rx='9' ry='24' transform='rotate(-12 44 36)' fill='%23F6ECFF'/%3E%3Cellipse cx='76' cy='36' rx='9' ry='24' transform='rotate(12 76 36)' fill='%23F6ECFF'/%3E%3Cellipse cx='60' cy='74' rx='30' ry='29' fill='%23F6ECFF'/%3E%3Crect x='34' y='64' width='52' height='20' rx='9' fill='%23FF3D8B'/%3E%3Ccircle cx='47' cy='74' r='6.5' fill='%23FFF'/%3E%3Ccircle cx='47' cy='74' r='3' fill='%23140B1C'/%3E%3Ccircle cx='73' cy='74' r='6.5' fill='%23FFF'/%3E%3Ccircle cx='73' cy='74' r='3' fill='%23140B1C'/%3E%3C/svg%3E">
+<title>Gebuk Kelinci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --kertas:#140B1C;
+  --permukaan:#241533;
+  --permukaan-2:#2F1C42;
+  --garis:#42285C;
+  --tinta:#F6ECFF;
+  --tinta-lembut:#B9A3CE;
+  --aksen:#FF3D8B;
+  --sorot:#FFC531;
+  --bahaya:#E23744;
+  --tanah:#6B4326;
+  --tanah-gelap:#4A2C17;
+  --lubang:#0A0510;
+  --display:'Bungee','Impact',system-ui,sans-serif;
+  --teks:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--kertas);
+  color:var(--tinta);
+  font-family:var(--teks);
+  font-size:16px;
+  line-height:1.5;
+  overscroll-behavior:none;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--sorot);outline-offset:3px;border-radius:6px}
+
+/* ---------- kerangka ---------- */
+.wrap{
+  max-width:440px;
+  margin:0 auto;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+}
+.wrap.getar{animation:getar .28s}
+@keyframes getar{
+  0%,100%{transform:translate3d(0,0,0)}
+  20%{transform:translate3d(-7px,2px,0)}
+  45%{transform:translate3d(6px,-3px,0)}
+  70%{transform:translate3d(-4px,1px,0)}
+}
+
+/* ---------- HUD strip tiket ---------- */
+.hud{display:flex;align-items:stretch;gap:8px}
+.tiket{
+  flex:1;
+  background:var(--permukaan);
+  border:2px solid var(--garis);
+  border-radius:4px 4px 10px 10px;
+  padding:6px 8px 7px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  position:relative;
+}
+.hud-label{
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--tinta-lembut);font-weight:600;line-height:1;
+}
+.hud-nilai{
+  font-family:var(--display);font-size:23px;line-height:1.05;
+  font-variant-numeric:tabular-nums;font-weight:400;
+}
+.tiket--waktu .hud-nilai{color:var(--sorot)}
+.tiket--waktu.kritis .hud-nilai{color:var(--bahaya);animation:denyut .5s infinite}
+@keyframes denyut{50%{opacity:.35}}
+.nyawa{display:flex;gap:3px;height:23px;align-items:center}
+.nyawa i{display:block;line-height:0}
+.nyawa i svg{width:16px;height:15px;fill:var(--aksen)}
+.nyawa i.mati svg{fill:var(--garis)}
+.hud-aksi{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.ikon{
+  width:34px;height:34px;display:grid;place-items:center;
+  background:var(--permukaan);border:2px solid var(--garis);border-radius:9px;
+  cursor:pointer;padding:0;
+}
+.ikon svg{width:17px;height:17px;fill:none;stroke:var(--tinta-lembut);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ikon:hover svg{stroke:var(--tinta)}
+
+/* ---------- papan tanah ---------- */
+.papan{
+  position:relative;
+  flex:0 1 auto;min-height:0;width:100%;aspect-ratio:1/1.02;margin:auto 0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:2px;
+  padding:20px 10px 10px;
+  border-radius:18px;
+  background:
+    radial-gradient(120% 70% at 50% 0%,rgba(255,61,139,.14),transparent 62%),
+    linear-gradient(180deg,#3A2214 0%,#2A1710 100%);
+  /* pinggiran terpal tenda */
+  border:7px solid transparent;
+  border-image:repeating-linear-gradient(115deg,var(--aksen) 0 13px,#F6ECFF 13px 26px) 7;
+  user-select:none;-webkit-user-select:none;
+  overflow:hidden;
+}
+.lubang{
+  position:relative;
+  background:none;border:0;padding:0;margin:0;
+  cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+}
+/* gundukan tanah */
+.gundukan{
+  position:absolute;left:2%;right:2%;bottom:2%;height:54%;
+  border-radius:50% 50% 28% 28%/64% 64% 28% 28%;
+  background:linear-gradient(180deg,var(--tanah) 0%,var(--tanah-gelap) 100%);
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.25);
+  z-index:1;
+}
+/* mulut lubang */
+.pit{
+  position:absolute;left:18%;right:18%;bottom:27%;height:19%;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 50% 30%,#1B0F28 0%,var(--lubang) 70%);
+  box-shadow:0 -2px 6px rgba(0,0,0,.6) inset;
+  z-index:2;
+}
+/* panggung: tempat karakter naik, dipotong di bawah */
+.panggung{
+  position:absolute;left:5%;right:5%;bottom:29%;height:84%;
+  overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:center;
+  z-index:3;
+  pointer-events:none;
+}
+.sosok{
+  width:82%;aspect-ratio:1;
+  transform:translateY(112%);
+  transition:transform 170ms cubic-bezier(.2,1.35,.4,1);
+  will-change:transform;
+}
+.sosok svg{width:100%;height:100%;display:block;overflow:visible}
+.lubang.naik .sosok{transform:translateY(0)}
+.lubang.turun .sosok{transform:translateY(112%);transition-duration:130ms;transition-timing-function:ease-in}
+.lubang.kena .sosok{
+  transform:translateY(26%) scale(1.16,.6);
+  transition:transform 90ms ease-out;
+}
+/* bibir depan lubang, menutup garis potong panggung */
+.bibir{
+  position:absolute;left:17%;right:17%;bottom:23%;height:13%;
+  border-radius:50%;
+  background:linear-gradient(180deg,#7A4E2C 0%,var(--tanah-gelap) 100%);
+  box-shadow:0 2px 0 rgba(0,0,0,.3);
+  z-index:4;
+}
+/* aura penanda tipe */
+.aura{
+  position:absolute;left:13%;right:13%;bottom:22%;height:19%;
+  border-radius:50%;opacity:0;
+  transition:opacity .12s;
+  z-index:2;
+}
+.lubang[data-tipe="kamera"].naik .aura{opacity:1;box-shadow:0 0 0 3px var(--bahaya),0 0 22px 6px rgba(226,55,68,.55)}
+.lubang[data-tipe="emas"].naik .aura{opacity:1;box-shadow:0 0 0 3px var(--sorot),0 0 22px 6px rgba(255,197,49,.5)}
+.lubang[data-tipe="pisang"].naik .aura{opacity:1;box-shadow:0 0 0 3px #8BE07A,0 0 18px 5px rgba(139,224,122,.4)}
+/* petunjuk tombol angka, hanya untuk yang pakai keyboard */
+.tombol-angka{
+  position:absolute;top:2px;left:4px;z-index:5;
+  font-size:10px;font-weight:800;color:rgba(246,236,255,.28);
+  display:none;
+}
+@media (hover:hover) and (pointer:fine){.tombol-angka{display:block}}
+
+/* teks melayang */
+.skor-terbang{
+  position:absolute;z-index:8;pointer-events:none;
+  font-family:var(--display);font-size:19px;
+  text-shadow:0 2px 0 rgba(0,0,0,.55);
+  transform:translate(-50%,-50%);
+  animation:terbang .72s ease-out forwards;
+}
+.skor-terbang.plus{color:var(--sorot)}
+.skor-terbang.minus{color:var(--bahaya)}
+.skor-terbang.waktu{color:#8BE07A}
+@keyframes terbang{
+  0%{opacity:0;transform:translate(-50%,-40%) scale(.6)}
+  22%{opacity:1;transform:translate(-50%,-60%) scale(1.14)}
+  100%{opacity:0;transform:translate(-50%,-150%) scale(1)}
+}
+/* palu */
+.palu{
+  position:absolute;z-index:9;pointer-events:none;
+  width:64px;height:64px;
+  transform-origin:78% 78%;
+  animation:ayun .3s ease-out forwards;
+  margin:-46px 0 0 -20px;
+}
+@keyframes ayun{
+  0%{opacity:0;transform:rotate(-72deg) scale(.8)}
+  35%{opacity:1;transform:rotate(14deg) scale(1.05)}
+  100%{opacity:0;transform:rotate(-8deg) scale(1)}
+}
+
+/* ---------- bar bawah ---------- */
+.bar{display:flex;align-items:center;gap:10px}
+.kombo{
+  flex:1;display:flex;align-items:center;gap:8px;
+  background:var(--permukaan);border:2px solid var(--garis);
+  border-radius:11px;padding:7px 10px;
+}
+.kombo-track{flex:1;height:8px;border-radius:99px;background:var(--kertas);overflow:hidden}
+.kombo-isi{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--aksen),var(--sorot));transition:width .15s}
+.lipat{font-family:var(--display);font-size:16px;min-width:34px;text-align:right;color:var(--aksen)}
+.lipat.panas{color:var(--sorot)}
+.level{
+  background:var(--permukaan);border:2px solid var(--garis);border-radius:11px;
+  padding:5px 11px;display:flex;flex-direction:column;align-items:center;
+}
+.level strong{font-family:var(--display);font-size:16px}
+
+/* ---------- tirai & poster ---------- */
+.tirai{
+  position:fixed;inset:0;z-index:20;
+  background:rgba(10,5,16,.86);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  display:grid;place-items:center;
+  padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+  overflow-y:auto;
+}
+.poster{
+  width:100%;max-width:400px;
+  background:var(--permukaan);
+  border:3px solid var(--garis);
+  border-radius:20px;
+  padding:22px 20px 20px;
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
+  animation:masuk .22s ease-out;
+}
+@keyframes masuk{from{opacity:0;transform:translateY(14px) scale(.97)}}
+.judul{
+  font-family:var(--display);font-weight:400;
+  font-size:37px;line-height:1.02;margin:0 0 8px;
+  color:var(--aksen);
+  text-shadow:3px 3px 0 var(--kertas);
+  text-wrap:balance;
+}
+.judul.kecil{font-size:28px;color:var(--tinta)}
+.subjudul{margin:0 0 18px;color:var(--tinta-lembut);font-size:15px;max-width:34ch}
+.aturan{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:10px}
+.aturan li{display:flex;align-items:center;gap:11px}
+.aturan .rupa{width:42px;height:42px;flex:none;background:var(--kertas);border-radius:11px;border:2px solid var(--garis);overflow:hidden;display:grid;place-items:center}
+.aturan .rupa svg{width:106%;height:106%;margin-bottom:-11%}
+.aturan b{display:block;font-size:14px;font-weight:800}
+.aturan span{display:block;font-size:13px;color:var(--tinta-lembut);line-height:1.35}
+.tombol{
+  width:100%;
+  font-family:var(--display);font-size:19px;
+  background:var(--aksen);color:#190B12;
+  border:0;border-bottom:4px solid #A81E58;
+  border-radius:13px;
+  padding:14px 16px;min-height:52px;
+  cursor:pointer;
+  transition:transform .06s,filter .12s;
+}
+.tombol:active{transform:translateY(2px);border-bottom-width:2px}
+.tombol.sekunder{background:var(--permukaan-2);color:var(--tinta);border-bottom-color:var(--garis)}
+.tombol-baris{display:flex;flex-direction:column;gap:9px}
+.rekor{
+  display:flex;justify-content:space-between;align-items:baseline;
+  border-top:2px dashed var(--garis);margin-top:16px;padding-top:12px;
+  font-size:14px;color:var(--tinta-lembut);
+}
+.rekor strong{font-family:var(--display);font-size:19px;color:var(--sorot)}
+.skor-besar{
+  font-family:var(--display);font-size:66px;line-height:.95;
+  color:var(--sorot);font-variant-numeric:tabular-nums;margin:0;
+}
+.pangkat{font-family:var(--display);font-size:21px;color:var(--aksen);margin:2px 0 16px}
+.lencana{
+  display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--sorot);color:#241533;border-radius:99px;padding:4px 11px;margin-bottom:8px;
+}
+.rincian{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  background:var(--garis);border:2px solid var(--garis);border-radius:12px;overflow:hidden;
+  margin-bottom:18px;
+}
+.rincian div{background:var(--kertas);padding:9px 6px;text-align:center}
+.rincian dt{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-lembut);font-weight:600}
+.rincian dd{margin:2px 0 0;font-family:var(--display);font-size:19px;font-variant-numeric:tabular-nums}
+.catatan{margin:14px 0 0;font-size:12px;color:var(--tinta-lembut);text-align:center}
+.hitung-mundur{
+  position:fixed;inset:0;z-index:25;display:grid;place-items:center;
+  font-family:var(--display);font-size:88px;color:var(--sorot);
+  text-shadow:0 4px 0 var(--kertas);pointer-events:none;
+}
+.hitung-mundur span{animation:aba .7s ease-out}
+@keyframes aba{from{opacity:0;transform:scale(2.2)}60%{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.9)}}
+
+@media (max-width:360px){
+  .hud-nilai{font-size:20px}
+  .judul{font-size:31px}
+  .skor-besar{font-size:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sosok{transition-duration:60ms}
+  .wrap.getar{animation:none}
+  .skor-terbang,.palu,.poster,.hitung-mundur span{animation-duration:.01ms;animation-iteration-count:1}
+  .skor-terbang{opacity:1}
+  .tiket--waktu.kritis .hud-nilai{animation:none}
+}
+</style>
+
+<div class="wrap" id="wrap">
+  <header class="hud">
+    <div class="tiket"><span class="hud-label">Skor</span><strong class="hud-nilai" id="uiSkor">0</strong></div>
+    <div class="tiket tiket--waktu" id="tiketWaktu"><span class="hud-label">Waktu</span><strong class="hud-nilai" id="uiWaktu">60</strong></div>
+    <div class="tiket"><span class="hud-label">Nyawa</span><span class="nyawa" id="uiNyawa"></span></div>
+    <div class="hud-aksi">
+      <button class="ikon" id="btnSuara" aria-label="Matikan suara"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 8.5a5 5 0 0 1 0 7" class="gel"/></svg></button>
+      <button class="ikon" id="btnJeda" aria-label="Jeda permainan"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></button>
+    </div>
+  </header>
+
+  <main class="papan" id="papan" aria-label="Papan sembilan lubang"></main>
+
+  <footer class="bar">
+    <div class="kombo">
+      <span class="hud-label">Kombo</span>
+      <div class="kombo-track"><div class="kombo-isi" id="uiKomboIsi"></div></div>
+      <strong class="lipat" id="uiLipat">&times;1</strong>
+    </div>
+    <div class="level"><span class="hud-label">Level</span><strong id="uiLevel">1</strong></div>
+  </footer>
+</div>
+
+<div class="tirai" id="tirai"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============ karakter, digambar sebagai SVG ============ */
+  function kelinci(o){
+    o = o || {};
+    var baju   = o.baju   || '#171021';
+    var kuping = o.kuping || '#3B2A4A';
+    var topeng = o.topeng || '#FF3D8B';
+    var kulit  = '#C98A5E';
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+      + '<g>'
+      +   '<ellipse cx="41" cy="27" rx="9" ry="25" transform="rotate(-12 41 27)" fill="'+baju+'"/>'
+      +   '<ellipse cx="41" cy="28" rx="4" ry="17" transform="rotate(-12 41 28)" fill="'+kuping+'"/>'
+      +   '<ellipse cx="79" cy="27" rx="9" ry="25" transform="rotate(12 79 27)" fill="'+baju+'"/>'
+      +   '<ellipse cx="79" cy="28" rx="4" ry="17" transform="rotate(12 79 28)" fill="'+kuping+'"/>'
+      + '</g>'
+      + '<path d="M24 120 Q24 92 60 89 Q96 92 96 120 Z" fill="'+baju+'"/>'
+      + '<ellipse cx="60" cy="64" rx="31" ry="30" fill="'+baju+'"/>'
+      + '<ellipse cx="60" cy="68" rx="22" ry="24" fill="'+kulit+'"/>'
+      + '<path d="M29 64 A31 30 0 0 1 91 64 Q60 47 29 64 Z" fill="'+baju+'"/>'
+      + '<ellipse cx="60" cy="86" rx="8.5" ry="6.5" fill="#54212C"/>'
+      + '<path d="M52 86 q8 -3 16 0" stroke="'+kulit+'" stroke-width="2" fill="none" opacity=".5"/>'
+      + '<rect x="32" y="53" width="56" height="22" rx="10" fill="'+topeng+'"/>'
+      + '<circle cx="46" cy="64" r="7.4" fill="#FFF9FC"/><circle cx="46" cy="64.5" r="3.6" fill="#1B1220"/>'
+      + '<circle cx="74" cy="64" r="7.4" fill="#FFF9FC"/><circle cx="74" cy="64.5" r="3.6" fill="#1B1220"/>'
+      + '<path d="M60 64 l4.5 5 h-9 z" fill="#FF8A2B"/>'
+      + '<path d="M97 120 q-4 -20 -13 -28" stroke="'+baju+'" stroke-width="15" stroke-linecap="round" fill="none"/>'
+      + '<circle cx="82" cy="90" r="8.5" fill="'+kulit+'"/>'
+      + '<g stroke="#F3E08A" stroke-width="4.5" stroke-linecap="round" fill="none" opacity=".9">'
+      +   '<path d="M82 92 q2 10 -3 16"/><path d="M87 90 q6 8 4 16"/>'
+      + '</g>'
+      + '<path d="M80 88 q-7 -8 -14 -10" stroke="#FFD84D" stroke-width="10" stroke-linecap="round" fill="none"/>'
+      + '<path d="M80 88 q-7 -8 -14 -10" stroke="#FFEFA8" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>'
+      + '</svg>';
+  }
+
+  function kelinciEmas(){
+    return kelinci({baju:'#E9A21B',kuping:'#FFD97A',topeng:'#5B2A7A'})
+      .replace('</svg>',
+        '<g fill="#FFF3C4"><path d="M18 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z"/>'
+      + '<path d="M103 56 l2.4 5.4 5.6 2.4 -5.6 2.4 -2.4 5.4 -2.4 -5.4 -5.6 -2.4 5.6 -2.4z"/></g></svg>');
+  }
+
+  function omKamera(){
+    var kulit='#C98A5E';
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+      + '<path d="M22 120 Q22 88 60 85 Q98 88 98 120 Z" fill="#E23744"/>'
+      + '<path d="M60 85 v16" stroke="#FFF" stroke-width="3" opacity=".55"/>'
+      + '<rect x="52" y="72" width="16" height="16" rx="4" fill="'+kulit+'"/>'
+      + '<ellipse cx="60" cy="55" rx="21" ry="23" fill="'+kulit+'"/>'
+      + '<path d="M39 52 q1 -25 21 -25 q20 0 21 25 q-8 -11 -21 -11 q-13 0 -21 11z" fill="#241A17"/>'
+      + '<path d="M46 48 q5 -3 10 0M64 48 q5 -3 10 0" stroke="#241A17" stroke-width="3" stroke-linecap="round" fill="none"/>'
+      + '<ellipse cx="51" cy="56" rx="3.2" ry="3.6" fill="#1B1220"/>'
+      + '<ellipse cx="69" cy="56" rx="3.2" ry="3.6" fill="#1B1220"/>'
+      + '<path d="M53 68 q7 4 14 0" stroke="#7A4A2E" stroke-width="2.6" stroke-linecap="round" fill="none"/>'
+      + '<rect x="44" y="92" width="32" height="22" rx="4" fill="#120C1B" stroke="#8A8FA3" stroke-width="2"/>'
+      + '<rect x="47.5" y="95.5" width="25" height="15" rx="2" fill="#5AC8FA" opacity=".85"/>'
+      + '<circle cx="40" cy="103" r="8.5" fill="'+kulit+'"/><circle cx="80" cy="103" r="8.5" fill="'+kulit+'"/>'
+      + '</svg>';
+  }
+
+  function pisang(){
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">'
+      + '<path d="M36 104 q-10 -40 26 -60" stroke="#C9971B" stroke-width="24" stroke-linecap="round" fill="none"/>'
+      + '<path d="M36 104 q-10 -40 26 -60" stroke="#FFD84D" stroke-width="19" stroke-linecap="round" fill="none"/>'
+      + '<path d="M40 100 q-7 -33 22 -52" stroke="#FFEFA8" stroke-width="4" stroke-linecap="round" fill="none" opacity=".75"/>'
+      + '<path d="M60 46 l5 -12 6 3 -5 12z" fill="#6B4326"/>'
+      + '<circle cx="35" cy="106" r="5" fill="#6B4326"/>'
+      + '<g fill="#FFF9D6"><path d="M92 62 l2.6 6 6 2.6 -6 2.6 -2.6 6 -2.6 -6 -6 -2.6 6 -2.6z"/></g>'
+      + '</svg>';
+  }
+
+  var PALU = '<svg viewBox="0 0 64 64" aria-hidden="true">'
+    + '<path d="M26 30 L14 54 a5 5 0 0 0 8 5 L38 38z" fill="#8B5A2B" stroke="#5C3A19" stroke-width="2.5" stroke-linejoin="round"/>'
+    + '<rect x="24" y="4" width="34" height="24" rx="6" transform="rotate(18 41 16)" fill="#FF3D8B" stroke="#A81E58" stroke-width="3"/>'
+    + '<rect x="30" y="9" width="10" height="14" rx="3" transform="rotate(18 35 16)" fill="#FF7CB4"/>'
+    + '</svg>';
+
+  var TIPE = {
+    kelinci: {gambar:kelinci,  skor:10,  label:'Kelinci'},
+    emas:    {gambar:kelinciEmas, skor:50, label:'Kelinci emas'},
+    kamera:  {gambar:omKamera, skor:-20, label:'Om kamera'},
+    pisang:  {gambar:pisang,   skor:5,   label:'Pisang'}
+  };
+
+  /* ============ suara, disintesis tanpa berkas ============ */
+  var AC=null, suaraAktif = simpanan('gk.suara') !== '0';
+  function ctx(){
+    if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+    if(AC.state==='suspended') AC.resume();
+    return AC;
+  }
+  function nada(f1,f2,dur,bentuk,vol){
+    if(!suaraAktif) return; var a=ctx(); if(!a) return;
+    var o=a.createOscillator(), g=a.createGain(), t=a.currentTime;
+    o.type=bentuk||'sine'; o.frequency.setValueAtTime(f1,t);
+    if(f2) o.frequency.exponentialRampToValueAtTime(Math.max(30,f2),t+dur);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.16,t+0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur+0.02);
+  }
+  function desis(dur,vol){
+    if(!suaraAktif) return; var a=ctx(); if(!a) return;
+    var n=Math.floor(a.sampleRate*dur), buf=a.createBuffer(1,n,a.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.2);
+    var s=a.createBufferSource(), g=a.createGain();
+    s.buffer=buf; g.gain.value=vol||0.2;
+    s.connect(g); g.connect(a.destination); s.start();
+  }
+  var sfx = {
+    gebuk:  function(){ desis(0.07,0.22); nada(200,60,0.11,'square',0.2); },
+    emas:   function(){ nada(880,880,0.09,'sine',0.16); setTimeout(function(){nada(1320,1320,0.16,'sine',0.15);},80); },
+    pisang: function(){ nada(620,980,0.16,'triangle',0.16); },
+    salah:  function(){ nada(210,70,0.3,'sawtooth',0.2); },
+    lolos:  function(){ nada(300,180,0.09,'sine',0.07); },
+    tik:    function(){ nada(1250,1250,0.05,'square',0.09); },
+    habis:  function(){ [520,420,330].forEach(function(f,i){ setTimeout(function(){nada(f,f,0.22,'triangle',0.15);}, i*150); }); },
+    rekor:  function(){ [523,659,784,1047].forEach(function(f,i){ setTimeout(function(){nada(f,f,0.2,'triangle',0.16);}, i*95); }); }
+  };
+  function getar(ms){ if(navigator.vibrate) try{ navigator.vibrate(ms); }catch(e){} }
+
+  /* ============ penyimpanan lokal, aman kalau diblokir ============ */
+  function simpanan(k,v){
+    try{
+      if(v===undefined) return localStorage.getItem(k);
+      localStorage.setItem(k,v); return v;
+    }catch(e){ return null; }
+  }
+
+  /* ============ keadaan permainan ============ */
+  var DURASI = 60, NYAWA_AWAL = 3;
+  var S = {
+    jalan:false, jeda:false, skor:0, nyawa:NYAWA_AWAL, sisa:DURASI,
+    kombo:0, komboTerpanjang:0, level:1, kena:0, lolos:0,
+    jedaSpawn:0, detikTerakhir:DURASI
+  };
+  var lubang = [], rafId = null, waktuBingkai = 0;
+
+  var papan   = document.getElementById('papan');
+  var tirai   = document.getElementById('tirai');
+  var uiSkor  = document.getElementById('uiSkor');
+  var uiWaktu = document.getElementById('uiWaktu');
+  var uiNyawa = document.getElementById('uiNyawa');
+  var uiLevel = document.getElementById('uiLevel');
+  var uiKombo = document.getElementById('uiKomboIsi');
+  var uiLipat = document.getElementById('uiLipat');
+  var tiketWaktu = document.getElementById('tiketWaktu');
+  var wrap = document.getElementById('wrap');
+
+  /* ---- bangun papan ---- */
+  for(var i=0;i<9;i++){
+    var b = document.createElement('button');
+    b.className = 'lubang';
+    b.type = 'button';
+    b.setAttribute('aria-label','Lubang '+(i+1));
+    b.innerHTML = '<span class="gundukan"></span><span class="aura"></span><span class="pit"></span>'
+                + '<span class="panggung"><span class="sosok"></span></span>'
+                + '<span class="bibir"></span><span class="tombol-angka">'+(i+1)+'</span>';
+    papan.appendChild(b);
+    lubang.push({ el:b, sosok:b.querySelector('.sosok'), tipe:null, sisaNaik:0, sudahKena:false });
+    (function(idx){
+      b.addEventListener('pointerdown', function(ev){ ev.preventDefault(); pukul(idx, ev); });
+      b.addEventListener('keydown', function(ev){
+        if(ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); pukul(idx, null); }
+      });
+    })(i);
+  }
+
+  document.addEventListener('keydown', function(ev){
+    if(ev.key>='1' && ev.key<='9'){ pukul(parseInt(ev.key,10)-1, null); }
+    else if(ev.key==='Escape' && S.jalan && !S.jeda){ setJeda(true); }
+  });
+
+  /* ---- kesulitan naik pelan-pelan ---- */
+  function levelSekarang(){ return Math.min(5, Math.max(1, 1 + Math.floor((DURASI - S.sisa) / 12))); }
+  function jedaAntarMunculan(){
+    var d = Math.max(340, 920 - (S.level-1)*130);
+    return d * (0.8 + Math.random()*0.45);
+  }
+  function lamaNaik(){ return Math.max(620, 1380 - (S.level-1)*165); }
+  function maksBarengan(){ return Math.min(4, 1 + S.level); }
+  function pilihTipe(){
+    var r = Math.random();
+    var peluangKamera = Math.min(0.26, 0.09 + (S.level-1)*0.04);
+    if(r < 0.05) return 'pisang';
+    if(r < 0.13) return 'emas';
+    if(r < 0.13 + peluangKamera) return 'kamera';
+    return 'kelinci';
+  }
+
+  function munculkan(){
+    var kosong = [];
+    for(var i=0;i<9;i++) if(!lubang[i].tipe) kosong.push(i);
+    if(!kosong.length) return;
+    var l = lubang[kosong[Math.floor(Math.random()*kosong.length)]];
+    var tipe = pilihTipe();
+    l.tipe = tipe;
+    l.sudahKena = false;
+    l.sisaNaik = lamaNaik() * (tipe==='emas' ? 0.72 : tipe==='pisang' ? 0.85 : 1);
+    l.sosok.innerHTML = TIPE[tipe].gambar();
+    l.el.dataset.tipe = tipe;
+    l.el.classList.remove('turun','kena');
+    l.el.classList.add('naik');
+    l.el.setAttribute('aria-label', TIPE[tipe].label + ' di lubang ' + (lubang.indexOf(l)+1));
+    if(tipe==='emas') sfx.emas();
+  }
+
+  function turunkan(l, kabur){
+    if(!l.tipe) return;
+    var tipe = l.tipe;
+    l.tipe = null;
+    l.el.classList.remove('naik');
+    l.el.classList.add('turun');
+    l.el.removeAttribute('data-tipe');
+    l.el.setAttribute('aria-label','Lubang '+(lubang.indexOf(l)+1));
+    if(kabur && (tipe==='kelinci' || tipe==='emas')){
+      S.lolos++;
+      if(S.kombo>0){ S.kombo = 0; sfx.lolos(); gambarKombo(); }
+    }
+  }
+
+  function lipatan(){ return Math.min(5, 1 + Math.floor(S.kombo/4)); }
+
+  function pukul(idx, ev){
+    if(!S.jalan || S.jeda) return;
+    var l = lubang[idx];
+    ayunPalu(l.el, ev);
+    if(!l.tipe || l.sudahKena) return;
+    l.sudahKena = true;
+    var tipe = l.tipe;
+    var tengah = pusatLubang(l.el);
+
+    if(tipe==='kamera'){
+      S.kombo = 0; S.nyawa--;
+      S.skor = Math.max(0, S.skor - 20);
+      sfx.salah(); getar([30,40,60]);
+      wrap.classList.remove('getar'); void wrap.offsetWidth; wrap.classList.add('getar');
+      terbang('-20', 'minus', tengah);
+      terbang('SALAH!', 'minus', {x:tengah.x, y:tengah.y-26});
+      l.el.classList.remove('kena');
+      turunkan(l, false);
+      gambarHUD();
+      if(S.nyawa<=0){ selesai('nyawa'); }
+      return;
+    }
+
+    l.el.classList.add('kena');
+    S.kena++;
+    S.kombo++;
+    if(S.kombo > S.komboTerpanjang) S.komboTerpanjang = S.kombo;
+    var x = lipatan();
+
+    if(tipe==='pisang'){
+      S.sisa = Math.min(DURASI + 15, S.sisa + 3);
+      S.skor += 5 * x;
+      sfx.pisang(); getar(18);
+      terbang('+3 detik','waktu',tengah);
+    } else if(tipe==='emas'){
+      S.skor += 50 * x;
+      sfx.emas(); getar(28);
+      terbang('+'+(50*x),'plus',tengah);
+    } else {
+      S.skor += 10 * x;
+      sfx.gebuk(); getar(16);
+      terbang('+'+(10*x),'plus',tengah);
+      if(S.kombo % 4 === 0) terbang(bunyi(),'plus',{x:tengah.x,y:tengah.y-26});
+    }
+    setTimeout(function(){ turunkan(l,false); l.el.classList.remove('kena'); }, 110);
+    gambarHUD();
+  }
+
+  var HATI = '<svg viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21S1.5 13.6 1.5 7.2A5.7 5.7 0 0 1 12 4a5.7 5.7 0 0 1 10.5 3.2C22.5 13.6 12 21 12 21z"/></svg>';
+  var BUNYI = ['PLAK!','BUK!','JEDER!','BLETAK!','DUAR!','TAK!'];
+  function bunyi(){ return BUNYI[Math.floor(Math.random()*BUNYI.length)]; }
+
+  function pusatLubang(el){
+    var r = el.getBoundingClientRect(), p = papan.getBoundingClientRect();
+    return { x: r.left - p.left + r.width/2, y: r.top - p.top + r.height*0.38 };
+  }
+  function terbang(teks, kelas, pos){
+    var s = document.createElement('span');
+    s.className = 'skor-terbang ' + kelas;
+    s.textContent = teks;
+    s.style.left = pos.x + 'px';
+    s.style.top  = pos.y + 'px';
+    papan.appendChild(s);
+    setTimeout(function(){ s.remove(); }, 780);
+  }
+  function ayunPalu(el, ev){
+    var p = papan.getBoundingClientRect(), x, y;
+    if(ev){ x = ev.clientX - p.left; y = ev.clientY - p.top; }
+    else { var c = pusatLubang(el); x = c.x; y = c.y; }
+    var s = document.createElement('span');
+    s.className = 'palu';
+    s.innerHTML = PALU;
+    s.style.left = x + 'px';
+    s.style.top  = y + 'px';
+    papan.appendChild(s);
+    setTimeout(function(){ s.remove(); }, 340);
+  }
+
+  /* ---- gambar ulang HUD ---- */
+  function gambarHUD(){
+    uiSkor.textContent = S.skor;
+    uiWaktu.textContent = Math.ceil(S.sisa);
+    uiLevel.textContent = S.level;
+    tiketWaktu.classList.toggle('kritis', S.sisa <= 10);
+    var hati = '';
+    for(var i=0;i<NYAWA_AWAL;i++) hati += '<i class="'+(i<S.nyawa?'':'mati')+'">'+HATI+'</i>';
+    uiNyawa.innerHTML = hati;
+    uiNyawa.setAttribute('aria-label', S.nyawa + ' dari ' + NYAWA_AWAL + ' nyawa');
+    gambarKombo();
+  }
+  function gambarKombo(){
+    var x = lipatan();
+    uiKombo.style.width = (x>=5 ? 100 : (S.kombo%4)/4*100) + '%';
+    uiLipat.textContent = '×' + x;
+    uiLipat.classList.toggle('panas', x>=3);
+  }
+
+  /* ---- gelung utama ---- */
+  function bingkai(t){
+    rafId = requestAnimationFrame(bingkai);
+    if(!waktuBingkai) waktuBingkai = t;
+    var dt = Math.min(80, t - waktuBingkai);
+    waktuBingkai = t;
+    if(!S.jalan || S.jeda) return;
+
+    S.sisa -= dt/1000;
+    if(S.sisa <= 0){ S.sisa = 0; gambarHUD(); selesai('waktu'); return; }
+
+    var detik = Math.ceil(S.sisa);
+    if(detik !== S.detikTerakhir){
+      S.detikTerakhir = detik;
+      if(detik <= 5 && detik > 0) sfx.tik();
+    }
+    S.level = levelSekarang();
+
+    var aktif = 0;
+    for(var i=0;i<9;i++){
+      var l = lubang[i];
+      if(l.tipe){
+        aktif++;
+        l.sisaNaik -= dt;
+        if(l.sisaNaik <= 0) turunkan(l, true);
+      }
+    }
+    S.jedaSpawn -= dt;
+    if(S.jedaSpawn <= 0 && aktif < maksBarengan()){
+      munculkan();
+      S.jedaSpawn = jedaAntarMunculan();
+    }
+    gambarHUD();
+  }
+
+  /* ---- alur permainan ---- */
+  function bersihkanPapan(){
+    for(var i=0;i<9;i++){
+      lubang[i].tipe = null;
+      lubang[i].el.classList.remove('naik','kena','turun');
+      lubang[i].el.removeAttribute('data-tipe');
+    }
+  }
+
+  function mulai(){
+    bersihkanPapan();
+    S.jalan=false; S.jeda=false; S.skor=0; S.nyawa=NYAWA_AWAL; S.sisa=DURASI;
+    S.kombo=0; S.komboTerpanjang=0; S.level=1; S.kena=0; S.lolos=0;
+    S.jedaSpawn=0; S.detikTerakhir=DURASI;
+    gambarHUD();
+    tutupTirai();
+    ctx();
+    abaAba(function(){
+      S.jalan = true;
+      waktuBingkai = 0;
+      if(!rafId) rafId = requestAnimationFrame(bingkai);
+    });
+  }
+
+  function abaAba(lalu){
+    var el = document.createElement('div');
+    el.className = 'hitung-mundur';
+    document.body.appendChild(el);
+    var urut = ['3','2','1','AYO!'], n = 0;
+    (function langkah(){
+      if(n >= urut.length){ el.remove(); lalu(); return; }
+      el.innerHTML = '<span>'+urut[n]+'</span>';
+      nada(n===3?900:560, null, 0.12, 'triangle', 0.13);
+      n++;
+      setTimeout(langkah, 620);
+    })();
+  }
+
+  function setJeda(nilai){
+    if(!S.jalan) return;
+    S.jeda = nilai;
+    if(nilai) posterJeda(); else tutupTirai();
+  }
+
+  function selesai(sebab){
+    S.jalan = false;
+    bersihkanPapan();
+    var rekorLama = parseInt(simpanan('gk.rekor')||'0',10);
+    var rekorBaru = S.skor > rekorLama;
+    if(rekorBaru) simpanan('gk.rekor', String(S.skor));
+    setTimeout(function(){ rekorBaru ? sfx.rekor() : sfx.habis(); }, 120);
+    getar(rekorBaru ? [40,60,40,60,120] : 60);
+    posterHasil(sebab, rekorBaru, Math.max(rekorLama, S.skor));
+  }
+
+  function pangkat(n){
+    if(n < 250)  return 'Baru bangun';
+    if(n < 600)  return 'Tangan pemula';
+    if(n < 1000) return 'Jago kampung';
+    if(n < 1600) return 'Tukang gebuk';
+    return 'Legenda pasar malam';
+  }
+
+  /* ---- poster ---- */
+  function tutupTirai(){ tirai.innerHTML = ''; tirai.style.display = 'none'; }
+  function bukaTirai(html){
+    tirai.innerHTML = '<div class="poster">'+html+'</div>';
+    tirai.style.display = 'grid';
+  }
+
+  function posterMenu(){
+    var rekor = parseInt(simpanan('gk.rekor')||'0',10);
+    bukaTirai(
+      '<h1 class="judul">Gebuk<br>Kelinci</h1>'
+    + '<p class="subjudul">Dia nongol dari lubang sambil ngunyah pisang, terus kabur lagi. Ketuk sebelum keburu masuk.</p>'
+    + '<ul class="aturan">'
+    +   baris(kelinci(), 'Kelinci', '+10 poin. Ini sasaran utamanya.')
+    +   baris(kelinciEmas(), 'Kelinci emas', '+50 poin, tapi cuma nongol sekejap.')
+    +   baris(pisang(), 'Pisang', 'Nambah 3 detik. Jangan dilewatkan.')
+    +   baris(omKamera(), 'Om kamera', 'Jangan dipukul. Kena dia: nyawa berkurang, skor dipotong 20.')
+    + '</ul>'
+    + '<button class="tombol" id="btnMulai">Mulai main</button>'
+    + '<div class="rekor"><span>Rekor kamu</span><strong>'+rekor+'</strong></div>'
+    + '<p class="catatan">60 detik &middot; 3 nyawa &middot; pukul beruntun buat naikin pengali skor</p>'
+    );
+    document.getElementById('btnMulai').addEventListener('click', mulai);
+  }
+  function baris(svg, nama, ket){
+    return '<li><span class="rupa">'+svg+'</span><span><b>'+nama+'</b><span>'+ket+'</span></span></li>';
+  }
+
+  function posterJeda(){
+    bukaTirai(
+      '<h2 class="judul kecil">Istirahat dulu</h2>'
+    + '<p class="subjudul">Skor kamu sekarang '+S.skor+', sisa waktu '+Math.ceil(S.sisa)+' detik.</p>'
+    + '<div class="tombol-baris">'
+    +   '<button class="tombol" id="btnLanjut">Lanjut main</button>'
+    +   '<button class="tombol sekunder" id="btnUlangJeda">Mulai dari awal</button>'
+    + '</div>'
+    );
+    document.getElementById('btnLanjut').addEventListener('click', function(){ setJeda(false); });
+    document.getElementById('btnUlangJeda').addEventListener('click', mulai);
+  }
+
+  function posterHasil(sebab, rekorBaru, rekor){
+    var pesan = sebab==='nyawa'
+      ? 'Nyawa habis gara-gara om kamera kepukul tiga kali.'
+      : 'Waktu habis. Kelincinya balik tidur.';
+    bukaTirai(
+      (rekorBaru ? '<span class="lencana">Rekor baru</span>' : '')
+    + '<h2 class="judul kecil">Selesai</h2>'
+    + '<p class="skor-besar">'+S.skor+'</p>'
+    + '<p class="pangkat">'+pangkat(S.skor)+'</p>'
+    + '<dl class="rincian">'
+    +   '<div><dt>Kena</dt><dd>'+S.kena+'</dd></div>'
+    +   '<div><dt>Lolos</dt><dd>'+S.lolos+'</dd></div>'
+    +   '<div><dt>Kombo</dt><dd>'+S.komboTerpanjang+'</dd></div>'
+    + '</dl>'
+    + '<p class="subjudul">'+pesan+'</p>'
+    + '<div class="tombol-baris">'
+    +   '<button class="tombol" id="btnUlang">Main lagi</button>'
+    +   '<button class="tombol sekunder" id="btnSalin">Salin skor</button>'
+    + '</div>'
+    + '<div class="rekor"><span>Rekor kamu</span><strong>'+rekor+'</strong></div>'
+    );
+    document.getElementById('btnUlang').addEventListener('click', mulai);
+    var btnSalin = document.getElementById('btnSalin');
+    btnSalin.addEventListener('click', function(){
+      var teks = 'Skor aku di Gebuk Kelinci: ' + S.skor + ' (' + pangkat(S.skor) + '), kombo terpanjang '
+               + S.komboTerpanjang + '. Coba kalahin: ' + location.href;
+      salin(teks, function(berhasil){
+        btnSalin.textContent = berhasil ? 'Sudah tersalin' : 'Gagal menyalin';
+        setTimeout(function(){ btnSalin.textContent = 'Salin skor'; }, 1800);
+      });
+    });
+  }
+
+  function salin(teks, lalu){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(teks).then(function(){ lalu(true); }, function(){ lalu(cadanganSalin(teks)); });
+    } else { lalu(cadanganSalin(teks)); }
+  }
+  function cadanganSalin(teks){
+    try{
+      var ta = document.createElement('textarea');
+      ta.value = teks; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      var ok = document.execCommand('copy');
+      ta.remove(); return ok;
+    }catch(e){ return false; }
+  }
+
+  /* ---- tombol HUD ---- */
+  var btnSuara = document.getElementById('btnSuara');
+  function gambarSuara(){
+    btnSuara.setAttribute('aria-label', suaraAktif ? 'Matikan suara' : 'Nyalakan suara');
+    btnSuara.innerHTML = suaraAktif
+      ? '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 8.5a5 5 0 0 1 0 7"/></svg>'
+      : '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 10l4 4M21 10l-4 4"/></svg>';
+  }
+  btnSuara.addEventListener('click', function(){
+    suaraAktif = !suaraAktif;
+    simpanan('gk.suara', suaraAktif ? '1' : '0');
+    gambarSuara();
+    if(suaraAktif) sfx.pisang();
+  });
+  document.getElementById('btnJeda').addEventListener('click', function(){ setJeda(!S.jeda); });
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden && S.jalan && !S.jeda) setJeda(true);
+  });
+
+  /* ---- jalan ---- */
+  gambarSuara();
+  gambarHUD();
+  posterMenu();
+  rafId = requestAnimationFrame(bingkai);
+})();
+</script>
+</body>
+</html>
