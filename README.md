@@ -34,3 +34,28 @@ lalu buka `http://localhost:8000`.
 - Mengikuti tema terang/gelap perangkat, dan menghormati `prefers-reduced-motion`.
 - Dirancang untuk layar HP dulu (lebar maksimum 460px), bisa dimainkan dengan
   sentuh maupun keyboard.
+
+---
+
+# Catatan Uang
+
+Pelacak keuangan harian di `keuangan.html`. Satu berkas, tanpa server: semua
+catatan disimpan di `localStorage` peramban yang dipakai, tidak dikirim ke mana
+pun.
+
+## Isinya
+
+- Catat pemasukan/pengeluaran: jumlah, kategori, tanggal, catatan. Ketuk satu
+  baris riwayat untuk mengubahnya, tombol × untuk menghapus (ada "urungkan").
+- Ringkasan per bulan — masuk, keluar, sisa — dengan navigasi bulan.
+- Anggaran bulanan opsional: meter terpakai dan jatah harian untuk sisa bulan.
+- **Irama belanja**: batang pengeluaran per tanggal sebulan penuh; akhir pekan
+  dibedakan, titik hijau menandai hari ada pemasukan. Ketuk satu tanggal untuk
+  menyaring riwayat hari itu.
+- Rincian per kategori, pencarian riwayat, unduh CSV, cadangkan/pulihkan JSON.
+- Belum punya data? Ada tombol pengisi data contoh di layar kosong.
+
+## Menjalankan
+
+Buka `keuangan.html` langsung di peramban, atau sajikan foldernya
+(`python3 -m http.server 8000`).
