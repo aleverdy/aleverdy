@@ -34,3 +34,9 @@ lalu buka `http://localhost:8000`.
 - Mengikuti tema terang/gelap perangkat, dan menghormati `prefers-reduced-motion`.
 - Dirancang untuk layar HP dulu (lebar maksimum 460px), bisa dimainkan dengan
   sentuh maupun keyboard.
+
+## Game lain di repo ini
+
+- [`kamen-rider-chibi/`](kamen-rider-chibi/) — **Kamen Rider Chibi Fight**, game
+  fighting chibi berisi 24 rider era Showa, Heisei, dan Reiwa (termasuk Kamen
+  Rider Myth), lengkap dengan adegan henshin sebelum ronde pertama.
