@@ -49,9 +49,10 @@ pun.
   baris riwayat untuk mengubahnya, tombol × untuk menghapus (ada "urungkan").
 - Ringkasan per bulan — masuk, keluar, sisa — dengan navigasi bulan.
 - Anggaran bulanan opsional: meter terpakai dan jatah harian untuk sisa bulan.
-- **Irama belanja**: batang pengeluaran per tanggal sebulan penuh; akhir pekan
-  dibedakan, titik hijau menandai hari ada pemasukan. Ketuk satu tanggal untuk
-  menyaring riwayat hari itu.
+- **Belanja harian**: batang pengeluaran per tanggal sebulan penuh, digambar di
+  panel atas; akhir pekan dibedakan, titik hijau menandai hari ada pemasukan,
+  titik pasir di bawah sumbu menandai hari ini. Arahkan/ketuk satu batang untuk
+  melihat nominalnya, ketuk lagi untuk menyaring riwayat hari itu.
 - Rincian per kategori, pencarian riwayat, unduh CSV, cadangkan/pulihkan JSON.
 - Belum punya data? Ada tombol pengisi data contoh di layar kosong.
 
@@ -59,3 +60,13 @@ pun.
 
 Buka `keuangan.html` langsung di peramban, atau sajikan foldernya
 (`python3 -m http.server 8000`).
+
+## Catatan desain
+
+Kepala halaman berupa panel hijau tinta bertekstur garis ukir — pinjam bahasa
+lembar uang — memuat saldo, arus masuk/keluar, dan grafik harian. Badan halaman
+memakai kertas terang berisi buku kas, dengan kartu anggaran mengambang di batas
+keduanya. Angka besar memakai Archivo, kolom angka memakai IBM Plex Mono supaya
+digitnya rata. Satu warna aksen (hijau arsip) untuk aksi dan pemasukan, merah
+bata untuk pengeluaran; grafik kategori sengaja satu warna karena panjang batang
+sudah membawa besarannya.
