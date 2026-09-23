@@ -39,8 +39,17 @@ lalu buka `http://localhost:8000`.
 
 # Rutin: habit tracker
 
-Ada di folder [`habit/`](habit/). Kalau GitHub Pages aktif, alamatnya
-`https://<nama-akun>.github.io/aleverdy/habit/`.
+Ada di folder [`habit/`](habit/). Bisa dibuka lewat githack (selalu sertakan
+`index.html`, karena githack tidak menyajikan folder):
+
+- Versi tetap per commit: `https://raw.githack.com/aleverdy/aleverdy/<hash-commit>/habit/index.html`
+- Setelah digabung ke `main`, selalu versi terbaru:
+  `https://raw.githack.com/aleverdy/aleverdy/main/habit/index.html`
+
+Data tersimpan per domain, jadi pakai domain yang sama terus
+(`raw.githack.com`, bukan bergantian dengan `rawcdn.githack.com`) supaya
+catatanmu tidak terpisah. Pindah dari satu hash commit ke hash lain di domain
+yang sama tetap membawa datanya.
 
 ## Isinya
 

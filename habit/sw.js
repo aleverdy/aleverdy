@@ -1,6 +1,7 @@
 /* Rutin service worker: menyimpan aplikasi untuk offline dan menangani klik notifikasi. */
-const CACHE = 'rutin-v1';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'rutin-v2';
+// Tanpa './': host berkas statis seperti githack tidak menyajikan folder, hanya berkas.
+const SHELL = ['index.html', 'style.css', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -45,6 +46,6 @@ self.addEventListener('notificationclick', e => {
       return client.focus();
     }
     const q = done ? `?done=${encodeURIComponent(id)}&date=${encodeURIComponent(date || '')}` : '';
-    return self.clients.openWindow('./' + q);
+    return self.clients.openWindow('index.html' + q);
   })());
 });
