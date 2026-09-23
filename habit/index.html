@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="id" data-accent="fajar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Catat kebiasaan harian, lihat streak-nya, dan pasang pengingat ke notifikasi atau kalender HP.">
+<meta name="theme-color" content="#F4F4FA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rutin">
+<title>Rutin</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Langsung ke isi</a>
+
+<div class="shell">
+  <nav class="tabs" aria-label="Halaman">
+    <span class="brand" aria-hidden="true">Rutin</span>
+    <a href="#hari-ini" data-tab="hari-ini">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
+      <span>Hari ini</span>
+    </a>
+    <a href="#statistik" data-tab="statistik">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19v-5"/></svg>
+      <span>Statistik</span>
+    </a>
+    <a href="#atur" data-tab="atur">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      <span>Atur</span>
+    </a>
+  </nav>
+
+  <main id="main">
+    <!-- HARI INI -->
+    <section class="view" id="view-hari-ini" aria-labelledby="greet">
+      <header class="today-head">
+        <div>
+          <h1 id="greet" class="greet">Selamat pagi</h1>
+          <p class="date" id="today-date"></p>
+        </div>
+        <button class="btn primary" type="button" data-action="new">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Tambah kebiasaan
+        </button>
+      </header>
+
+      <div class="today-grid">
+        <div class="dial-col">
+          <figure class="dial" aria-describedby="dial-caption">
+            <svg id="dial" viewBox="0 0 320 320" role="img" aria-label="Jam hari ini"></svg>
+            <figcaption id="dial-caption" class="dial-caption"></figcaption>
+          </figure>
+          <div id="notify-hint" class="notify-hint" hidden></div>
+        </div>
+
+        <div class="list-col">
+          <h2 class="section-title">Jadwal hari ini</h2>
+          <ul class="habits" id="list-today"></ul>
+          <div id="empty-today" class="empty" hidden></div>
+
+          <details class="others" id="others-wrap" hidden>
+            <summary>Tidak dijadwalkan hari ini <span id="others-count"></span></summary>
+            <ul class="habits" id="list-others"></ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATISTIK -->
+    <section class="view" id="view-statistik" aria-labelledby="stat-title" hidden>
+      <h1 id="stat-title" class="page-title">Statistik</h1>
+      <div class="stat-sum" id="stat-sum"></div>
+
+      <div class="block">
+        <div class="block-head">
+          <h2 class="section-title">Peta 20 minggu terakhir</h2>
+          <label class="select">
+            <span class="sr">Tampilkan</span>
+            <select id="heat-filter"></select>
+          </label>
+        </div>
+        <div class="heat-scroll">
+          <div class="heat" id="heat" role="img"></div>
+        </div>
+        <p class="heat-legend" aria-hidden="true">
+          Kosong <i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i> Penuh
+        </p>
+      </div>
+
+      <div class="block">
+        <h2 class="section-title">Per kebiasaan</h2>
+        <ul class="stat-list" id="stat-list"></ul>
+      </div>
+    </section>
+
+    <!-- ATUR -->
+    <section class="view" id="view-atur" aria-labelledby="atur-title" hidden>
+      <h1 id="atur-title" class="page-title">Atur</h1>
+
+      <section class="block" aria-labelledby="set-habits">
+        <div class="block-head">
+          <h2 id="set-habits" class="section-title">Kebiasaan</h2>
+          <button class="btn ghost" type="button" data-action="new">Tambah</button>
+        </div>
+        <ul class="manage" id="manage-list"></ul>
+      </section>
+
+      <section class="block" aria-labelledby="set-look">
+        <h2 id="set-look" class="section-title">Tampilan</h2>
+
+        <div class="field">
+          <label for="set-name">Nama panggilan</label>
+          <input id="set-name" type="text" maxlength="24" autocomplete="nickname" placeholder="Misalnya: Ale">
+        </div>
+
+        <fieldset class="field">
+          <legend>Tema warna</legend>
+          <div class="themes" id="theme-picker"></div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>Mode</legend>
+          <div class="seg" id="mode-picker">
+            <label><input type="radio" name="mode" value="auto"><span>Ikuti HP</span></label>
+            <label><input type="radio" name="mode" value="light"><span>Terang</span></label>
+            <label><input type="radio" name="mode" value="dark"><span>Gelap</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>Minggu dimulai hari</legend>
+          <div class="seg" id="week-picker">
+            <label><input type="radio" name="week" value="1"><span>Senin</span></label>
+            <label><input type="radio" name="week" value="0"><span>Minggu</span></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="block" aria-labelledby="set-remind" id="pengingat">
+        <h2 id="set-remind" class="section-title">Pengingat &amp; alarm</h2>
+
+        <div class="remind-card">
+          <h3>Notifikasi dari Rutin</h3>
+          <p class="muted">Muncul di jam pengingat selama Rutin terbuka atau terpasang di layar utama HP. Kalau browser benar-benar ditutup, notifikasi bisa tertahan &mdash; untuk alarm yang pasti bunyi, pakai kalender di bawah.</p>
+          <p id="perm-status" class="perm"></p>
+          <div class="row-btns">
+            <button class="btn primary" type="button" id="btn-perm">Izinkan notifikasi</button>
+            <button class="btn ghost" type="button" id="btn-test">Coba bunyikan</button>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="set-sound">
+            <span>Bunyi dan getar saat pengingat</span>
+          </label>
+        </div>
+
+        <div class="remind-card">
+          <h3>Sambungkan ke kalender HP</h3>
+          <p class="muted">Setiap jam pengingat jadi acara berulang dengan alarm, sesuai hari yang dipilih. Alarm kalender tetap bunyi walau Rutin ditutup. Buka berkasnya di HP: iPhone langsung menawarkan <em>Tambah ke Kalender</em>, Android membukanya lewat Google Calendar.</p>
+          <div class="row-btns">
+            <button class="btn primary" type="button" id="btn-ics-all">Unduh semua pengingat (.ics)</button>
+          </div>
+          <ul class="cal-list" id="cal-list"></ul>
+          <p class="muted small">Tautan Google Calendar memakai notifikasi bawaan kalendermu (biasanya 10 atau 30 menit sebelumnya). Ubah ke &ldquo;saat acara dimulai&rdquo; kalau ingin tepat waktu.</p>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="set-data">
+        <h2 id="set-data" class="section-title">Data</h2>
+        <p class="muted">Semua catatan tersimpan di browser ini saja. Simpan cadangan sebelum ganti HP atau membersihkan data browser.</p>
+        <div class="row-btns">
+          <button class="btn ghost" type="button" id="btn-export">Simpan cadangan</button>
+          <label class="btn ghost file-btn">
+            Pulihkan dari cadangan
+            <input type="file" id="file-import" accept="application/json,.json">
+          </label>
+          <button class="btn danger" type="button" id="btn-reset">Hapus semua data</button>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<!-- EDITOR -->
+<dialog id="editor" aria-labelledby="ed-title">
+  <form id="ed-form" method="dialog" novalidate>
+    <header class="ed-head">
+      <h2 id="ed-title">Kebiasaan baru</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Tutup">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="ed-body">
+      <div class="suggest" id="suggest">
+        <p class="muted small">Mulai dari contoh, atau tulis sendiri:</p>
+        <div class="chips" id="suggest-chips"></div>
+      </div>
+
+      <div class="field">
+        <label for="ed-name">Nama kebiasaan</label>
+        <input id="ed-name" name="name" type="text" maxlength="40" required autocomplete="off" placeholder="Misalnya: Baca buku">
+        <p class="err" id="err-name" hidden>Beri nama dulu supaya mudah dikenali.</p>
+      </div>
+
+      <fieldset class="field">
+        <legend>Ikon</legend>
+        <div class="icons" id="ed-icons"></div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Warna</legend>
+        <div class="colors" id="ed-colors"></div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Hari</legend>
+        <div class="days" id="ed-days"></div>
+        <div class="quick">
+          <button type="button" class="link" data-days="all">Setiap hari</button>
+          <button type="button" class="link" data-days="work">Hari kerja</button>
+          <button type="button" class="link" data-days="end">Akhir pekan</button>
+        </div>
+        <p class="err" id="err-days" hidden>Pilih minimal satu hari.</p>
+      </fieldset>
+
+      <div class="field two">
+        <div>
+          <label for="ed-target">Target per hari</label>
+          <input id="ed-target" type="number" inputmode="numeric" min="1" max="50" value="1">
+        </div>
+        <div>
+          <label for="ed-unit">Satuan <span class="muted">(opsional)</span></label>
+          <input id="ed-unit" type="text" maxlength="16" placeholder="gelas, halaman, menit">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Jam pengingat</legend>
+        <ul class="times" id="ed-times"></ul>
+        <button type="button" class="btn ghost small" id="ed-add-time">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Tambah jam
+        </button>
+      </fieldset>
+
+      <div class="field">
+        <label for="ed-note">Catatan <span class="muted">(opsional)</span></label>
+        <textarea id="ed-note" rows="2" maxlength="140" placeholder="Kenapa kebiasaan ini penting buatmu?"></textarea>
+      </div>
+    </div>
+
+    <footer class="ed-foot">
+      <button class="btn danger ghosty" type="button" id="ed-delete" hidden>Hapus</button>
+      <span class="spacer"></span>
+      <button class="btn ghost" type="button" data-close>Batal</button>
+      <button class="btn primary" type="submit" id="ed-save">Simpan</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
