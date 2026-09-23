@@ -43,8 +43,8 @@ Ada di folder [`habit/`](habit/). Bisa dibuka lewat githack (selalu sertakan
 `index.html`, karena githack tidak menyajikan folder):
 
 - Versi tetap per commit: `https://raw.githack.com/aleverdy/aleverdy/<hash-commit>/habit/index.html`
-- Setelah digabung ke `main`, selalu versi terbaru:
-  `https://raw.githack.com/aleverdy/aleverdy/main/habit/index.html`
+- Setelah digabung ke branch utama repo ini, selalu versi terbaru:
+  `https://raw.githack.com/aleverdy/aleverdy/claude/flower-game-couple-u3b6cd/habit/index.html`
 
 Data tersimpan per domain, jadi pakai domain yang sama terus
 (`raw.githack.com`, bukan bergantian dengan `rawcdn.githack.com`) supaya
