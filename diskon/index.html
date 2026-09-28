@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harga Akhir</title>
+<meta name="description" content="Cari barang di beberapa marketplace sekaligus, lalu hitung harga yang benar-benar kamu bayar setelah voucher, ongkir, biaya layanan, dan cashback.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 16%22%3E%3Cpath d=%22M0 2a2 2 0 0 1 2-2h14l8 8-8 8H2a2 2 0 0 1-2-2z%22 fill=%22%23FFD23F%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1A17;
+    --muted: #5C5E57;
+    --paper: #FFFFFF;
+    --surface: #F2F3EF;
+    --line: #DADCD5;
+    --tag: #FFD23F;
+    --coret: #B42318;
+    --ok: #067647;
+    --receipt: #FBFAF5;
+    --receipt-ink: #1A1A17;
+    --focus: #1A1A17;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #ECEBE6;
+      --muted: #A5A49C;
+      --paper: #151513;
+      --surface: #1F1F1C;
+      --line: #3A3A35;
+      --tag: #F2C94C;
+      --coret: #F97066;
+      --ok: #47CD89;
+      --receipt: #F4F2EA;
+      --focus: #F2C94C;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #ECEBE6; --muted: #A5A49C; --paper: #151513; --surface: #1F1F1C;
+    --line: #3A3A35; --tag: #F2C94C; --coret: #F97066; --ok: #47CD89;
+    --receipt: #F4F2EA; --focus: #F2C94C; color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 16px/1.55 Figtree, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .mono, .rp { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  section { padding-block: 48px; border-top: 1px solid var(--line); }
+  h1, h2, h3 { line-height: 1.15; margin: 0; }
+  h1 { font-size: 39px; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 25px; font-weight: 800; letter-spacing: -0.01em; }
+  h3 { font-size: 16px; font-weight: 600; }
+  p { margin: 0; }
+  .lede { color: var(--muted); max-width: 60ch; margin-top: 8px; }
+  .hint { color: var(--muted); font-size: 14px; }
+
+  /* ---------- Hero / pencarian ---------- */
+  header.hero { padding-block: 48px 48px; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; margin-bottom: 24px; }
+  .brand .tagmark { width: 24px; height: 16px; background: var(--tag); border-radius: 2px 8px 8px 2px; position: relative; }
+  .brand .tagmark::after { content: ""; position: absolute; right: 5px; top: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--paper); }
+  .hero h1 { max-width: 16ch; }
+
+  form.search { margin-top: 32px; display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  form.search .q { grid-column: 1 / -1; }
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  input, select {
+    width: 100%; min-height: 44px; padding: 8px 12px;
+    font: inherit; color: var(--ink); background: var(--paper);
+    border: 1px solid var(--line); border-radius: 8px;
+  }
+  input:hover, select:hover { border-color: var(--muted); }
+  .q input { min-height: 56px; font-size: 20px; border: 2px solid var(--ink); border-radius: 12px; padding-inline: 16px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 44px; padding: 8px 20px; border-radius: 8px;
+    font: 600 16px/1.2 Figtree, system-ui, sans-serif; cursor: pointer;
+    border: 1px solid var(--ink); background: var(--ink); color: var(--paper); text-decoration: none;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--ink); opacity: 1; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  form.search .btn { grid-column: 1 / -1; justify-self: start; }
+
+  .stores { margin-top: 24px; list-style: none; padding: 0; display: grid; gap: 8px; }
+  .stores li a {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    min-height: 56px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px;
+    text-decoration: none; background: var(--paper);
+  }
+  .stores li a:hover { border-color: var(--ink); }
+  .stores .name { font-weight: 600; }
+  .stores .how { font-size: 14px; color: var(--muted); text-align: right; }
+  .stores .how.sorted { color: var(--ok); }
+  .stores-empty { margin-top: 24px; padding: 16px; background: var(--surface); border-radius: 12px; color: var(--muted); }
+
+  /* ---------- Kalkulator + struk ---------- */
+  .calc { display: grid; gap: 32px; grid-template-columns: 1fr; margin-top: 32px; }
+  @media (min-width: 800px) { .calc { grid-template-columns: 1fr 340px; align-items: start; } .receipt-col { position: sticky; top: 16px; } }
+  fieldset { border: 0; padding: 0; margin: 0 0 24px; }
+  legend { font-weight: 800; font-size: 16px; padding: 0; margin-bottom: 12px; }
+  .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  .row + .row { margin-top: 12px; }
+  .row.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 520px) { .row.three { grid-template-columns: 1fr 1fr; } .row.three > :first-child { grid-column: 1 / -1; } }
+  .field-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .receipt {
+    background: var(--receipt); color: var(--receipt-ink);
+    font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.5;
+    padding: 24px 20px 32px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 12px 32px -16px rgba(0,0,0,.35);
+    position: relative;
+    --tooth: 8px;
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--tooth)) 100%;
+            mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--tooth)) 100%;
+  }
+  .receipt .head { text-align: center; margin-bottom: 12px; }
+  .receipt .head strong { font-size: 16px; letter-spacing: .04em; }
+  .receipt .rule { border: 0; border-top: 1px dashed #8A8A80; margin: 12px 0; }
+  .receipt .ln { display: flex; justify-content: space-between; gap: 12px; }
+  .receipt .ln span:last-child { text-align: right; white-space: nowrap; }
+  .receipt .ln.minus span:last-child { color: #067647; }
+  .receipt .ln.off { color: #7A7A70; text-decoration: line-through; }
+  .receipt .note { font-size: 12px; color: #6A6A60; margin: 2px 0 6px; }
+  .receipt .warn { font-size: 12px; color: #B42318; margin: 2px 0 6px; }
+  .receipt .total { font-weight: 700; font-size: 16px; }
+  .receipt .final {
+    margin-top: 12px; padding: 12px; background: #FFD23F; border-radius: 4px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 700;
+  }
+  .receipt .final .big { font-size: 20px; }
+  .receipt .verdict { margin-top: 12px; font-size: 12px; }
+  .receipt-actions { margin-top: 16px; display: grid; gap: 8px; }
+  .receipt-actions .btn { width: 100%; }
+
+  /* ---------- Perbandingan ---------- */
+  .table-wrap { margin-top: 24px; overflow-x: auto; position: relative; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 12px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); font-size: 12px; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tr.best td { background: color-mix(in srgb, var(--tag) 22%, transparent); }
+  tr.best td:first-child { box-shadow: inset 4px 0 0 var(--tag); }
+  .best-tag { display: inline-block; margin-left: 8px; padding: 0 6px; font-size: 12px; font-weight: 600; background: var(--tag); color: #1A1A17; border-radius: 4px; }
+  .icon-btn { min-width: 44px; min-height: 44px; border: 0; background: none; color: var(--muted); cursor: pointer; border-radius: 8px; font: inherit; }
+  .icon-btn:hover { color: var(--coret); background: var(--surface); }
+  .empty { margin-top: 24px; padding: 24px; background: var(--surface); border-radius: 12px; }
+  .empty p + p { margin-top: 8px; }
+
+  /* ---------- Kalender ---------- */
+  .dates { list-style: none; padding: 0; margin: 24px 0 0; }
+  .dates li { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .dates .d { font-weight: 800; font-size: 25px; }
+  .dates .t { font-weight: 600; }
+  .dates .s { font-size: 14px; color: var(--muted); }
+  .dates .cd { font-size: 14px; white-space: nowrap; }
+  .dates li.soon .cd { background: var(--tag); color: #1A1A17; padding: 0 8px; border-radius: 4px; font-weight: 700; }
+  @media (max-width: 520px) { .dates li { grid-template-columns: 72px 1fr; } .dates .cd { grid-column: 2; } .dates .d { font-size: 20px; } }
+
+  /* ---------- Aturan ---------- */
+  .rules { margin: 24px 0 0; padding-left: 20px; max-width: 70ch; }
+  .rules li + li { margin-top: 16px; }
+  .rules strong { display: block; }
+  .rules span { color: var(--muted); }
+
+  footer { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  .theme-btn { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; min-height: 44px; padding: 0 12px; font: inherit; cursor: pointer; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (max-width: 520px) {
+    h1 { font-size: 31px; }
+    section, header.hero { padding-block: 32px; }
+    form.search { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .receipt .final .big { transition: color .2s; }
+    .receipt.bump { animation: bump .35s ease-out; }
+    @keyframes bump { 0% { transform: translateY(-4px); } 100% { transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="tagmark" aria-hidden="true"></span>Harga Akhir</div>
+    <h1>Cari yang termurah, bukan yang coretannya paling panjang.</h1>
+    <p class="lede">Ketik barangnya sekali, buka hasilnya di beberapa marketplace yang sudah diurutkan dari harga terendah. Lalu hitung berapa yang benar-benar keluar dari dompet setelah voucher, ongkir, dan biaya layanan.</p>
+
+    <form class="search" id="searchForm" role="search">
+      <div class="q">
+        <label for="q">Barang yang dicari</label>
+        <input id="q" name="q" type="search" autocomplete="off" placeholder="contoh: sepatu lari pria 42" required>
+      </div>
+      <div>
+        <label for="pmin">Harga minimum</label>
+        <input id="pmin" class="rp-input mono" inputmode="numeric" autocomplete="off" placeholder="Rp 0">
+      </div>
+      <div>
+        <label for="pmax">Harga maksimum</label>
+        <input id="pmax" class="rp-input mono" inputmode="numeric" autocomplete="off" placeholder="tanpa batas">
+      </div>
+      <button class="btn" type="submit">Cari di semua toko</button>
+    </form>
+    <p class="field-note">Harga minimum membantu menyaring aksesoris dan produk KW yang sering nangkring di urutan termurah.</p>
+
+    <div id="storeResults" aria-live="polite"></div>
+  </div>
+</header>
+
+<main>
+  <section id="hitung">
+    <div class="wrap">
+      <h2>Hitung harga akhir</h2>
+      <p class="lede">Isi dari halaman checkout. Struk di samping langsung berubah, lalu simpan untuk dibandingkan dengan toko lain.</p>
+
+      <div class="calc">
+        <form id="calcForm" autocomplete="off" novalidate>
+          <fieldset>
+            <legend>Barang</legend>
+            <div class="row">
+              <div>
+                <label for="c-label">Nama toko atau catatan</label>
+                <input id="c-label" placeholder="contoh: Shopee, toko Sinar Jaya">
+              </div>
+              <div>
+                <label for="c-qty">Jumlah beli</label>
+                <input id="c-qty" class="mono" inputmode="numeric" value="1">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="c-coret">Harga coret</label>
+                <input id="c-coret" class="rp-input mono" inputmode="numeric" placeholder="opsional">
+              </div>
+              <div>
+                <label for="c-jual">Harga jual per barang</label>
+                <input id="c-jual" class="rp-input mono" inputmode="numeric" placeholder="wajib">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="c-isi">Isi per barang</label>
+                <input id="c-isi" class="mono" inputmode="decimal" placeholder="opsional, mis. 500">
+              </div>
+              <div>
+                <label for="c-unit">Satuan</label>
+                <select id="c-unit">
+                  <option value="g">gram</option>
+                  <option value="ml">ml</option>
+                  <option value="pcs">pcs / lembar</option>
+                  <option value="kg">kg</option>
+                  <option value="l">liter</option>
+                </select>
+              </div>
+            </div>
+            <p class="field-note">Isi dipakai untuk harga per 100 g / 100 ml / pcs, supaya kemasan besar dan kecil bisa dibandingkan dengan adil.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Voucher toko atau platform</legend>
+            <div class="row">
+              <div>
+                <label for="c-vtype">Jenis potongan</label>
+                <select id="c-vtype">
+                  <option value="rp">Potongan Rupiah</option>
+                  <option value="pct">Potongan persen</option>
+                </select>
+              </div>
+              <div>
+                <label for="c-vval" id="c-vval-label">Besar potongan</label>
+                <input id="c-vval" class="mono" inputmode="decimal" placeholder="0">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="c-vmax">Maks. potongan</label>
+                <input id="c-vmax" class="rp-input mono" inputmode="numeric" placeholder="tanpa batas">
+              </div>
+              <div>
+                <label for="c-vmin">Min. belanja</label>
+                <input id="c-vmin" class="rp-input mono" inputmode="numeric" placeholder="Rp 0">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Ongkir dan biaya</legend>
+            <div class="row three">
+              <div>
+                <label for="c-ongkir">Ongkir</label>
+                <input id="c-ongkir" class="rp-input mono" inputmode="numeric" placeholder="Rp 0">
+              </div>
+              <div>
+                <label for="c-gratong">Potongan ongkir</label>
+                <input id="c-gratong" class="rp-input mono" inputmode="numeric" placeholder="Rp 0">
+              </div>
+              <div>
+                <label for="c-layanan">Biaya layanan</label>
+                <input id="c-layanan" class="rp-input mono" inputmode="numeric" placeholder="Rp 0">
+              </div>
+            </div>
+            <p class="field-note">Biaya layanan, penanganan, dan asuransi baru muncul di halaman checkout. Jumlahkan semuanya di sini.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Cashback</legend>
+            <div class="row">
+              <div>
+                <label for="c-cbpct">Cashback (%)</label>
+                <input id="c-cbpct" class="mono" inputmode="decimal" placeholder="0">
+              </div>
+              <div>
+                <label for="c-cbmax">Maks. cashback</label>
+                <input id="c-cbmax" class="rp-input mono" inputmode="numeric" placeholder="tanpa batas">
+              </div>
+            </div>
+            <p class="field-note">Cashback biasanya berupa koin yang hanya bisa dipakai di toko yang sama. Nilainya tidak dipotong dari yang kamu bayar hari ini.</p>
+          </fieldset>
+        </form>
+
+        <div class="receipt-col">
+          <div class="receipt" id="receipt" aria-live="polite"></div>
+          <div class="receipt-actions">
+            <button class="btn" type="button" id="saveBtn" disabled>Simpan ke perbandingan</button>
+            <button class="btn ghost" type="button" id="resetBtn">Kosongkan isian</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="banding">
+    <div class="wrap">
+      <h2>Perbandingan</h2>
+      <p class="lede">Diurutkan dari total bayar terendah. Koin cashback ditampilkan terpisah karena hanya bisa dipakai di toko yang sama. Tersimpan di browser ini saja.</p>
+      <div id="compare"></div>
+    </div>
+  </section>
+
+  <section id="kalender">
+    <div class="wrap">
+      <h2>Tanggal promo berikutnya</h2>
+      <p class="lede">Marketplace besar biasanya menyebar voucher terbesar di tanggal kembar, akhir bulan saat gajian, dan Harbolnas 12.12. Kalau tidak buru-buru, tunggu tanggal ini.</p>
+      <ol class="dates" id="dates"></ol>
+      <p class="hint" style="margin-top:12px">Pola umum, bukan jadwal resmi. Cek halaman promo tiap marketplace untuk jam dan kuotanya.</p>
+    </div>
+  </section>
+
+  <section id="aturan">
+    <div class="wrap">
+      <h2>Cara membaca diskon</h2>
+      <ol class="rules">
+        <li><strong>Harga coret bukan bukti.</strong><span> Penjual bisa menaikkan harga coret sehari sebelum promo. Bandingkan harga jual antar-toko, bukan persen diskonnya.</span></li>
+        <li><strong>Urutan termurah sering berisi jebakan.</strong><span> Aksesoris, varian terkecil, atau harga Rp1 untuk pancingan. Pasang harga minimum di pencarian dan cek varian yang terpilih di halaman produk.</span></li>
+        <li><strong>Hitung setelah ongkir.</strong><span> Selisih Rp5.000 di harga barang habis kalau ongkir toko itu Rp15.000 lebih mahal. Itu gunanya struk di atas.</span></li>
+        <li><strong>Voucher min. belanja mendorong beli lebih.</strong><span> Kalau kurang sedikit, struk akan menunjukkan berapa kurangnya. Tambah barang hanya kalau memang butuh.</span></li>
+        <li><strong>Periksa toko, bukan cuma harga.</strong><span> Rating, jumlah terjual, dan label toko resmi. Barang murah dari toko baru tanpa ulasan adalah risiko, bukan diskon.</span></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Harga Akhir tidak berafiliasi dengan marketplace mana pun dan tidak mengambil data dari sana.</span>
+    <button class="theme-btn" type="button" id="themeBtn">Ganti tema</button>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const fmt = new Intl.NumberFormat('id-ID');
+  const rp = (n) => (n < 0 ? '−Rp' : 'Rp') + fmt.format(Math.round(Math.abs(n)));
+  const digits = (s) => { const d = String(s || '').replace(/[^\d]/g, ''); return d ? Number(d) : 0; };
+  const dec = (s) => { const n = parseFloat(String(s || '').replace(',', '.').replace(/[^\d.]/g, '')); return isFinite(n) ? n : 0; };
+  const store = {
+    get(k, fallback) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // Rupiah inputs: reformat with thousand separators on blur.
+  document.querySelectorAll('.rp-input').forEach((el) => {
+    el.addEventListener('blur', () => { const n = digits(el.value); el.value = n ? fmt.format(n) : ''; });
+  });
+
+  /* ---------- Pencarian lintas toko ---------- */
+  const STORES = [
+    {
+      name: 'Tokopedia', sorted: true,
+      url: (q, min, max) => `https://www.tokopedia.com/search?st=product&q=${q}&ob=3` + (min ? `&pmin=${min}` : '') + (max ? `&pmax=${max}` : ''),
+    },
+    {
+      name: 'Shopee', sorted: true,
+      url: (q, min, max) => `https://shopee.co.id/search?keyword=${q}&sortBy=price&order=asc` + (min ? `&minPrice=${min}` : '') + (max ? `&maxPrice=${max}` : ''),
+    },
+    {
+      name: 'Lazada', sorted: true,
+      url: (q, min, max) => `https://www.lazada.co.id/catalog/?q=${q}&sort=priceasc` + (min || max ? `&price=${min || 0}-${max || 999999999}` : ''),
+    },
+    {
+      name: 'Blibli', sorted: false,
+      url: (q) => `https://www.blibli.com/cari/${q}`,
+    },
+    {
+      name: 'Google Shopping', sorted: false, note: 'banyak toko sekaligus',
+      url: (q) => `https://www.google.com/search?q=${q}&udm=28`,
+    },
+  ];
+
+  function renderStores(query, min, max) {
+    const box = $('storeResults');
+    if (!query) { box.innerHTML = ''; return; }
+    const q = encodeURIComponent(query);
+    const rangeText = min || max ? ` (${min ? rp(min) : 'Rp0'} – ${max ? rp(max) : 'tanpa batas'})` : '';
+    box.innerHTML = `
+      <h2 class="sr-only">Hasil pencarian</h2>
+      <ul class="stores">
+        ${STORES.map((s) => `
+          <li><a href="${s.url(q, min, max)}" target="_blank" rel="noopener noreferrer">
+            <span class="name">${s.name}</span>
+            <span class="how ${s.sorted ? 'sorted' : ''}">${s.sorted ? 'urut harga terendah' + (rangeText ? ', rentang harga dipasang' : '') : (s.note || 'urutkan harga di halamannya')}</span>
+          </a></li>`).join('')}
+      </ul>
+      <p class="hint" style="margin-top:12px">Mencari “${esc(query)}”${esc(rangeText)}. Tiap toko terbuka di tab baru.</p>`;
+  }
+
+  $('searchForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = $('q').value.trim();
+    let min = digits($('pmin').value), max = digits($('pmax').value);
+    if (min && max && min > max) [min, max] = [max, min];
+    renderStores(query, min, max);
+    store.set('ha.search', { query, min, max });
+  });
+  const lastSearch = store.get('ha.search', null);
+  if (lastSearch && lastSearch.query) {
+    $('q').value = lastSearch.query;
+    if (lastSearch.min) $('pmin').value = fmt.format(lastSearch.min);
+    if (lastSearch.max) $('pmax').value = fmt.format(lastSearch.max);
+    renderStores(lastSearch.query, lastSearch.min, lastSearch.max);
+  }
+
+  /* ---------- Kalkulator ---------- */
+  const F = ['c-label', 'c-qty', 'c-coret', 'c-jual', 'c-isi', 'c-unit', 'c-vtype', 'c-vval', 'c-vmax', 'c-vmin', 'c-ongkir', 'c-gratong', 'c-layanan', 'c-cbpct', 'c-cbmax'];
+
+  function read() {
+    const qty = Math.max(1, digits($('c-qty').value) || 1);
+    return {
+      label: $('c-label').value.trim(),
+      qty,
+      coret: digits($('c-coret').value),
+      jual: digits($('c-jual').value),
+      isi: dec($('c-isi').value),
+      unit: $('c-unit').value,
+      vtype: $('c-vtype').value,
+      vval: $('c-vtype').value === 'pct' ? Math.min(100, dec($('c-vval').value)) : digits($('c-vval').value),
+      vmax: digits($('c-vmax').value),
+      vmin: digits($('c-vmin').value),
+      ongkir: digits($('c-ongkir').value),
+      gratong: digits($('c-gratong').value),
+      layanan: digits($('c-layanan').value),
+      cbpct: Math.min(100, dec($('c-cbpct').value)),
+      cbmax: digits($('c-cbmax').value),
+    };
+  }
+
+  function compute(v) {
+    const subtotal = v.jual * v.qty;
+    let voucher = 0, voucherBlocked = 0;
+    if (v.vval > 0) {
+      if (v.vmin && subtotal < v.vmin) {
+        voucherBlocked = v.vmin - subtotal;
+      } else {
+        voucher = v.vtype === 'pct' ? subtotal * v.vval / 100 : v.vval;
+        if (v.vmax) voucher = Math.min(voucher, v.vmax);
+        voucher = Math.min(voucher, subtotal);
+      }
+    }
+    const gratong = Math.min(v.gratong, v.ongkir);
+    const total = subtotal - voucher + (v.ongkir - gratong) + v.layanan;
+    // Cashback umumnya dihitung dari harga barang setelah voucher.
+    let cashback = v.cbpct > 0 ? (subtotal - voucher) * v.cbpct / 100 : 0;
+    if (v.cbmax) cashback = Math.min(cashback, v.cbmax);
+    const efektif = total - cashback;
+    const coretTotal = v.coret * v.qty;
+    const klaimPct = v.coret > v.jual && v.jual ? (1 - v.jual / v.coret) * 100 : 0;
+    const nyataPct = coretTotal > 0 ? (1 - total / coretTotal) * 100 : null;
+
+    let perUnit = null;
+    if (v.isi > 0 && total > 0) {
+      const totalIsi = v.isi * v.qty;
+      const map = { g: [100, '100 g'], ml: [100, '100 ml'], kg: [1, 'kg'], l: [1, 'liter'], pcs: [1, 'pcs'] };
+      const [per, lbl] = map[v.unit];
+      perUnit = { value: total / totalIsi * per, label: lbl };
+    }
+    return { subtotal, voucher, voucherBlocked, gratong, total, cashback, efektif, coretTotal, klaimPct, nyataPct, perUnit };
+  }
+
+  function renderReceipt() {
+    const v = read(), r = compute(v);
+    const box = $('receipt');
+    $('saveBtn').disabled = !v.jual;
+    $('c-vval-label').textContent = v.vtype === 'pct' ? 'Besar potongan (%)' : 'Besar potongan (Rp)';
+
+    if (!v.jual) {
+      box.innerHTML = `
+        <div class="head"><strong>STRUK HARGA AKHIR</strong></div>
+        <hr class="rule">
+        <p>Isi harga jual dulu.</p>
+        <p class="note">Setiap angka yang kamu masukkan akan muncul di sini sebagai baris struk, sampai ketemu angka yang benar-benar kamu bayar.</p>`;
+      return;
+    }
+
+    const lines = [];
+    const ln = (a, b, cls = '') => lines.push(`<div class="ln ${cls}"><span>${a}</span><span>${b}</span></div>`);
+    const note = (t, cls = 'note') => lines.push(`<p class="${cls}">${t}</p>`);
+
+    if (v.coret > v.jual) {
+      ln(`${v.qty}× harga coret`, rp(r.coretTotal), 'off');
+    }
+    ln(`${v.qty}× ${rp(v.jual)}`, rp(r.subtotal));
+    if (r.klaimPct > 0) note(`Toko mengklaim diskon ${Math.round(r.klaimPct)}%`);
+
+    if (v.vval > 0) {
+      if (r.voucherBlocked) {
+        ln('Voucher', 'tidak berlaku');
+        note(`Kurang ${rp(r.voucherBlocked)} lagi untuk min. belanja ${rp(v.vmin)}`, 'warn');
+      } else {
+        ln(v.vtype === 'pct' ? `Voucher ${fmt.format(v.vval)}%` : 'Voucher', '−' + rp(r.voucher), 'minus');
+        if (v.vtype === 'pct' && v.vmax && r.voucher >= v.vmax) note(`Mentok di batas ${rp(v.vmax)}`);
+      }
+    }
+    if (v.ongkir) {
+      ln('Ongkir', rp(v.ongkir));
+      if (r.gratong) ln('Potongan ongkir', '−' + rp(r.gratong), 'minus');
+    }
+    if (v.layanan) ln('Biaya layanan', rp(v.layanan));
+
+    lines.push('<hr class="rule">');
+    ln('TOTAL BAYAR', rp(r.total), 'total');
+
+    if (r.cashback > 0) {
+      ln(`Cashback ${fmt.format(v.cbpct)}%`, '−' + rp(r.cashback), 'minus');
+      note('Kembali sebagai koin, bukan uang tunai');
+    }
+
+    const finalLabel = r.cashback > 0 ? 'Harga efektif' : 'Yang kamu bayar';
+    let verdict = '';
+    if (r.nyataPct !== null) {
+      if (r.nyataPct <= 0) {
+        verdict = `<p class="verdict warn">Setelah ongkir dan biaya, total ini ${rp(r.total - r.coretTotal)} lebih mahal dari harga coret. Diskonnya habis di ongkos.</p>`;
+      } else {
+        const gap = r.klaimPct - r.nyataPct;
+        verdict = `<p class="verdict">Diskon nyata dari harga coret: <strong>${Math.round(r.nyataPct)}%</strong>` +
+          (gap > 3 ? `, bukan ${Math.round(r.klaimPct)}% seperti yang tertulis.` : '.') + '</p>';
+      }
+    }
+
+    box.innerHTML = `
+      <div class="head"><strong>STRUK HARGA AKHIR</strong><br>${v.label ? esc(v.label) : 'tanpa nama toko'}</div>
+      <hr class="rule">
+      ${lines.join('')}
+      <div class="final"><span>${finalLabel}</span><span class="big">${rp(r.efektif)}</span></div>
+      ${r.perUnit ? `<p class="note" style="margin-top:8px">≈ ${rp(r.perUnit.value)} per ${r.perUnit.label} (dari total bayar)</p>` : ''}
+      ${verdict}`;
+  }
+
+  F.forEach((id) => { $(id).addEventListener('input', renderReceipt); $(id).addEventListener('change', renderReceipt); });
+
+  $('resetBtn').addEventListener('click', () => {
+    F.forEach((id) => { const el = $(id); if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = id === 'c-qty' ? '1' : ''; });
+    renderReceipt();
+    $('c-label').focus();
+  });
+
+  /* ---------- Perbandingan ---------- */
+  let items = store.get('ha.compare', []);
+
+  function renderCompare() {
+    const box = $('compare');
+    if (!items.length) {
+      box.innerHTML = `<div class="empty">
+        <p><strong>Belum ada yang dibandingkan.</strong></p>
+        <p class="hint">Isi kalkulator dengan harga dari satu toko, tekan “Simpan ke perbandingan”, lalu ulangi untuk toko lain. Yang termurah akan ditandai.</p>
+        <p style="margin-top:16px"><a class="btn ghost" href="#hitung">Isi kalkulator</a></p>
+      </div>`;
+      return;
+    }
+    // Urut berdasarkan uang yang keluar hari ini. Koin cashback hanya berlaku di toko yang sama,
+    // jadi tidak adil disetarakan dengan uang tunai saat membandingkan antar-toko.
+    const sorted = [...items].sort((a, b) => a.total - b.total);
+    const cheapest = sorted[0].total;
+    const multi = sorted.length > 1;
+    box.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th scope="col">Toko</th>
+        <th scope="col" class="num">Total bayar</th>
+        <th scope="col" class="num">Selisih</th>
+        <th scope="col"><span class="sr-only">Hapus</span></th>
+      </tr></thead>
+      <tbody>
+      ${sorted.map((i, idx) => `<tr class="${idx === 0 && multi ? 'best' : ''}">
+        <td>${esc(i.label || 'Tanpa nama')}${idx === 0 && multi ? '<span class="best-tag">termurah</span>' : ''}<br><span class="hint">${i.qty}× ${rp(i.jual)}</span></td>
+        <td class="num rp">${rp(i.total)}${i.efektif < i.total ? `<br><span class="hint">${rp(i.efektif)} stlh koin</span>` : ''}${i.perUnit ? `<br><span class="hint">${rp(i.perUnit.value)}/${i.perUnit.label}</span>` : ''}</td>
+        <td class="num rp">${idx === 0 ? '–' : '+' + rp(i.total - cheapest)}</td>
+        <td class="num"><button class="icon-btn" type="button" data-del="${i.id}" aria-label="Hapus ${esc(i.label || 'baris ini')}">✕</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+      ${sorted.some((i) => i.perUnit) && sorted.some((i) => !i.perUnit) ? '<p class="hint" style="margin-top:12px">Isi “isi per barang” di semua baris supaya perbandingan per satuan adil.</p>' : ''}
+      <p style="margin-top:16px"><button class="btn ghost" type="button" id="clearAll">Hapus semua</button></p>`;
+  }
+
+  $('compare').addEventListener('click', (e) => {
+    const del = e.target.closest('[data-del]');
+    if (del) { items = items.filter((i) => i.id !== del.dataset.del); store.set('ha.compare', items); renderCompare(); return; }
+    if (e.target.id === 'clearAll' && confirm('Hapus semua baris perbandingan?')) { items = []; store.set('ha.compare', items); renderCompare(); }
+  });
+
+  $('saveBtn').addEventListener('click', () => {
+    const v = read(), r = compute(v);
+    if (!v.jual) return;
+    items.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      label: v.label || `Toko ${items.length + 1}`,
+      qty: v.qty, jual: v.jual, total: r.total, efektif: r.efektif, perUnit: r.perUnit,
+    });
+    store.set('ha.compare', items);
+    renderCompare();
+    const rc = $('receipt');
+    rc.classList.remove('bump'); void rc.offsetWidth; rc.classList.add('bump');
+    $('saveBtn').textContent = 'Tersimpan. Isi toko berikutnya';
+    setTimeout(() => { $('saveBtn').textContent = 'Simpan ke perbandingan'; }, 2200);
+  });
+
+  /* ---------- Kalender promo ---------- */
+  function upcoming(now) {
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const out = [];
+    for (let y = today.getFullYear(); y <= today.getFullYear() + 1; y++) {
+      for (let m = 0; m < 12; m++) {
+        const twin = new Date(y, m, m + 1);
+        if (m === 11) out.push({ date: twin, title: 'Harbolnas 12.12', sub: 'Hari Belanja Online Nasional, voucher terbesar tahunan' });
+        else out.push({ date: twin, title: `Tanggal kembar ${m + 1}.${m + 1}`, sub: 'Flash sale dan voucher gratis ongkir' });
+        out.push({ date: new Date(y, m, 25), title: 'Promo gajian', sub: 'Biasanya berlangsung 25 sampai awal bulan' });
+      }
+    }
+    return out
+      .filter((e) => e.date >= today)
+      .sort((a, b) => a.date - b.date)
+      .slice(0, 5)
+      .map((e) => ({ ...e, days: Math.round((e.date - today) / 86400000) }));
+  }
+
+  function renderDates() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    $('dates').innerHTML = upcoming(new Date()).map((e) => `
+      <li class="${e.days <= 7 ? 'soon' : ''}">
+        <span class="d mono">${e.date.getDate()} ${months[e.date.getMonth()]}</span>
+        <span><span class="t">${e.title}</span><br><span class="s">${e.sub}</span></span>
+        <span class="cd">${e.days === 0 ? 'hari ini' : e.days === 1 ? 'besok' : e.days + ' hari lagi'}</span>
+      </li>`).join('');
+  }
+
+  /* ---------- Tema ---------- */
+  const root = document.documentElement;
+  const savedTheme = store.get('ha.theme', null);
+  if (savedTheme) root.dataset.theme = savedTheme;
+  $('themeBtn').addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    store.set('ha.theme', root.dataset.theme);
+  });
+
+  renderReceipt();
+  renderCompare();
+  renderDates();
+})();
+</script>
+</body>
+</html>

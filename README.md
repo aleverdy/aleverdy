@@ -34,3 +34,25 @@ lalu buka `http://localhost:8000`.
 - Mengikuti tema terang/gelap perangkat, dan menghormati `prefers-reduced-motion`.
 - Dirancang untuk layar HP dulu (lebar maksimum 460px), bisa dimainkan dengan
   sentuh maupun keyboard.
+
+---
+
+# Harga Akhir (`diskon/`)
+
+Alat bantu belanja online: cari barang di beberapa marketplace sekaligus
+(hasil diurutkan dari harga terendah bila tokonya mendukung), lalu hitung
+harga yang benar-benar dibayar setelah voucher, ongkir, biaya layanan, dan
+cashback. Buka `diskon/index.html`, atau `http://localhost:8000/diskon/` bila
+foldernya disajikan seperti di atas.
+
+- **Cari di semua toko** membuat tautan pencarian ke Tokopedia, Shopee, Lazada
+  (urut termurah + rentang harga), Blibli, dan Google Shopping. Tidak ada
+  scraping; datanya tetap dilihat langsung di situs masing-masing.
+- **Struk harga akhir** menghitung voucher persen/Rupiah dengan batas maksimum
+  dan syarat min. belanja, potongan ongkir, biaya layanan, cashback, diskon
+  nyata dibanding harga coret, dan harga per 100 g / ml / pcs.
+- **Perbandingan** menyimpan hasil hitungan di `localStorage` dan mengurutkan
+  dari total bayar terendah. Koin cashback ditampilkan terpisah karena hanya
+  berlaku di toko yang sama.
+- **Tanggal promo berikutnya** menghitung mundur ke tanggal kembar, promo
+  gajian (tanggal 25), dan Harbolnas 12.12.
