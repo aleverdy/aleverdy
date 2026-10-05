@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cek Nomor Spam</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --text: #1d1d1b; --muted: #66645e; --line: #e2dfd6;
+    --accent: #2a5bd7; --ok: #1f7a4d; --warn: #b26a00; --bad: #b42318; --chip: #efede6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413; --card: #1e1e1c; --text: #ecebe6; --muted: #a3a199; --line: #34332f;
+      --accent: #7ea2ff; --ok: #5cc48f; --warn: #f0b24a; --bad: #ff7a6b; --chip: #2a2a27;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.05rem; margin: 0 0 10px; }
+  p.lead { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  form { display: flex; gap: 8px; }
+  input, select, textarea { font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 10px 16px;
+    background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
+  button.ghost { background: var(--chip); color: var(--text); }
+  .meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: .95rem; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .vonis { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .skor { font-size: 1.6rem; font-weight: 700; min-width: 3ch; }
+  .lvl-ok { color: var(--ok); } .lvl-warn { color: var(--warn); } .lvl-bad { color: var(--bad); }
+  ul.sinyal { margin: 12px 0 0; padding-left: 18px; }
+  ul.sinyal li { margin-bottom: 4px; }
+  .sumber { display: grid; gap: 8px; }
+  .sumber a { display: block; text-decoration: none; color: var(--text); background: var(--chip);
+    border-radius: 8px; padding: 10px 12px; }
+  .sumber a b { color: var(--accent); }
+  .sumber a span { display: block; color: var(--muted); font-size: .88rem; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .note { color: var(--muted); font-size: .88rem; margin: 8px 0 0; }
+  .lap { border-top: 1px solid var(--line); padding: 8px 0; font-size: .95rem; }
+  .lap:first-child { border-top: 0; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cek Nomor Spam</h1>
+  <p class="lead">Masukkan nomor. Halaman ini menganalisis formatnya, lalu menyiapkan pencarian ke semua sumber publik yang bisa dicek.</p>
+
+  <div class="card">
+    <form id="f">
+      <input id="no" inputmode="tel" autocomplete="off" placeholder="0812 3456 7890 atau +62…" aria-label="Nomor telepon">
+      <button>Cek</button>
+    </form>
+    <p class="note" id="err" hidden></p>
+  </div>
+
+  <section id="hasil" hidden>
+    <div class="card">
+      <div class="vonis"><div class="skor" id="skor"></div><div id="label"></div></div>
+      <dl class="meta" id="meta"></dl>
+      <ul class="sinyal" id="sinyal"></ul>
+      <p class="note">Skor ini hanya dari pola nomor, bukan dari data laporan. Nomor "bersih" di sini belum tentu aman — cek sumber di bawah.</p>
+    </div>
+
+    <div class="card" id="kartuLap" hidden>
+      <h2>Catatanmu untuk nomor ini</h2>
+      <div id="daftarLap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Cek di semua sumber</h2>
+      <div class="sumber" id="sumber"></div>
+      <div class="row"><button class="ghost" id="bukaSemua" type="button">Buka semua di tab baru</button></div>
+      <p class="note">Browser biasanya memblokir banyak tab sekaligus; izinkan pop-up untuk halaman ini kalau hanya satu yang terbuka. Getcontact tidak punya pencarian web — cek lewat aplikasinya.</p>
+    </div>
+
+    <div class="card">
+      <h2>Tandai nomor ini</h2>
+      <select id="kat">
+        <option>Penipuan</option><option>Telemarketing</option><option>Pinjol / penagih</option>
+        <option>Judi online</option><option>Wangiri (miscall luar negeri)</option><option>Aman / dikenal</option>
+      </select>
+      <textarea id="cat" rows="2" placeholder="Catatan (opsional): mengaku kurir, minta OTP, dll." style="margin-top:8px"></textarea>
+      <div class="row">
+        <button id="simpan" type="button">Simpan catatan</button>
+        <a class="ghost" href="https://aduannomor.id" target="_blank" rel="noopener" style="text-decoration:none;padding:10px 16px;border-radius:8px;background:var(--chip);color:var(--text);font-weight:600">Laporkan resmi ke Komdigi</a>
+      </div>
+      <p class="note">Catatan hanya tersimpan di browser ini, tidak dikirim ke mana pun.</p>
+    </div>
+  </section>
+</main>
+<script src="analisis.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var KUNCI = 'cek-spam:laporan';
+  var sekarang = null;
+
+  function bacaLap() { try { return JSON.parse(localStorage.getItem(KUNCI)) || {}; } catch (e) { return {}; } }
+  function tulisLap(d) { try { localStorage.setItem(KUNCI, JSON.stringify(d)); return true; } catch (e) { return false; } }
+
+  function el(tag, attrs, teks) {
+    var x = document.createElement(tag);
+    for (var k in attrs) x.setAttribute(k, attrs[k]);
+    if (teks != null) x.textContent = teks;
+    return x;
+  }
+
+  function tampilLap() {
+    var list = sekarang ? (bacaLap()[sekarang.e164] || []) : [];
+    var box = $('daftarLap'); box.textContent = '';
+    $('kartuLap').hidden = !list.length;
+    list.slice().reverse().forEach(function (l) {
+      var d = el('div', { 'class': 'lap' });
+      d.appendChild(el('b', {}, l.kat));
+      d.appendChild(document.createTextNode(' · ' + new Date(l.t).toLocaleDateString('id-ID') + (l.cat ? ' — ' + l.cat : '')));
+      box.appendChild(d);
+    });
+  }
+
+  function cek(masukan) {
+    var a = CekNomor.analisis(masukan);
+    if (!a.nomor.valid) {
+      $('err').textContent = a.nomor.alasan; $('err').hidden = false; $('hasil').hidden = true; return;
+    }
+    $('err').hidden = true;
+    sekarang = a.nomor;
+    var lap = bacaLap()[a.nomor.e164] || [];
+    var lvl = a.skor >= 40 ? 'bad' : a.skor >= 15 ? 'warn' : 'ok';
+    $('skor').textContent = a.skor;
+    $('skor').className = 'skor lvl-' + lvl;
+    $('label').textContent = lvl === 'bad' ? 'Pola berisiko tinggi' : lvl === 'warn' ? 'Ada pola mencurigakan' : 'Tidak ada pola mencurigakan dari formatnya';
+
+    var meta = $('meta'); meta.textContent = '';
+    var baris = [['Format internasional', a.nomor.e164]];
+    if (a.nomor.lokal) baris.push(['Format lokal', a.nomor.lokal]);
+    baris.push(['Jenis', a.jenis]);
+    if (a.operator) baris.push(['Operator awal', a.operator + ' (bisa sudah pindah operator)']);
+    if (a.area) baris.push(['Wilayah', a.area]);
+    if (lap.length) baris.push(['Catatanmu', lap.length + ' kali ditandai']);
+    baris.forEach(function (b) { meta.appendChild(el('dt', {}, b[0])); meta.appendChild(el('dd', {}, b[1])); });
+
+    var ul = $('sinyal'); ul.textContent = '';
+    a.sinyal.forEach(function (s) { ul.appendChild(el('li', {}, s.teks)); });
+
+    var box = $('sumber'); box.textContent = '';
+    CekNomor.sumber(a.nomor).forEach(function (s) {
+      var link = el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' });
+      link.appendChild(el('b', {}, s.nama));
+      link.appendChild(el('span', {}, s.ket));
+      box.appendChild(link);
+    });
+
+    tampilLap();
+    $('hasil').hidden = false;
+    try { history.replaceState(null, '', '#' + encodeURIComponent(a.nomor.e164)); } catch (e) {}
+  }
+
+  $('f').addEventListener('submit', function (ev) { ev.preventDefault(); cek($('no').value); });
+
+  $('bukaSemua').addEventListener('click', function () {
+    if (!sekarang) return;
+    CekNomor.sumber(sekarang).forEach(function (s) { window.open(s.url, '_blank', 'noopener'); });
+  });
+
+  $('simpan').addEventListener('click', function () {
+    if (!sekarang) return;
+    var d = bacaLap();
+    (d[sekarang.e164] = d[sekarang.e164] || []).push({ kat: $('kat').value, cat: $('cat').value.trim(), t: Date.now() });
+    if (!tulisLap(d)) { alert('Browser ini tidak mengizinkan penyimpanan lokal.'); return; }
+    $('cat').value = '';
+    cek(sekarang.e164);
+  });
+
+  var awal = decodeURIComponent(location.hash.slice(1));
+  if (awal) { $('no').value = awal; cek(awal); }
+})();
+</script>
+</body>
+</html>

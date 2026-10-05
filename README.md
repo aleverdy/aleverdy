@@ -34,3 +34,20 @@ lalu buka `http://localhost:8000`.
 - Mengikuti tema terang/gelap perangkat, dan menghormati `prefers-reduced-motion`.
 - Dirancang untuk layar HP dulu (lebar maksimum 460px), bisa dimainkan dengan
   sentuh maupun keyboard.
+
+---
+
+# Cek Nomor Spam (`/cek-spam`)
+
+Halaman terpisah di `cek-spam/index.html`. Masukkan nomor (08…, 62…, +62…,
+atau nomor luar negeri), lalu halaman:
+
+- menormalkan nomor ke format lokal & internasional, menebak operator awal
+  dari awalannya, dan memberi skor dari **pola nomor saja** (awalan tidak
+  dikenal, panjang tidak wajar, 0809 premium, kode negara wangiri, dll.);
+- menyiapkan tautan pencarian siap-klik ke Google, Truecaller, Sync.ME,
+  Tellows, WhatsApp, X, dan Facebook;
+- menyimpan catatan/penandaanmu sendiri di browser (localStorage), plus
+  tautan ke aduannomor.id untuk laporan resmi.
+
+Logikanya ada di `cek-spam/analisis.js` dan bisa dites dengan Node.
