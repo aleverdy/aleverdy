@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Agenda nomor surat keluar, memo, dan surat masuk dari OJK, APPI, dan umum. Bisa disinkronkan dari Excel.">
+<meta name="theme-color" content="#EDF0F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12161F" media="(prefers-color-scheme: dark)">
+<title>Agenda Surat</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='20' rx='3' fill='%232547A8'/%3E%3Cpath d='M4 8l12 9 12-9' fill='none' stroke='white' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Public+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+<style>
+  :root{
+    --ink:#18213A; --ink-soft:#4C5670; --paper:#EDF0F4; --surface:#FFFFFF; --surface-2:#F5F7FA;
+    --line:#D3D9E2; --accent:#2547A8; --accent-ink:#FFFFFF; --accent-soft:#E4EAF8;
+    --danger:#B42318; --danger-soft:#FDECEA; --warn:#8A4B00; --warn-soft:#FFF1D6; --ok:#067647; --ok-soft:#E3F4EA;
+    --shadow:0 12px 40px rgba(16,24,48,.18);
+    --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+    --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ink:#E6EAF2; --ink-soft:#A3ACBF; --paper:#12161F; --surface:#1A202C; --surface-2:#212836;
+      --line:#2E3748; --accent:#8EA8F0; --accent-ink:#0E1630; --accent-soft:#232F4D;
+      --danger:#F28B82; --danger-soft:#3A2224; --warn:#F2B45C; --warn-soft:#3A2E1A; --ok:#6FCF97; --ok-soft:#1C3328;
+      --shadow:0 12px 40px rgba(0,0,0,.5); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#E6EAF2; --ink-soft:#A3ACBF; --paper:#12161F; --surface:#1A202C; --surface-2:#212836;
+    --line:#2E3748; --accent:#8EA8F0; --accent-ink:#0E1630; --accent-soft:#232F4D;
+    --danger:#F28B82; --danger-soft:#3A2224; --warn:#F2B45C; --warn-soft:#3A2E1A; --ok:#6FCF97; --ok-soft:#1C3328;
+    --shadow:0 12px 40px rgba(0,0,0,.5); color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+  button,input,select,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* Bar atas */
+  .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .brand{display:flex;flex-direction:column;margin-right:auto;min-width:0}
+  .brand b{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .brand span{font-size:14px;color:var(--ink-soft)}
+  .sync{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .sync-info{font-size:14px;color:var(--ink-soft);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px;white-space:nowrap}
+  .btn:hover{background:var(--surface-2)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.danger{color:var(--danger);border-color:var(--danger)}
+  .btn.ghost{border-color:transparent;background:transparent}
+  .btn.ghost:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn svg{width:18px;height:18px;flex:none}
+
+  /* Kerangka */
+  .wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;padding:24px;max-width:1440px;margin:0 auto}
+  nav.cats{display:flex;flex-direction:column;gap:4px;align-self:start;position:sticky;top:16px}
+  .cats h2{font-size:14px;font-weight:600;color:var(--ink-soft);margin:0 0 4px 12px}
+  .cats h2:not(:first-child){margin-top:16px}
+  .cat{display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 12px;border-radius:8px;border:0;background:transparent;text-align:left;cursor:pointer;font-weight:500}
+  .cat:hover{background:var(--surface)}
+  .cat[aria-current="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--accent);font-weight:700}
+  .cat .n{margin-left:auto;font:500 14px var(--mono);color:var(--ink-soft)}
+
+  main{min-width:0}
+  .head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+  .head h1{font-size:31px;line-height:1.15;letter-spacing:-.02em;margin:0;font-weight:700}
+  .head p{margin:4px 0 0;color:var(--ink-soft);font-size:14px}
+
+  /* Panel nomor berikutnya */
+  .next{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 24px;align-items:center;padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:24px}
+  .next small{display:block;font-size:14px;color:var(--ink-soft);margin-bottom:4px}
+  .next .num{font:600 31px/1.2 var(--mono);letter-spacing:-.01em;color:var(--accent);overflow-wrap:anywhere}
+  .next .meta{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px}
+  .next .meta:empty{display:none}
+
+  /* Filter */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .filters input[type=search]{flex:1 1 240px}
+  .field{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  .check{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px;cursor:pointer}
+  .check input{width:18px;height:18px;accent-color:var(--accent)}
+  .count{font-size:14px;color:var(--ink-soft);margin-left:auto}
+
+  /* Tabel */
+  .table-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-weight:600;color:var(--ink-soft);padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:var(--surface-2)}
+  td.r,th.r{text-align:right}
+  .mono{font-family:var(--mono);font-weight:500}
+  .nomor{font-family:var(--mono);font-weight:500;white-space:nowrap}
+  .perihal{min-width:220px}
+  .sub{display:block;color:var(--ink-soft);font-size:12px;margin-top:4px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--surface-2);border:1px solid var(--line)}
+  .tag.late{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+  .tag.soon{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+  .tag.done{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+  .row-btn{min-height:36px;padding:0 12px;font-size:14px}
+
+  .empty{padding:48px 24px;text-align:center}
+  .empty h3{margin:0 0 8px;font-size:20px}
+  .empty p{margin:0 auto 16px;max-width:52ch;color:var(--ink-soft)}
+  .empty .acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+  /* Dialog */
+  dialog{border:0;border-radius:16px;padding:0;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 32px)}
+  dialog.wide{width:min(960px,calc(100vw - 32px))}
+  dialog::backdrop{background:rgba(10,14,28,.45)}
+  .dlg{display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
+  .dlg header{display:flex;align-items:center;gap:8px;padding:16px 24px;border-bottom:1px solid var(--line)}
+  .dlg header h2{margin:0;font-size:20px;margin-right:auto}
+  .dlg .body{padding:24px;overflow:auto}
+  .dlg footer{display:flex;gap:8px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid var(--line);background:var(--surface-2)}
+  .dlg footer .spacer{margin-right:auto}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid .full{grid-column:1/-1}
+  label.f{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+  label.f .hint{font-weight:400;color:var(--ink-soft);font-size:12px}
+  label.f input,label.f select,label.f textarea{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-weight:400;font-size:16px}
+  label.f textarea{min-height:88px;resize:vertical}
+  label.f input.mono{font-family:var(--mono)}
+  .err{color:var(--danger);font-size:14px;margin:12px 0 0;min-height:0}
+  .err:empty{display:none}
+
+  .summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .summary .tag{font-size:14px;padding:4px 12px}
+  .preview{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:8px}
+  .note{font-size:14px;color:var(--ink-soft);margin:0 0 16px}
+  .note b{color:var(--ink)}
+  .mirror{margin-top:16px;padding:12px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+  .mirror p{margin:4px 0 0 26px;font-size:14px;color:var(--ink-soft)}
+
+  .set-cats{display:flex;flex-direction:column;gap:12px}
+  .set-cat{display:grid;grid-template-columns:1.4fr .7fr .8fr 2fr auto;gap:8px;align-items:end;padding:12px;border:1px solid var(--line);border-radius:8px}
+  .set-cat label.f input,.set-cat label.f select{font-size:14px}
+  .tokens{font-size:12px;color:var(--ink-soft);margin:8px 0 0}
+  .tokens code{font-family:var(--mono);background:var(--surface-2);padding:0 4px;border-radius:4px}
+  hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:8px;box-shadow:var(--shadow);font-size:14px;max-width:calc(100vw - 32px);z-index:10}
+  #toast[hidden]{display:none}
+  #toast button{background:transparent;border:1px solid currentColor;color:inherit;border-radius:6px;min-height:32px;padding:0 12px;cursor:pointer;font-weight:600}
+
+  .banner{margin:16px 24px 0;padding:12px 16px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:14px}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr;padding:16px;gap:16px}
+    .top{padding:12px 16px}
+    nav.cats{position:static;flex-direction:row;overflow-x:auto;gap:8px;padding-bottom:4px;scrollbar-width:thin}
+    .cats h2{display:none}
+    .cat{flex:none;background:var(--surface);border:1px solid var(--line)}
+    .cat[aria-current="true"]{box-shadow:inset 0 -3px 0 var(--accent)}
+    .set-cat{grid-template-columns:1fr 1fr}
+    .set-cat .fmt{grid-column:1/-1}
+  }
+  @media (max-width:640px){
+    .head h1{font-size:25px}
+    .next{grid-template-columns:1fr;padding:16px}
+    .next .num{font-size:25px}
+    .grid{grid-template-columns:1fr}
+    .sync-info{max-width:100%;white-space:normal}
+    table.stack thead{display:none}
+    table.stack tr{display:block;padding:12px 16px;border-bottom:1px solid var(--line)}
+    table.stack tr:last-child{border-bottom:0}
+    table.stack td{display:flex;gap:12px;padding:4px 0;border:0}
+    table.stack td::before{content:attr(data-l);font-family:var(--sans);font-weight:400;flex:0 0 96px;color:var(--ink-soft);font-size:12px;padding-top:2px}
+    table.stack td.r{text-align:left}
+    table.stack td.act::before{content:""}
+    table.stack tbody tr:hover td{background:transparent}
+    .nomor{white-space:normal;overflow-wrap:anywhere}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    dialog[open]{animation:pop .16s ease-out}
+    @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+  @media print{
+    .top,nav.cats,.filters,.next,.act,#toast{display:none!important}
+    .wrap{display:block;padding:0}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <b>Agenda Surat</b>
+    <span id="ptName"></span>
+  </div>
+  <div class="sync">
+    <span class="sync-info" id="syncInfo"></span>
+    <button class="btn" id="btnSync" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>
+      <span id="btnSyncLabel">Sinkronkan dari Excel</span>
+    </button>
+    <button class="btn" id="btnExport" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+      Unduh Excel
+    </button>
+    <button class="btn ghost" id="btnSettings" type="button" aria-label="Pengaturan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      <span class="sr">Pengaturan</span>
+    </button>
+  </div>
+</header>
+<div class="banner" id="storageBanner" hidden>Browser ini tidak mengizinkan penyimpanan lokal (mungkin mode penyamaran). Data akan hilang saat halaman ditutup; unduh Excel sebelum keluar.</div>
+
+<div class="wrap">
+  <nav class="cats" id="cats" aria-label="Kategori"></nav>
+
+  <main>
+    <div class="head">
+      <div>
+        <h1 id="title"></h1>
+        <p id="subtitle"></p>
+      </div>
+    </div>
+
+    <section class="next" id="nextPanel" aria-live="polite"></section>
+
+    <div class="filters">
+      <label class="sr" for="q">Cari</label>
+      <input class="field" type="search" id="q" placeholder="Cari nomor, perihal, tujuan, PIC…">
+      <label class="sr" for="fYear">Tahun</label>
+      <select class="field" id="fYear"></select>
+      <label class="sr" for="fMonth">Bulan</label>
+      <select class="field" id="fMonth"></select>
+      <label class="check" id="fOpenWrap"><input type="checkbox" id="fOpen"> Belum selesai saja</label>
+      <span class="count" id="count"></span>
+    </div>
+
+    <div class="table-box" id="tableBox"></div>
+  </main>
+</div>
+
+<!-- Form surat -->
+<dialog id="dlgRec" aria-labelledby="recTitle">
+  <form class="dlg" id="recForm" method="dialog" novalidate>
+    <header>
+      <h2 id="recTitle">Catat surat</h2>
+      <button class="btn ghost" type="button" data-close aria-label="Tutup">✕</button>
+    </header>
+    <div class="body">
+      <div class="grid">
+        <label class="f">Kategori
+          <select name="kat" id="rKat"></select>
+        </label>
+        <label class="f"><span id="rTglLabel">Tanggal surat</span>
+          <input type="date" name="tanggal" id="rTgl" required>
+        </label>
+        <label class="f full"><span id="rNomorLabel">Nomor surat</span>
+          <input class="mono" type="text" name="nomor" id="rNomor" autocomplete="off">
+          <span class="hint" id="rNomorHint"></span>
+        </label>
+        <label class="f full">Perihal
+          <input type="text" name="perihal" id="rPerihal" required>
+        </label>
+        <label class="f"><span id="rPihakLabel">Tujuan</span>
+          <input type="text" name="pihak" id="rPihak">
+        </label>
+        <label class="f">PIC / unit
+          <input type="text" name="pic" id="rPic" list="picList">
+          <datalist id="picList"></datalist>
+        </label>
+        <label class="f" data-masuk>Tenggat tindak lanjut
+          <input type="date" name="tenggat" id="rTenggat">
+        </label>
+        <label class="check" data-masuk style="align-self:end"><input type="checkbox" name="selesai" id="rSelesai"> Sudah ditindaklanjuti</label>
+        <label class="f full">Tautan dokumen
+          <input type="url" name="link" id="rLink" placeholder="https://drive.google.com/…">
+          <span class="hint">Opsional. Tempel tautan Google Drive/OneDrive/SharePoint ke pindaian surat.</span>
+        </label>
+        <label class="f full">Keterangan
+          <textarea name="ket" id="rKet"></textarea>
+        </label>
+      </div>
+      <p class="err" id="recErr" role="alert"></p>
+    </div>
+    <footer>
+      <button class="btn danger" type="button" id="recDelete">Hapus</button>
+      <span class="spacer"></span>
+      <button class="btn" type="button" data-close>Batal</button>
+      <button class="btn primary" type="submit" id="recSave">Simpan</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Sinkronisasi -->
+<dialog id="dlgSync" class="wide" aria-labelledby="syncTitle">
+  <div class="dlg">
+    <header>
+      <h2 id="syncTitle">Sinkronkan dari Excel</h2>
+      <button class="btn ghost" type="button" data-close aria-label="Tutup">✕</button>
+    </header>
+    <div class="body" id="syncBody"></div>
+    <footer id="syncFoot"></footer>
+  </div>
+</dialog>
+
+<!-- Pengaturan -->
+<dialog id="dlgSet" class="wide" aria-labelledby="setTitle">
+  <form class="dlg" id="setForm" method="dialog" novalidate>
+    <header>
+      <h2 id="setTitle">Pengaturan</h2>
+      <button class="btn ghost" type="button" data-close aria-label="Tutup">✕</button>
+    </header>
+    <div class="body">
+      <div class="grid">
+        <label class="f">Nama perusahaan
+          <input type="text" id="sNama" placeholder="PT Contoh Finance">
+        </label>
+        <label class="f">Kode perusahaan
+          <input class="mono" type="text" id="sPt" placeholder="CF">
+          <span class="hint">Mengisi <code>{pt}</code> di format nomor.</span>
+        </label>
+        <label class="f">Jumlah digit nomor urut
+          <select id="sPad"><option value="1">1 (7)</option><option value="2">2 (07)</option><option value="3">3 (007)</option><option value="4">4 (0007)</option></select>
+        </label>
+      </div>
+      <hr>
+      <h3 style="margin:0 0 4px;font-size:16px">Kategori</h3>
+      <p class="note">Jenis <b>keluar</b> membuat nomor otomatis dari format. Jenis <b>masuk</b> mencatat nomor dari pengirim dan memberi nomor agenda. Nomor urut mulai lagi dari 1 setiap tahun.</p>
+      <div class="set-cats" id="setCats"></div>
+      <p class="tokens">Kode format: <code>{urut}</code> nomor urut, <code>{kode}</code> kode kategori, <code>{pt}</code> kode perusahaan, <code>{romawi}</code> bulan romawi, <code>{bulan}</code> bulan angka, <code>{tahun}</code> tahun.</p>
+      <button class="btn" type="button" id="setAdd" style="margin-top:12px">Tambah kategori</button>
+      <hr>
+      <h3 style="margin:0 0 4px;font-size:16px">Data</h3>
+      <p class="note">Data tersimpan di browser ini saja. Unduh Excel secara rutin sebagai cadangan.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" type="button" id="setTemplate">Unduh templat Excel kosong</button>
+        <button class="btn" type="button" id="setForget">Lepas file Excel terhubung</button>
+        <button class="btn danger" type="button" id="setWipe">Hapus semua data</button>
+      </div>
+      <p class="err" id="setErr" role="alert"></p>
+    </div>
+    <footer>
+      <span class="spacer"></span>
+      <button class="btn" type="button" data-close>Batal</button>
+      <button class="btn primary" type="submit">Simpan pengaturan</button>
+    </footer>
+  </form>
+</dialog>
+
+<input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm,.csv" hidden>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- Data ---------- */
+const STORE = 'agenda-surat:v1';
+const DEFAULT_CATS = [
+  {id:'SK',   nama:'Surat keluar',     kode:'SK',   jenis:'keluar', format:'{urut}/SK/{pt}/{romawi}/{tahun}'},
+  {id:'MEMO', nama:'Memo internal',    kode:'MEMO', jenis:'keluar', format:'{urut}/MEMO/{pt}/{romawi}/{tahun}'},
+  {id:'OJK',  nama:'Surat dari OJK',   kode:'OJK',  jenis:'masuk',  format:''},
+  {id:'APPI', nama:'Surat dari APPI',  kode:'APPI', jenis:'masuk',  format:''},
+  {id:'UMUM', nama:'Surat masuk umum', kode:'UMUM', jenis:'masuk',  format:''},
+];
+const fresh = () => ({settings:{nama:'', pt:'PT', pad:3, categories:JSON.parse(JSON.stringify(DEFAULT_CATS))}, records:[], sync:{}});
+
+let storageOk = true;
+let db = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE);
+    if(raw){
+      const d = JSON.parse(raw);
+      const base = fresh();
+      return {settings:{...base.settings, ...d.settings}, records:Array.isArray(d.records)?d.records:[], sync:d.sync||{}};
+    }
+  }catch(e){ storageOk = false; }
+  return fresh();
+}
+function save(){
+  try{ localStorage.setItem(STORE, JSON.stringify(db)); storageOk = true; }
+  catch(e){ storageOk = false; }
+  $('#storageBanner').hidden = storageOk;
+}
+
+/* ---------- Util ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const ROMAWI = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const pad2 = n => String(n).padStart(2,'0');
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; };
+const normKey = s => String(s ?? '').toUpperCase().replace(/\s+/g,'');
+const normHead = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const cats = () => db.settings.categories;
+const catById = id => cats().find(c => c.id === id);
+
+function fmtDate(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-').map(Number);
+  return `${d} ${BULAN[m-1].slice(0,3)} ${y}`;
+}
+function daysBetween(a, b){ return Math.round((Date.parse(b) - Date.parse(a)) / 864e5); }
+
+function formatNomor(cat, urut, iso){
+  const [y,m] = (iso || todayIso()).split('-').map(Number);
+  const pad = Number(db.settings.pad) || 3;
+  return (cat.format || '{urut}')
+    .replaceAll('{urut}', String(urut).padStart(pad,'0'))
+    .replaceAll('{kode}', cat.kode)
+    .replaceAll('{pt}', db.settings.pt || '')
+    .replaceAll('{romawi}', ROMAWI[m-1])
+    .replaceAll('{bulan}', pad2(m))
+    .replaceAll('{tahun}', String(y));
+}
+function extractUrut(cat, nomor){
+  nomor = String(nomor ?? '').trim();
+  if(!nomor) return null;
+  if(cat.format && cat.format.includes('{urut}')){
+    const re = cat.format.split(/(\{[a-z]+\})/).map(part => {
+      if(part === '{urut}') return '(\\d+)';
+      if(part === '{tahun}') return '\\d{4}';
+      if(part === '{bulan}') return '\\d{1,2}';
+      if(part === '{romawi}') return '[IVXivx]+';
+      if(/^\{[a-z]+\}$/.test(part)) return '.*?';
+      return part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s*');
+    }).join('');
+    const m = nomor.match(new RegExp('^\\s*' + re + '\\s*$','i'));
+    if(m) return parseInt(m[1],10);
+  }
+  const lead = nomor.match(/^\s*(\d+)/);
+  return lead ? parseInt(lead[1],10) : null;
+}
+function yearOf(rec){
+  if(rec.tanggal) return Number(rec.tanggal.slice(0,4));
+  const m = String(rec.nomor||'').match(/(?:^|\D)((?:19|20)\d{2})(?:\D|$)/);
+  return m ? Number(m[1]) : new Date().getFullYear();
+}
+function nextUrut(katId, tahun, exceptId){
+  let max = 0;
+  for(const r of db.records){
+    if(r.kat === katId && r.tahun === tahun && r.id !== exceptId && r.urut > max) max = r.urut;
+  }
+  return max + 1;
+}
+
+let toastTimer;
+function toast(msg, action){
+  const t = $('#toast');
+  t.innerHTML = `<span>${esc(msg)}</span>`;
+  if(action){
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = action.label;
+    b.onclick = () => { action.run(); t.hidden = true; };
+    t.append(b);
+  }
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.hidden = true, action ? 8000 : 4000);
+}
+async function copy(text){
+  try{ await navigator.clipboard.writeText(text); toast(`Disalin: ${text}`); }
+  catch(e){ toast('Browser menolak menyalin. Pilih nomornya lalu tekan Ctrl+C.'); }
+}
+
+/* ---------- Tampilan ---------- */
+const view = {kat: 'SK', q:'', tahun:'', bulan:'', open:false};
+
+function render(){
+  if(view.kat !== 'ALL' && !catById(view.kat)) view.kat = cats()[0]?.id || 'ALL';
+  $('#ptName').textContent = db.settings.nama || 'Atur nama perusahaan di Pengaturan';
+  renderCats();
+  renderHead();
+  renderFilters();
+  renderTable();
+  renderSyncInfo();
+}
+
+function renderCats(){
+  const counts = {};
+  for(const r of db.records) counts[r.kat] = (counts[r.kat]||0) + 1;
+  const item = (id, label, n) =>
+    `<button type="button" class="cat" data-kat="${esc(id)}" aria-current="${view.kat===id}">${esc(label)}<span class="n">${n}</span></button>`;
+  const keluar = cats().filter(c => c.jenis === 'keluar');
+  const masuk = cats().filter(c => c.jenis === 'masuk');
+  $('#cats').innerHTML =
+    (keluar.length ? `<h2>Keluar</h2>` + keluar.map(c => item(c.id, c.nama, counts[c.id]||0)).join('') : '') +
+    (masuk.length ? `<h2>Masuk</h2>` + masuk.map(c => item(c.id, c.nama, counts[c.id]||0)).join('') : '') +
+    `<h2>Lainnya</h2>` + item('ALL', 'Semua surat', db.records.length);
+}
+
+function renderHead(){
+  const panel = $('#nextPanel');
+  if(view.kat === 'ALL'){
+    $('#title').textContent = 'Semua surat';
+    $('#subtitle').textContent = 'Cari lintas kategori. Pilih kategori di kiri untuk mengambil nomor baru.';
+    panel.hidden = true;
+    return;
+  }
+  const cat = catById(view.kat);
+  const tahun = new Date().getFullYear();
+  const urut = nextUrut(cat.id, tahun);
+  $('#title').textContent = cat.nama;
+  panel.hidden = false;
+  if(cat.jenis === 'keluar'){
+    $('#subtitle').textContent = `Format: ${cat.format || '{urut}'}`;
+    panel.innerHTML = `
+      <div><small>Nomor berikutnya untuk hari ini</small><div class="num" id="nextNum">${esc(formatNomor(cat, urut, todayIso()))}</div></div>
+      <button class="btn primary" type="button" id="btnTake">Ambil nomor &amp; catat</button>
+      <div class="meta">${metaKeluar(cat, tahun)}</div>`;
+  }else{
+    const open = db.records.filter(r => r.kat === cat.id && !r.selesai && r.tenggat);
+    const late = open.filter(r => r.tenggat < todayIso()).length;
+    const soon = open.filter(r => r.tenggat >= todayIso() && daysBetween(todayIso(), r.tenggat) <= 7).length;
+    $('#subtitle').textContent = 'Nomor agenda diberikan otomatis; nomor surat diisi sesuai surat dari pengirim.';
+    panel.innerHTML = `
+      <div><small>No. agenda berikutnya (${tahun})</small><div class="num">${String(urut).padStart(Number(db.settings.pad)||3,'0')}</div></div>
+      <button class="btn primary" type="button" id="btnTake">Catat surat masuk</button>
+      <div class="meta">${late ? `<span class="tag late">${late} lewat tenggat</span>` : ''}${soon ? `<span class="tag soon">${soon} tenggat ≤ 7 hari</span>` : ''}${!late && !soon ? 'Tidak ada tenggat yang mendesak.' : ''}</div>`;
+  }
+  $('#btnTake').onclick = () => openRecord(null, cat.id);
+}
+function metaKeluar(cat, tahun){
+  const last = db.records.filter(r => r.kat === cat.id && r.tahun === tahun).sort((a,b) => b.urut - a.urut)[0];
+  return last ? `<span>Terakhir dipakai: <span class="mono">${esc(last.nomor)}</span> untuk "${esc(last.perihal || 'tanpa perihal')}"</span>` : `Belum ada nomor terpakai di ${tahun}.`;
+}
+
+function renderFilters(){
+  const years = new Set([new Date().getFullYear()]);
+  db.records.forEach(r => r.tahun && years.add(r.tahun));
+  const ys = [...years].sort((a,b) => b-a);
+  $('#fYear').innerHTML = `<option value="">Semua tahun</option>` + ys.map(y => `<option ${String(y)===view.tahun?'selected':''}>${y}</option>`).join('');
+  $('#fMonth').innerHTML = `<option value="">Semua bulan</option>` + BULAN.map((b,i) => `<option value="${pad2(i+1)}" ${pad2(i+1)===view.bulan?'selected':''}>${b}</option>`).join('');
+  const cat = catById(view.kat);
+  $('#fOpenWrap').hidden = !(cat && cat.jenis === 'masuk');
+  $('#fOpen').checked = view.open;
+}
+
+function filtered(){
+  const q = view.q.trim().toLowerCase();
+  const cat = catById(view.kat);
+  return db.records.filter(r =>
+    (view.kat === 'ALL' || r.kat === view.kat) &&
+    (!view.tahun || String(r.tahun) === view.tahun) &&
+    (!view.bulan || (r.tanggal && r.tanggal.slice(5,7) === view.bulan)) &&
+    (!(view.open && cat && cat.jenis === 'masuk') || !r.selesai) &&
+    (!q || [r.nomor, r.perihal, r.pihak, r.pic, r.ket, catById(r.kat)?.nama].join(' ').toLowerCase().includes(q))
+  ).sort((a,b) => (b.tahun - a.tahun) || ((b.tanggal||'').localeCompare(a.tanggal||'')) || (b.urut - a.urut));
+}
+
+function tenggatTag(r){
+  if(r.selesai) return `<span class="tag done">Selesai</span>`;
+  if(!r.tenggat) return '';
+  const d = daysBetween(todayIso(), r.tenggat);
+  if(d < 0) return `<span class="tag late">Lewat ${-d} hari</span>`;
+  if(d === 0) return `<span class="tag late">Hari ini</span>`;
+  if(d <= 7) return `<span class="tag soon">${d} hari lagi</span>`;
+  return `<span class="tag">${fmtDate(r.tenggat)}</span>`;
+}
+
+function renderTable(){
+  const rows = filtered();
+  const total = view.kat === 'ALL' ? db.records.length : db.records.filter(r => r.kat === view.kat).length;
+  $('#count').textContent = rows.length === total ? `${total} surat` : `${rows.length} dari ${total} surat`;
+  const box = $('#tableBox');
+
+  if(!rows.length){
+    const cat = catById(view.kat);
+    if(total === 0){
+      box.innerHTML = `<div class="empty">
+        <h3>${cat ? `Belum ada ${esc(cat.nama.toLowerCase())}` : 'Belum ada surat tercatat'}</h3>
+        <p>Catat surat pertama, atau tarik data yang sudah ada dari file Excel. Kolom seperti <b>Nomor Surat</b>, <b>Tanggal</b>, <b>Perihal</b>, dan <b>Tujuan/Pengirim</b> dikenali otomatis.</p>
+        <div class="acts">
+          ${cat ? `<button class="btn primary" type="button" data-act="new">${cat.jenis==='keluar'?'Ambil nomor &amp; catat':'Catat surat masuk'}</button>` : ''}
+          <button class="btn" type="button" data-act="sync">Sinkronkan dari Excel</button>
+        </div></div>`;
+    }else{
+      box.innerHTML = `<div class="empty"><h3>Tidak ada yang cocok</h3><p>Coba kata kunci lain atau ubah filter tahun/bulan.</p>
+        <div class="acts"><button class="btn" type="button" data-act="reset">Hapus filter</button></div></div>`;
+    }
+    return;
+  }
+
+  const cat = catById(view.kat);
+  const masuk = cat && cat.jenis === 'masuk';
+  const all = view.kat === 'ALL';
+  const pad = Number(db.settings.pad) || 3;
+  const head = all
+    ? ['Kategori','No.','Nomor surat','Tanggal','Tujuan / pengirim','Perihal','PIC','']
+    : masuk ? ['Agenda','Nomor surat','Diterima','Pengirim','Perihal','Tenggat','']
+            : ['No.','Nomor surat','Tanggal','Tujuan','Perihal','PIC',''];
+  const LIMIT = 500;
+  const body = rows.slice(0, LIMIT).map(r => {
+    const c = catById(r.kat);
+    const link = r.link ? ` <a href="${esc(r.link)}" target="_blank" rel="noopener">dokumen</a>` : '';
+    const perihal = `<td class="perihal" data-l="Perihal">${esc(r.perihal)}${r.ket || link ? `<span class="sub">${esc(r.ket)}${link}</span>` : ''}</td>`;
+    const act = `<td class="act r"><button class="btn row-btn" type="button" data-edit="${r.id}">Ubah</button></td>`;
+    const no = `<td class="r mono" data-l="${masuk?'Agenda':'No.'}">${String(r.urut).padStart(pad,'0')}</td>`;
+    if(all) return `<tr><td data-l="Kategori">${esc(c?.nama || r.kat)}</td>${no}<td class="nomor" data-l="Nomor">${esc(r.nomor)}</td><td data-l="Tanggal">${fmtDate(r.tanggal)}</td><td data-l="Pihak">${esc(r.pihak)}</td>${perihal}<td data-l="PIC">${esc(r.pic)}</td>${act}</tr>`;
+    if(masuk) return `<tr>${no}<td class="nomor" data-l="Nomor">${esc(r.nomor)}</td><td data-l="Diterima">${fmtDate(r.tanggal)}</td><td data-l="Pengirim">${esc(r.pihak)}</td>${perihal}<td data-l="Tenggat">${tenggatTag(r)}</td>${act}</tr>`;
+    return `<tr>${no}<td class="nomor" data-l="Nomor">${esc(r.nomor)}</td><td data-l="Tanggal">${fmtDate(r.tanggal)}</td><td data-l="Tujuan">${esc(r.pihak)}</td>${perihal}<td data-l="PIC">${esc(r.pic)}</td>${act}</tr>`;
+  }).join('');
+  box.innerHTML = `<div style="overflow-x:auto"><table class="stack"><thead><tr>${head.map((h,i) => `<th class="${h==='' || i===(all?1:0) ? 'r' : ''}">${h || '<span class="sr">Aksi</span>'}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>` +
+    (rows.length > LIMIT ? `<p class="note" style="padding:12px 16px;margin:0">Menampilkan ${LIMIT} terbaru dari ${rows.length}. Persempit dengan pencarian atau filter.</p>` : '');
+}
+
+function renderSyncInfo(){
+  const s = db.sync || {};
+  $('#syncInfo').textContent = s.file ? `${s.file}${s.at ? ', sinkron ' + new Date(s.at).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}` : '';
+  $('#syncInfo').title = $('#syncInfo').textContent;
+}
+
+/* ---------- Event utama ---------- */
+$('#cats').addEventListener('click', e => {
+  const b = e.target.closest('[data-kat]'); if(!b) return;
+  view.kat = b.dataset.kat; view.open = false; render();
+});
+$('#q').addEventListener('input', e => { view.q = e.target.value; renderTable(); });
+$('#fYear').addEventListener('change', e => { view.tahun = e.target.value; renderTable(); });
+$('#fMonth').addEventListener('change', e => { view.bulan = e.target.value; renderTable(); });
+$('#fOpen').addEventListener('change', e => { view.open = e.target.checked; renderTable(); });
+$('#tableBox').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]');
+  if(ed) return openRecord(db.records.find(r => r.id === ed.dataset.edit));
+  const a = e.target.closest('[data-act]'); if(!a) return;
+  if(a.dataset.act === 'new') openRecord(null, view.kat);
+  if(a.dataset.act === 'sync') startSync();
+  if(a.dataset.act === 'reset'){ view.q=''; view.tahun=''; view.bulan=''; view.open=false; $('#q').value=''; render(); }
+});
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => {
+  if(e.target.closest('[data-close]')) d.close();
+}));
+
+/* ---------- Form surat ---------- */
+let editing = null, nomorAuto = false;
+
+function openRecord(rec, katId){
+  editing = rec || null;
+  const f = $('#recForm');
+  f.reset();
+  $('#recErr').textContent = '';
+  $('#rKat').innerHTML = cats().map(c => `<option value="${esc(c.id)}">${esc(c.nama)}</option>`).join('');
+  $('#picList').innerHTML = [...new Set(db.records.map(r => r.pic).filter(Boolean))].map(p => `<option value="${esc(p)}">`).join('');
+  if(rec){
+    $('#rKat').value = rec.kat;
+    $('#rTgl').value = rec.tanggal || '';
+    $('#rNomor').value = rec.nomor || '';
+    $('#rPerihal').value = rec.perihal || '';
+    $('#rPihak').value = rec.pihak || '';
+    $('#rPic').value = rec.pic || '';
+    $('#rTenggat').value = rec.tenggat || '';
+    $('#rSelesai').checked = !!rec.selesai;
+    $('#rLink').value = rec.link || '';
+    $('#rKet').value = rec.ket || '';
+    nomorAuto = false;
+  }else{
+    $('#rKat').value = katId && katId !== 'ALL' ? katId : cats()[0].id;
+    $('#rTgl').value = todayIso();
+    nomorAuto = true;
+  }
+  $('#recTitle').textContent = rec ? 'Ubah catatan' : 'Catat surat';
+  $('#recDelete').hidden = !rec;
+  syncFormToCat();
+  $('#dlgRec').showModal();
+  (rec ? $('#rPerihal') : (catById($('#rKat').value).jenis === 'keluar' ? $('#rPerihal') : $('#rNomor'))).focus();
+}
+function syncFormToCat(){
+  const cat = catById($('#rKat').value);
+  const keluar = cat.jenis === 'keluar';
+  document.querySelectorAll('[data-masuk]').forEach(el => el.hidden = keluar);
+  $('#rTglLabel').textContent = keluar ? 'Tanggal surat' : 'Tanggal diterima';
+  $('#rPihakLabel').textContent = keluar ? 'Tujuan' : 'Pengirim';
+  $('#rNomorLabel').textContent = keluar ? 'Nomor surat' : 'Nomor surat dari pengirim';
+  if(!$('#rPihak').value && !keluar && ['OJK','APPI'].includes(cat.kode.toUpperCase())) $('#rPihak').placeholder = cat.kode.toUpperCase() === 'OJK' ? 'Otoritas Jasa Keuangan' : 'Asosiasi Perusahaan Pembiayaan Indonesia';
+  else $('#rPihak').placeholder = '';
+  if(keluar){
+    if(nomorAuto){
+      const tahun = Number(($('#rTgl').value || todayIso()).slice(0,4));
+      $('#rNomor').value = formatNomor(cat, nextUrut(cat.id, tahun, editing?.id), $('#rTgl').value || todayIso());
+    }
+    $('#rNomorHint').textContent = nomorAuto ? 'Dibuat otomatis dari nomor urut terakhir. Ubah hanya kalau perlu.' : 'Diisi manual.';
+  }else{
+    if(nomorAuto) $('#rNomor').value = '';
+    $('#rNomorHint').textContent = 'Salin persis dari kop surat, misalnya S-123/NB.1/2026.';
+  }
+}
+$('#rKat').addEventListener('change', () => { if(!editing) nomorAuto = true; syncFormToCat(); });
+$('#rTgl').addEventListener('change', syncFormToCat);
+$('#rNomor').addEventListener('input', () => { nomorAuto = false; $('#rNomorHint').textContent = 'Diisi manual.'; });
+
+$('#recForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const cat = catById($('#rKat').value);
+  const tanggal = $('#rTgl').value;
+  const perihal = $('#rPerihal').value.trim();
+  const err = m => { $('#recErr').textContent = m; };
+  if(!tanggal) return err('Isi tanggal surat.');
+  if(!perihal) return err('Isi perihal supaya surat ini bisa dicari lagi.');
+  const tahun = Number(tanggal.slice(0,4));
+  let nomor = $('#rNomor').value.trim();
+  let urut;
+  const sameSlot = editing && editing.kat === cat.id && editing.tahun === tahun;
+  if(cat.jenis === 'keluar'){
+    if(nomorAuto || !nomor){
+      urut = sameSlot ? editing.urut : nextUrut(cat.id, tahun);
+      nomor = formatNomor(cat, urut, tanggal);
+    }else{
+      urut = extractUrut(cat, nomor) ?? (sameSlot ? editing.urut : nextUrut(cat.id, tahun));
+    }
+  }else{
+    if(!nomor) return err('Isi nomor surat sesuai yang tertulis di surat pengirim.');
+    urut = sameSlot ? editing.urut : nextUrut(cat.id, tahun);
+  }
+  const dup = db.records.find(r => r.id !== editing?.id && r.kat === cat.id && normKey(r.nomor) === normKey(nomor));
+  if(dup) return err(`Nomor ${nomor} sudah dipakai untuk "${dup.perihal}". Periksa lagi, atau kosongkan kolom nomor agar dibuat otomatis.`);
+
+  const data = {
+    kat: cat.id, tanggal, tahun, urut, nomor, perihal,
+    pihak: $('#rPihak').value.trim(), pic: $('#rPic').value.trim(),
+    tenggat: cat.jenis === 'masuk' ? $('#rTenggat').value : '',
+    selesai: cat.jenis === 'masuk' ? $('#rSelesai').checked : false,
+    link: $('#rLink').value.trim(), ket: $('#rKet').value.trim(),
+    diubah: new Date().toISOString(),
+  };
+  if(editing) Object.assign(editing, data);
+  else db.records.push({id: uid(), dibuat: data.diubah, ...data});
+  save();
+  $('#dlgRec').close();
+  view.kat = cat.id;
+  render();
+  if(!editing && cat.jenis === 'keluar') toast(`Nomor ${nomor} tercatat.`, {label:'Salin nomor', run:() => copy(nomor)});
+  else toast(editing ? 'Perubahan disimpan.' : `Surat ${nomor} tercatat.`);
+});
+$('#recDelete').addEventListener('click', () => {
+  if(!editing) return;
+  if(!confirm(`Hapus catatan ${editing.nomor}?\n\nNomor urutnya tidak akan dipakai ulang kecuali ini nomor terakhir.`)) return;
+  const removed = editing, idx = db.records.indexOf(editing);
+  db.records.splice(idx, 1);
+  save(); $('#dlgRec').close(); render();
+  toast(`Catatan ${removed.nomor} dihapus.`, {label:'Batalkan', run:() => { db.records.splice(idx, 0, removed); save(); render(); }});
+});
+
+/* ---------- Excel: baca ---------- */
+const ALIASES = {
+  nomor:   ['nomor surat','no surat','nomor','no memo','nomor memo','no surat keluar','nomor surat keluar','no surat masuk','nomor surat masuk','no dokumen','nomor dokumen','reference','ref','no ref'],
+  agenda:  ['no agenda','nomor agenda','agenda','no urut','nomor urut','urut'],
+  tanggal: ['tanggal','tgl','tanggal surat','tgl surat','tanggal diterima','tgl diterima','tanggal terima','tgl terima','tanggal masuk','tgl masuk','date'],
+  pihak:   ['tujuan','kepada','tujuan surat','penerima','pengirim','dari','asal','asal surat','instansi','tujuan pengirim','pihak','kepada dari'],
+  perihal: ['perihal','hal','subject','judul','isi ringkas','ringkasan','isi surat','uraian'],
+  pic:     ['pic','pembuat','penanggung jawab','unit','divisi','bagian','konseptor','dibuat oleh'],
+  tenggat: ['tenggat','deadline','batas waktu','jatuh tempo','due date','tenggat waktu'],
+  status:  ['status','tindak lanjut','selesai'],
+  ket:     ['keterangan','catatan','ket','disposisi','note','notes'],
+  link:    ['tautan','link','lampiran','file','dokumen','url','tautan dokumen'],
+  kat:     ['kategori','jenis','jenis surat','tipe'],
+};
+const HEAD_MAP = (() => { const m = new Map(); for(const [k, arr] of Object.entries(ALIASES)) arr.forEach(a => m.set(a, k)); return m; })();
+
+function mapHeader(row){
+  const map = {};
+  row.forEach((h, i) => {
+    const k = HEAD_MAP.get(normHead(h));
+    if(k && map[k] === undefined) map[k] = i;
+  });
+  return map;
+}
+function parseDate(v){
+  if(v === '' || v == null) return '';
+  if(typeof v === 'number' && v > 20000 && v < 80000){
+    const d = new Date(Math.round((v - 25569) * 864e5));
+    return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth()+1)}-${pad2(d.getUTCDate())}`;
+  }
+  if(v instanceof Date && !isNaN(v)) return `${v.getFullYear()}-${pad2(v.getMonth()+1)}-${pad2(v.getDate())}`;
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
+  m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(m){ const y = m[3].length === 2 ? '20' + m[3] : m[3]; return `${y}-${pad2(m[2])}-${pad2(m[1])}`; }
+  m = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+  if(m){
+    const nm = m[2].toLowerCase().slice(0,3);
+    const en = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    let i = BULAN.findIndex(b => b.toLowerCase().slice(0,3) === nm);
+    if(i < 0) i = en.indexOf(nm);
+    if(i < 0 && nm === 'agt') i = 7;
+    if(i < 0 && nm === 'okt') i = 9;
+    if(i < 0 && nm === 'des') i = 11;
+    if(i >= 0) return `${m[3]}-${pad2(i+1)}-${pad2(m[1])}`;
+  }
+  return '';
+}
+function matchCat(text){
+  const t = normHead(text);
+  if(!t) return null;
+  return cats().find(c => normHead(c.nama) === t || normHead(c.kode) === t)
+      || cats().find(c => t.split(' ').includes(normHead(c.kode)))
+      || null;
+}
+const cell = (row, i) => i === undefined ? '' : (row[i] ?? '');
+const str = v => String(v ?? '').trim();
+
+function readWorkbook(buf){
+  if(!window.XLSX) throw new Error('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
+  const wb = XLSX.read(buf, {type:'array'});
+  const sheets = [];
+  for(const name of wb.SheetNames){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, raw:true, defval:''});
+    let hi = -1, map = {};
+    for(let i = 0; i < Math.min(rows.length, 15); i++){
+      const m = mapHeader(rows[i]);
+      if(m.nomor !== undefined && (m.perihal !== undefined || m.tanggal !== undefined)){ hi = i; map = m; break; }
+    }
+    sheets.push({name, map, rows: hi < 0 ? [] : rows.slice(hi + 1), headerRow: hi + 1, found: hi >= 0});
+  }
+  return sheets;
+}
+
+function buildPlan(sheets, defaultKat){
+  const items = [], seen = new Set(), touchedKats = new Set(), skipped = [];
+  for(const sh of sheets){
+    if(!sh.found) continue;
+    const sheetCat = matchCat(sh.name);
+    sh.rows.forEach((row, i) => {
+      if(row.every(v => str(v) === '')) return;
+      const excelRow = sh.headerRow + i + 1;
+      const where = `${sh.name} baris ${excelRow}`;
+      const nomor = str(cell(row, sh.map.nomor));
+      const katCell = str(cell(row, sh.map.kat));
+      const cat = (katCell && matchCat(katCell)) || sheetCat || catById(defaultKat);
+      if(!nomor){ skipped.push({where, why:'nomor kosong'}); return; }
+      if(!cat){ skipped.push({where, why:`kategori "${katCell}" tidak dikenal`}); return; }
+      const key = cat.id + '|' + normKey(nomor);
+      if(seen.has(key)){ skipped.push({where, why:`nomor ${nomor} muncul dua kali di file`}); return; }
+      seen.add(key); touchedKats.add(cat.id);
+      const statusTxt = str(cell(row, sh.map.status)).toLowerCase();
+      const data = {
+        kat: cat.id, nomor,
+        tanggal: parseDate(cell(row, sh.map.tanggal)),
+        perihal: str(cell(row, sh.map.perihal)),
+        pihak: str(cell(row, sh.map.pihak)),
+        pic: str(cell(row, sh.map.pic)),
+        tenggat: parseDate(cell(row, sh.map.tenggat)),
+        ket: str(cell(row, sh.map.ket)),
+        link: str(cell(row, sh.map.link)),
+      };
+      if(sh.map.status !== undefined && statusTxt) data.selesai = /selesai|done|sudah|ya|yes|true/.test(statusTxt) && !/belum/.test(statusTxt);
+      const agenda = parseInt(str(cell(row, sh.map.agenda)), 10);
+      data.urutHint = Number.isFinite(agenda) ? agenda : (cat.jenis === 'keluar' ? extractUrut(cat, nomor) : null);
+      const existing = db.records.find(r => r.kat === cat.id && normKey(r.nomor) === normKey(nomor));
+      let action = 'new', changes = [];
+      if(existing){
+        for(const k of ['tanggal','perihal','pihak','pic','tenggat','ket','link','selesai']){
+          if(data[k] === undefined || data[k] === '') continue;
+          if(String(existing[k] ?? '') !== String(data[k])) changes.push(k);
+        }
+        action = changes.length ? 'update' : 'same';
+      }
+      items.push({where, cat, data, existing, action, changes});
+    });
+  }
+  const clashes = [], slots = new Map();
+  for(const r of db.records) slots.set(`${r.kat}|${r.tahun}|${r.urut}`, r.nomor);
+  for(const it of items){
+    if(it.action !== 'new' || it.cat.jenis !== 'keluar' || !it.data.urutHint) continue;
+    const slot = `${it.cat.id}|${yearOf(it.data)}|${it.data.urutHint}`;
+    if(slots.has(slot)) clashes.push(`${it.data.nomor} memakai nomor urut yang sama dengan ${slots.get(slot)}`);
+    else slots.set(slot, it.data.nomor);
+  }
+  const keys = new Set(items.map(it => it.cat.id + '|' + normKey(it.data.nomor)));
+  const missing = db.records.filter(r => touchedKats.has(r.kat) && !keys.has(r.kat + '|' + normKey(r.nomor)));
+  return {items, skipped, missing, touchedKats, clashes};
+}
+
+function applyPlan(plan, mirror){
+  const now = new Date().toISOString();
+  let added = 0, updated = 0, removed = 0;
+  for(const it of plan.items){
+    const d = it.data;
+    if(it.action === 'new'){
+      const tahun = yearOf(d);
+      const urut = d.urutHint || nextUrut(d.kat, tahun);
+      db.records.push({id: uid(), kat:d.kat, nomor:d.nomor, tanggal:d.tanggal, tahun, urut, perihal:d.perihal, pihak:d.pihak, pic:d.pic,
+        tenggat:d.tenggat, selesai:!!d.selesai, ket:d.ket, link:d.link, dibuat: now, diubah: now, sumber:'excel'});
+      added++;
+    }else if(it.action === 'update'){
+      const r = it.existing;
+      for(const k of it.changes) r[k] = d[k];
+      r.tahun = yearOf(r);
+      r.diubah = now;
+      updated++;
+    }
+  }
+  if(mirror){
+    const gone = new Set(plan.missing.map(r => r.id));
+    removed = gone.size;
+    db.records = db.records.filter(r => !gone.has(r.id));
+  }
+  return {added, updated, removed};
+}
+
+/* ---------- Excel: file terhubung (Chrome/Edge) ---------- */
+const canLink = 'showOpenFilePicker' in window;
+const idb = {
+  open(){ return new Promise((res, rej) => { const q = indexedDB.open('agenda-surat', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
+  async get(k){ const d = await this.open(); return new Promise(res => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); },
+  async set(k, v){ const d = await this.open(); return new Promise(res => { const t = d.transaction('kv','readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = res; }); },
+  async del(k){ const d = await this.open(); return new Promise(res => { const t = d.transaction('kv','readwrite'); t.objectStore('kv').delete(k); t.oncomplete = res; t.onerror = res; }); },
+};
+let linkedHandle = null;
+(async () => {
+  if(!canLink) return;
+  try{ linkedHandle = await idb.get('handle') || null; }catch(e){}
+  updateSyncButton();
+})();
+function updateSyncButton(){
+  $('#btnSyncLabel').textContent = linkedHandle ? 'Sinkronkan' : 'Sinkronkan dari Excel';
+}
+
+async function startSync(){
+  if(linkedHandle){
+    try{
+      let p = await linkedHandle.queryPermission({mode:'read'});
+      if(p !== 'granted') p = await linkedHandle.requestPermission({mode:'read'});
+      if(p === 'granted'){ const file = await linkedHandle.getFile(); return previewFile(file, true); }
+    }catch(e){ /* file dipindah/dihapus: tawarkan pilih ulang */ }
+    linkedHandle = null; await idb.del('handle').catch(()=>{}); updateSyncButton();
+    toast('File Excel yang terhubung tidak bisa dibuka lagi. Pilih ulang filenya.');
+  }
+  showSyncIntro();
+}
+
+function showSyncIntro(){
+  $('#fileInput').value = '';
+  $('#syncBody').innerHTML = `
+    <p class="note">Pilih file Excel catatan surat Anda. Data di file itu akan dicocokkan dengan data di sini berdasarkan <b>kategori + nomor surat</b>: baris baru ditambahkan, baris yang berubah diperbarui, sisanya dibiarkan. Anda akan melihat pratinjau dulu sebelum apa pun berubah.</p>
+    <p class="note"><b>Cara kolom dikenali.</b> Baris judul bisa ada di 15 baris pertama. Wajib ada kolom <b>Nomor Surat</b> (atau No Surat / Nomor / No Memo) dan <b>Perihal</b> atau <b>Tanggal</b>. Kolom lain yang dikenali: Tujuan, Pengirim, PIC, Tenggat, Status, Keterangan, Tautan, No Agenda, Kategori.</p>
+    <p class="note"><b>Cara kategori ditentukan.</b> Dari kolom Kategori kalau ada; kalau tidak, dari nama sheet (misalnya sheet bernama "OJK", "APPI", "Memo internal"); kalau tidak cocok juga, dari pilihan di bawah.</p>
+    <label class="f" style="max-width:320px">Kategori bawaan
+      <select id="syncDefault">${cats().map(c => `<option value="${esc(c.id)}" ${c.id===view.kat?'selected':''}>${esc(c.nama)}</option>`).join('')}</select>
+    </label>
+    ${canLink ? `<p class="note" style="margin-top:16px">Di Chrome/Edge, file yang dipilih lewat <b>Hubungkan file</b> diingat. Setelah itu cukup simpan file di Excel lalu tekan <b>Sinkronkan</b>, tanpa memilih file lagi.</p>` : `<p class="note" style="margin-top:16px">Browser ini tidak bisa mengingat file. Pilih filenya lagi setiap kali mau menyinkronkan. Di Chrome atau Edge, file bisa dihubungkan sekali saja.</p>`}`;
+  $('#syncFoot').innerHTML = `<button class="btn" type="button" id="syncTpl">Unduh templat</button><span class="spacer"></span>
+    ${canLink ? `<button class="btn" type="button" id="syncPickOnce">Pilih file sekali</button><button class="btn primary" type="button" id="syncLink">Hubungkan file Excel</button>`
+              : `<button class="btn primary" type="button" id="syncPickOnce">Pilih file Excel</button>`}`;
+  $('#syncTpl').onclick = () => exportXlsx(true);
+  $('#syncPickOnce').onclick = () => { pendingDefault = $('#syncDefault').value; $('#fileInput').value = ''; $('#fileInput').click(); };
+  if(canLink) $('#syncLink').onclick = async () => {
+    pendingDefault = $('#syncDefault').value;
+    try{
+      const [h] = await window.showOpenFilePicker({types:[{description:'Excel', accept:{
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx','.xlsm'],
+        'application/vnd.ms-excel':['.xls'], 'text/csv':['.csv']}}]});
+      linkedHandle = h; await idb.set('handle', h).catch(()=>{}); updateSyncButton();
+      previewFile(await h.getFile(), true);
+    }catch(e){ if(e.name !== 'AbortError') toast('File tidak bisa dibuka: ' + e.message); }
+  };
+  if(!$('#dlgSync').open) $('#dlgSync').showModal();
+}
+let pendingDefault = null;
+$('#fileInput').addEventListener('change', e => { const f = e.target.files[0]; if(f) previewFile(f, false); });
+$('#btnSync').addEventListener('click', startSync);
+
+async function previewFile(file, linked){
+  const defaultKat = pendingDefault || (view.kat !== 'ALL' ? view.kat : cats()[0].id);
+  let sheets;
+  try{ sheets = readWorkbook(await file.arrayBuffer()); }
+  catch(e){
+    if(!$('#dlgSync').open) $('#dlgSync').showModal();
+    $('#syncBody').innerHTML = `<p class="err">${esc(/lock|permission|NotReadable/i.test(e.message) ? 'File sedang dikunci. Simpan dan tutup file di Excel, lalu coba lagi.' : e.message)}</p>`;
+    $('#syncFoot').innerHTML = `<span class="spacer"></span><button class="btn" type="button" data-close>Tutup</button>`;
+    return;
+  }
+  const plan = buildPlan(sheets, defaultKat);
+  const n = a => plan.items.filter(it => it.action === a).length;
+  const used = sheets.filter(s => s.found), unused = sheets.filter(s => !s.found);
+  const LABEL = {new:'Baru', update:'Diperbarui', same:'Sama'};
+  const TAG = {new:'done', update:'soon', same:''};
+  const changedRows = plan.items.filter(it => it.action !== 'same');
+  const shown = changedRows.slice(0, 200);
+  if(!$('#dlgSync').open) $('#dlgSync').showModal();
+  $('#syncTitle').textContent = `Pratinjau: ${file.name}`;
+  $('#syncBody').innerHTML = `
+    <div class="summary">
+      <span class="tag done">${n('new')} baru</span>
+      <span class="tag soon">${n('update')} diperbarui</span>
+      <span class="tag">${n('same')} sudah sama</span>
+      ${plan.skipped.length ? `<span class="tag late">${plan.skipped.length} dilewati</span>` : ''}
+    </div>
+    <p class="note">Sheet terbaca: ${used.length ? used.map(s => `<b>${esc(s.name)}</b> (${s.rows.length} baris, kategori ${esc(matchCat(s.name)?.nama || 'dari kolom/bawaan')})`).join(', ') : '<b>tidak ada</b>'}.
+      ${unused.length ? `Diabaikan karena tidak ada kolom Nomor Surat: ${unused.map(s => esc(s.name)).join(', ')}.` : ''}</p>
+    ${!used.length ? `<p class="err">Tidak ditemukan baris judul dengan kolom "Nomor Surat" dan "Perihal"/"Tanggal". Ganti nama judul kolomnya, atau unduh templat untuk contoh.</p>` : ''}
+    ${shown.length ? `<div class="preview"><table><thead><tr><th>Status</th><th>Kategori</th><th>Nomor</th><th>Tanggal</th><th>Perihal</th><th>Yang berubah</th></tr></thead><tbody>
+      ${shown.map(it => `<tr><td><span class="tag ${TAG[it.action]}">${LABEL[it.action]}</span></td><td>${esc(it.cat.nama)}</td><td class="nomor">${esc(it.data.nomor)}</td><td>${fmtDate(it.data.tanggal)}</td><td>${esc(it.data.perihal)}</td><td>${it.action === 'update' ? esc(it.changes.join(', ')) : ''}</td></tr>`).join('')}
+    </tbody></table></div>${changedRows.length > shown.length ? `<p class="note" style="margin-top:8px">+ ${changedRows.length - shown.length} baris lagi.</p>` : ''}` : (used.length ? `<p class="note">Tidak ada yang berubah. Data di sini sudah sama dengan file Excel.</p>` : '')}
+    ${plan.clashes.length ? `<div class="mirror" style="border-color:var(--danger)"><b style="color:var(--danger)">${plan.clashes.length} nomor urut bentrok</b><ul class="note" style="margin:8px 0 0">${plan.clashes.slice(0,50).map(c => `<li>${esc(c)}</li>`).join('')}</ul><p style="margin-left:0">Kemungkinan nomor yang sama sudah diambil di aplikasi dan di Excel. Tetap diimpor apa adanya; periksa dan perbaiki salah satunya.</p></div>` : ''}
+    ${plan.skipped.length ? `<details style="margin-top:16px"><summary class="note" style="cursor:pointer;margin:0">Lihat ${plan.skipped.length} baris yang dilewati</summary><ul class="note">${plan.skipped.slice(0,100).map(s => `<li>${esc(s.where)}: ${esc(s.why)}</li>`).join('')}</ul></details>` : ''}
+    ${plan.missing.length ? `<div class="mirror"><label class="check" style="min-height:0"><input type="checkbox" id="syncMirror"> Hapus ${plan.missing.length} catatan yang tidak ada di file ini</label>
+      <p>Hanya untuk kategori yang ada di file (${[...plan.touchedKats].map(id => esc(catById(id).nama)).join(', ')}). Centang kalau Excel adalah sumber utama dan baris yang dihapus di Excel juga harus hilang di sini.</p></div>` : ''}`;
+  const nothing = !n('new') && !n('update');
+  $('#syncFoot').innerHTML = `<button class="btn" type="button" id="syncOther">Pilih file lain</button><span class="spacer"></span>
+    <button class="btn" type="button" data-close>Batal</button>
+    <button class="btn primary" type="button" id="syncApply" ${nothing && !plan.missing.length ? 'disabled' : ''}>Terapkan sinkronisasi</button>`;
+  $('#syncOther').onclick = () => { $('#syncTitle').textContent = 'Sinkronkan dari Excel'; showSyncIntro(); };
+  $('#syncApply').onclick = () => {
+    const mirror = $('#syncMirror')?.checked;
+    if(mirror && !confirm(`Hapus ${plan.missing.length} catatan yang tidak ada di ${file.name}?`)) return;
+    const res = applyPlan(plan, mirror);
+    db.sync = {file: file.name, at: new Date().toISOString()};
+    save();
+    $('#dlgSync').close();
+    $('#syncTitle').textContent = 'Sinkronkan dari Excel';
+    pendingDefault = null;
+    render();
+    toast(`Sinkron selesai: ${res.added} baru, ${res.updated} diperbarui${res.removed ? `, ${res.removed} dihapus` : ''}.`);
+  };
+  if(nothing && !plan.missing.length && used.length){
+    db.sync = {file: file.name, at: new Date().toISOString()}; save(); renderSyncInfo();
+  }
+}
+
+/* ---------- Excel: tulis ---------- */
+function toSerial(iso){ if(!iso) return null; const [y,m,d] = iso.split('-').map(Number); return Date.UTC(y, m-1, d) / 864e5 + 25569; }
+function sheetName(s, used){
+  let n = String(s).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31).trim() || 'Sheet';
+  let i = 2; const base = n;
+  while(used.has(n.toLowerCase())) n = (base.slice(0, 28) + ' ' + i++);
+  used.add(n.toLowerCase()); return n;
+}
+function exportXlsx(templateOnly){
+  if(!window.XLSX){ toast('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.'); return; }
+  const wb = XLSX.utils.book_new(), used = new Set();
+  for(const cat of cats()){
+    const keluar = cat.jenis === 'keluar';
+    const head = keluar
+      ? ['No Urut','Nomor Surat','Tanggal','Tujuan','Perihal','PIC','Keterangan','Tautan']
+      : ['No Agenda','Nomor Surat','Tanggal Diterima','Pengirim','Perihal','PIC','Tenggat','Status','Keterangan','Tautan'];
+    const recs = templateOnly ? [] : db.records.filter(r => r.kat === cat.id).sort((a,b) => (a.tahun - b.tahun) || (a.urut - b.urut));
+    const rows = recs.map(r => keluar
+      ? [r.urut, r.nomor, toSerial(r.tanggal), r.pihak, r.perihal, r.pic, r.ket, r.link]
+      : [r.urut, r.nomor, toSerial(r.tanggal), r.pihak, r.perihal, r.pic, toSerial(r.tenggat), r.selesai ? 'Selesai' : 'Belum', r.ket, r.link]);
+    const ws = XLSX.utils.aoa_to_sheet([head, ...rows]);
+    const dateCols = keluar ? [2] : [2, 6];
+    for(let i = 0; i < rows.length; i++) for(const c of dateCols){
+      const ref = XLSX.utils.encode_cell({r:i+1, c}); if(ws[ref] && ws[ref].v != null) ws[ref].z = 'dd/mm/yyyy';
+    }
+    ws['!cols'] = head.map(h => ({wch: h === 'Perihal' ? 48 : h === 'Nomor Surat' ? 30 : h.length < 10 ? 12 : 18}));
+    XLSX.utils.book_append_sheet(wb, ws, sheetName(cat.nama, used));
+  }
+  const stamp = todayIso();
+  XLSX.writeFile(wb, templateOnly ? 'templat-agenda-surat.xlsx' : `agenda-surat-${stamp}.xlsx`);
+}
+$('#btnExport').addEventListener('click', () => {
+  if(!db.records.length) return toast('Belum ada data. Untuk file kosong berjudul kolom, pakai "Unduh templat" di Pengaturan.');
+  exportXlsx(false);
+});
+
+/* ---------- Pengaturan ---------- */
+let draftCats = [];
+function openSettings(){
+  $('#sNama').value = db.settings.nama || '';
+  $('#sPt').value = db.settings.pt || '';
+  $('#sPad').value = String(db.settings.pad || 3);
+  $('#setErr').textContent = '';
+  draftCats = JSON.parse(JSON.stringify(cats()));
+  renderSetCats();
+  $('#dlgSet').showModal();
+}
+function renderSetCats(){
+  const counts = {};
+  db.records.forEach(r => counts[r.kat] = (counts[r.kat]||0) + 1);
+  $('#setCats').innerHTML = draftCats.map((c, i) => `
+    <div class="set-cat" data-i="${i}">
+      <label class="f">Nama<input data-k="nama" value="${esc(c.nama)}"></label>
+      <label class="f">Kode<input class="mono" data-k="kode" value="${esc(c.kode)}"></label>
+      <label class="f">Jenis<select data-k="jenis"><option value="keluar" ${c.jenis==='keluar'?'selected':''}>Keluar</option><option value="masuk" ${c.jenis==='masuk'?'selected':''}>Masuk</option></select></label>
+      <label class="f fmt">Format nomor${c.jenis==='masuk' ? ' <span class="hint">(tidak dipakai untuk surat masuk)</span>' : ''}<input class="mono" data-k="format" value="${esc(c.format)}" placeholder="{urut}/${esc(c.kode)}/{pt}/{romawi}/{tahun}"></label>
+      <button class="btn ghost" type="button" data-del="${i}" ${counts[c.id] ? `disabled title="Masih ada ${counts[c.id]} catatan"` : ''} aria-label="Hapus kategori ${esc(c.nama)}">Hapus</button>
+    </div>`).join('');
+}
+$('#setCats').addEventListener('input', e => {
+  const box = e.target.closest('[data-i]'); if(!box || !e.target.dataset.k) return;
+  draftCats[+box.dataset.i][e.target.dataset.k] = e.target.value;
+  if(e.target.dataset.k === 'jenis') renderSetCats();
+});
+$('#setCats').addEventListener('click', e => {
+  const d = e.target.closest('[data-del]'); if(!d) return;
+  draftCats.splice(+d.dataset.del, 1); renderSetCats();
+});
+$('#setAdd').addEventListener('click', () => {
+  draftCats.push({id: 'K' + uid(), nama:'Kategori baru', kode:'BARU', jenis:'keluar', format:'{urut}/BARU/{pt}/{romawi}/{tahun}'});
+  renderSetCats();
+  $('#setCats').lastElementChild.querySelector('input').select();
+});
+$('#setForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const err = m => $('#setErr').textContent = m;
+  if(!draftCats.length) return err('Sisakan minimal satu kategori.');
+  const kodes = draftCats.map(c => c.kode.trim().toUpperCase());
+  if(kodes.some(k => !k)) return err('Setiap kategori perlu kode.');
+  if(new Set(kodes).size !== kodes.length) return err('Kode kategori tidak boleh sama.');
+  if(draftCats.some(c => !c.nama.trim())) return err('Setiap kategori perlu nama.');
+  if(draftCats.some(c => c.jenis === 'keluar' && !c.format.includes('{urut}'))) return err('Format nomor surat keluar harus memuat {urut}.');
+  db.settings.nama = $('#sNama').value.trim();
+  db.settings.pt = $('#sPt').value.trim();
+  db.settings.pad = Number($('#sPad').value);
+  db.settings.categories = draftCats.map(c => ({...c, nama:c.nama.trim(), kode:c.kode.trim(), format:c.format.trim()}));
+  save(); $('#dlgSet').close(); render();
+  toast('Pengaturan disimpan. Nomor yang sudah tercatat tidak diubah.');
+});
+$('#btnSettings').addEventListener('click', openSettings);
+$('#setTemplate').addEventListener('click', () => exportXlsx(true));
+$('#setForget').addEventListener('click', async () => {
+  linkedHandle = null; await idb.del('handle').catch(()=>{}); db.sync = {}; save(); updateSyncButton(); renderSyncInfo();
+  toast('File Excel dilepas. Sinkronisasi berikutnya akan meminta file lagi.');
+});
+$('#setWipe').addEventListener('click', () => {
+  if(!db.records.length) return toast('Tidak ada data untuk dihapus.');
+  if(!confirm(`Hapus SEMUA ${db.records.length} catatan di browser ini?\n\nUnduh Excel dulu kalau ingin menyimpan cadangan.`)) return;
+  db.records = []; save(); $('#dlgSet').close(); render(); toast('Semua catatan dihapus.');
+});
+
+/* ---------- Mulai ---------- */
+$('#storageBanner').hidden = storageOk;
+render();
+window.addEventListener('storage', e => { if(e.key === STORE){ db = load(); render(); } });
+})();
+</script>
+</body>
+</html>
