@@ -9,6 +9,16 @@ Buka lewat githack:
 https://raw.githack.com/aleverdy/aleverdy/<cabang>/pencatatan/index.html
 ```
 
+## Tampilan
+
+- **Beranda**: karcis nomor berikutnya untuk tiap jenis surat keluar, ringkasan
+  bulan ini, grafik volume surat per bulan per kategori, daftar surat masuk yang
+  perlu ditindaklanjuti (urut dari tenggat paling mendesak), dan catatan terbaru.
+- Setiap kategori punya warna tetap yang dipakai sama di menu, tabel, dan grafik.
+- Tema terang/gelap mengikuti perangkat, bisa diganti dari tombol di menu.
+- Di HP, menu samping menjadi laci dan tabel berubah menjadi daftar kartu.
+- Tekan `/` untuk langsung mencari.
+
 ## Yang bisa dilakukan
 
 - **Ambil nomor surat keluar/memo**: nomor urut berikutnya dibuat otomatis dari
