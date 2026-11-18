@@ -67,6 +67,12 @@
   .dance .shades{display:inline}
   .dance .eye-open{display:none}
 
+  .gbubble{position:absolute;bottom:calc(11% + 104px);left:0;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:5px 10px;font-weight:bold;font-size:15px;white-space:nowrap;z-index:6;pointer-events:none;opacity:0;transition:opacity .15s}
+  .gbubble.show{opacity:1}
+  .gbubble::after{content:"";position:absolute;left:40px;bottom:-12px;border:8px solid transparent;border-top-color:var(--ink)}
+  .scoreboard{display:inline-block;margin:4px 0;padding:4px 12px;border-radius:10px;background:#3b2a1a;color:#ffd23f;font-weight:bold;font-size:17px;letter-spacing:.5px}
+  .twirl{animation:twirl .7s ease-in-out}
+  @keyframes twirl{0%{transform:rotate(0)}40%{transform:translateY(-10px) rotate(200deg)}100%{transform:rotate(360deg)}}
   .confetti{position:absolute;width:10px;height:14px;top:-20px;z-index:9;animation:fall linear forwards;pointer-events:none}
   @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
   .laugh{position:absolute;font-weight:bold;font-size:26px;color:var(--bad);z-index:9;animation:float 1.6s ease-out forwards;pointer-events:none}
@@ -87,16 +93,18 @@
   </div>
 
   <div id="player"></div>
+  <div class="gbubble" id="gbubble"></div>
 
   <!-- Layar awal -->
   <div class="screen" id="start">
     <div class="card">
       <h1>Kapibara Jeruk 🍊</h1>
       <div id="capyStart"></div>
-      <div class="bubble">Halo Mona! Bantu aku tangkap jeruk ya~</div>
+      <div class="bubble">Halo Mona! Paling juga kalah sih 😏</div>
       <p class="rules">
         👉 Geser jari / mouse, atau pakai ← →<br>
-        🍊 Tangkap <b>15 jeruk</b> dalam <b>40 detik</b><br>
+        🍊 Tangkap <b>25 jeruk</b> dalam <b>35 detik</b><br>
+        🍋 Lemon itu <b>bukan</b> jeruk: −2 poin<br>
         🪨 🐊 Hindari batu & buaya (nyawa cuma 3)
       </p>
       <br><button id="btnStart">Main!</button>
@@ -107,8 +115,9 @@
   <div class="screen hidden" id="lose">
     <div class="card">
       <h1>Yahhh kalah 😝</h1>
+      <div class="scoreboard" id="board">Kapibara 1 – 0 Mona</div>
       <div class="bubble" id="taunt">Wkwkwk</div>
-      <div id="capyLose"></div>
+      <div id="capyLoseWrap"><div id="capyLose"></div></div>
       <p id="loseInfo"></p>
       <button id="btnRetry">Coba lagi deh</button>
     </div>
@@ -221,7 +230,8 @@ function danceMusic(){
 }
 
 // ---------- game ----------
-const TARGET = 15, DURATION = 40, LIVES = 3;
+const TARGET = 25, DURATION = 35, LIVES = 3;
+let losses = 0, wins = 0;
 $('target').textContent = TARGET;
 const game = $('game'), player = $('player');
 let W, H, px, targetX, items, score, lives, timeLeft, running, last, spawnT, raf, keys = {};
@@ -239,6 +249,7 @@ function start(){
   $('hud').classList.remove('hidden');
   clearInterval(danceTimer);
   laughTimers.forEach(clearTimeout); laughTimers = [];
+  clearInterval(tauntLoop); $('gbubble').classList.remove('show');
   document.querySelectorAll('.laugh,.confetti').forEach(e=>e.remove());
   try{ speechSynthesis.cancel(); }catch(e){}
   items && items.forEach(it=>it.el.remove());
@@ -258,15 +269,31 @@ function updHud(){
 function spawn(){
   const r = Math.random();
   const progress = 1 - timeLeft/DURATION;
-  const badChance = .25 + progress*.2;
-  let kind = r < badChance ? (Math.random()<.5?'🪨':'🐊') : (Math.random()<.08?'🍉':'🍊');
+  const badChance = .33 + progress*.27;
+  let kind;
+  if(r < badChance) kind = Math.random()<.5?'🪨':'🐊';
+  else if(r < badChance + .12) kind = '🍋';
+  else kind = Math.random()<.05?'🍉':'🍊';
   const el = document.createElement('div');
   el.className = 'item'; el.textContent = kind;
   game.appendChild(el);
   items.push({el, kind, x: Math.random()*(W-44), y:-50,
-    vy: 150 + Math.random()*90 + progress*170, rot: Math.random()*360, vr:(Math.random()-.5)*200});
+    vy: 200 + Math.random()*120 + progress*240, rot: Math.random()*360, vr:(Math.random()-.5)*200});
 }
 
+const hitTaunts = ["Wkwk ketabrak!","Aduh, matanya di mana? 🙈","Sakit ya? Hihi","Buayanya lapar tuh 🐊","Nyawa tinggal dikit lho~"];
+const lemonTaunts = ["Itu LEMON, bukan jeruk! 🤣","Asem ya? Wkwk","Buta warna ya, Mona? 🍋","Kuning ≠ oranye, hihi"];
+const missTaunts = ["Lewat tuh! 😝","Lambat bangettt","Jeruknya kabur~","Kurang cepet, Mona!","Hoaamm 😴"];
+let gbTimer, gbCool = 0;
+function gsay(list, force){
+  const now = performance.now();
+  if(!force && now < gbCool) return;
+  gbCool = now + 1400;
+  const b = $('gbubble');
+  b.textContent = list[Math.floor(Math.random()*list.length)];
+  b.classList.add('show');
+  clearTimeout(gbTimer); gbTimer = setTimeout(()=>b.classList.remove('show'), 1200);
+}
 function popText(txt, x, y, color){
   const p = document.createElement('div');
   p.className='pop'; p.textContent = txt; p.style.left = x+'px'; p.style.top = y+'px'; p.style.color = color;
@@ -285,10 +312,12 @@ function loop(t){
   targetX = Math.max(-10, Math.min(W-110, targetX));
   px += (targetX - px) * Math.min(1, dt*14);
   setPlayer();
+  const gb = $('gbubble');
+  gb.style.transform = `translateX(${Math.max(4, Math.min(W - gb.offsetWidth - 4, px + 20))}px)`;
 
   // spawn
   spawnT -= dt;
-  if(spawnT <= 0){ spawn(); spawnT = .55 - (1-timeLeft/DURATION)*.25 + Math.random()*.25; }
+  if(spawnT <= 0){ spawn(); spawnT = .42 - (1-timeLeft/DURATION)*.2 + Math.random()*.2; }
 
   // hitbox kapibara
   const pTop = H - H*.11 - 96, pL = px+15, pR = px+115;
@@ -298,7 +327,11 @@ function loop(t){
     it.el.style.transform = `translate(${it.x}px,${it.y}px) rotate(${it.rot}deg)`;
     const cx = it.x+20, cy = it.y+20;
     if(cy > pTop+10 && cy < pTop+90 && cx > pL && cx < pR){
-      if(it.kind==='🍊' || it.kind==='🍉'){
+      if(it.kind==='🍋'){
+        score = Math.max(0, score-2); beep(220,.25,'square',.1);
+        popText('−2 asem!', cx-30, pTop, '#c9a400');
+        gsay(lemonTaunts, true);
+      }else if(it.kind==='🍊' || it.kind==='🍉'){
         const pts = it.kind==='🍉'?3:1;
         score += pts; beep(880+score*20,.08,'triangle',.1);
         popText('+'+pts, cx, pTop, '#ff8a1f');
@@ -307,11 +340,15 @@ function loop(t){
         popText(it.kind==='🐊'?'Aduh digigit!':'Duk!', cx-30, pTop, '#e2483d');
         player.classList.remove('hit'); void player.offsetWidth; player.classList.add('hit');
         if(navigator.vibrate) navigator.vibrate(120);
+        gsay(hitTaunts, true);
       }
       it.el.remove(); items.splice(i,1); updHud();
       continue;
     }
-    if(it.y > H){ it.el.remove(); items.splice(i,1); }
+    if(it.y > H){
+      if(it.kind==='🍊' && Math.random()<.5) gsay(missTaunts);
+      it.el.remove(); items.splice(i,1);
+    }
   }
   updHud();
 
@@ -328,13 +365,21 @@ const taunts = [
   "Ciee kalah sama kapibara 🤭",
   "Tangannya licin ya? Wkwk",
   "Eh eh, jeruknya bukan buat ditonton!",
+  "Main sambil merem ya? 🙈",
+  "Kapibara 1, Mona 0. Eh, nambah terus! 🤣",
+  "Mau aku ajarin? Bayar pakai jeruk ya~",
+  "Udah, nyerah aja. Aku maklum kok 😌",
+  "Hihihi, muka kalahnya lucu deh",
+  "Jeruk segede gitu masa nggak ketangkep 😝",
 ];
+let tauntLoop;
 
 function end(won){
   running = false; cancelAnimationFrame(raf);
   items.forEach(it=>it.el.remove()); items = [];
   $('hud').classList.add('hidden');
   if(won){
+    wins++;
     $('win').classList.remove('hidden');
     $('winInfo').textContent = `🍊 ${score} jeruk, sisa waktu ${Math.ceil(timeLeft)} detik. Mantap!`;
     melody([523,659,784,1047,0,784,1047],.13);
@@ -342,9 +387,25 @@ function end(won){
     say('Selamat Mona, kamu menang!', 1.5, 1);
     confetti();
   }else{
+    losses++;
     $('lose').classList.remove('hidden');
-    const tx = taunts[Math.floor(Math.random()*taunts.length)];
+    $('board').textContent = `Kapibara ${losses} – ${wins} Mona`;
+    const pool = taunts.slice();
+    if(losses >= 2) pool.push(`Udah kalah ${losses} kali lho, Mona 🤭`, `Kalah ke-${losses}! Rekor nih, wkwk`);
+    if(score === 0) pool.push("NOL jeruk?! Serius?? 🤣🤣");
+    else if(score >= TARGET-5) pool.push(`Dikit lagi padahal... TAPI KALAH! Wkwk`);
+    const pick = ()=> pool[Math.floor(Math.random()*pool.length)];
+    const tx = pick();
     $('taunt').textContent = tx;
+    $('btnRetry').textContent = ['Coba lagi (kalau berani)','Balas dendam!','Sekali lagi deh…'][losses%3];
+    const wrap = $('capyLoseWrap');
+    clearInterval(tauntLoop);
+    tauntLoop = setInterval(()=>{
+      $('taunt').textContent = pick();
+      wrap.classList.remove('twirl'); void wrap.offsetWidth; wrap.classList.add('twirl');
+      melody([523,0,523,659],.09,'square');
+      laughs(4);
+    }, 2600);
     $('loseInfo').textContent = lives<=0
       ? `Nyawa habis! Baru dapat ${score} dari ${TARGET} jeruk.`
       : `Waktu habis! Baru dapat ${score} dari ${TARGET} jeruk.`;
@@ -367,9 +428,9 @@ function confetti(){
   }
 }
 let laughTimers = [];
-function laughs(){
-  const words = ['WKWK','HAHA','😝','WEK','HIHI','🤭','LOL'];
-  for(let i=0;i<12;i++){
+function laughs(n=12){
+  const words = ['WKWK','HAHA','😝','WEK','HIHI','🤭','LOL','🤣','CUPU'];
+  for(let i=0;i<n;i++){
     laughTimers.push(setTimeout(()=>{
       const l = document.createElement('div');
       l.className='laugh'; l.textContent = words[i%words.length];
