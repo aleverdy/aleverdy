@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Kapibara Jeruk</title>
+<style>
+  :root{
+    --sky1:#bfe6ff; --sky2:#fff3d6; --grass:#7cc36b; --grass2:#5aa64c;
+    --ink:#3b2a1a; --card:#fffaf0; --accent:#ff8a1f; --bad:#e2483d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:"Trebuchet MS","Comic Sans MS",system-ui,sans-serif;color:var(--ink);background:var(--sky1)}
+  #game{position:fixed;inset:0;background:linear-gradient(var(--sky1),var(--sky2) 70%);touch-action:none;user-select:none}
+  #ground{position:absolute;left:0;right:0;bottom:0;height:14%;background:linear-gradient(var(--grass),var(--grass2));border-top:6px solid #4e9441}
+  .cloud{position:absolute;background:#fff;border-radius:50px;opacity:.85;animation:drift linear infinite}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud::before{width:50%;height:160%;left:15%;top:-70%}
+  .cloud::after{width:35%;height:130%;left:50%;top:-45%}
+  @keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+
+  #hud{position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px;font-weight:bold;font-size:18px;z-index:5}
+  .pill{background:rgba(255,255,255,.85);padding:6px 12px;border-radius:999px;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+
+  #player{position:absolute;bottom:11%;width:120px;height:96px;left:0;will-change:transform;z-index:3}
+  #player.hit{animation:hit .4s}
+  @keyframes hit{0%,100%{filter:none}30%,70%{filter:brightness(1.6) saturate(0)}50%{transform:translateX(var(--x)) rotate(-8deg)}}
+  .item{position:absolute;top:0;left:0;font-size:40px;line-height:1;will-change:transform;z-index:2;pointer-events:none}
+  .pop{position:absolute;font-weight:bold;font-size:22px;pointer-events:none;animation:pop .7s forwards;z-index:4}
+  @keyframes pop{to{transform:translateY(-50px);opacity:0}}
+
+  .screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;z-index:10;background:rgba(255,243,214,.55);backdrop-filter:blur(2px)}
+  .card{background:var(--card);border-radius:24px;padding:20px 18px;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 0 rgba(59,42,26,.18),0 20px 40px rgba(0,0,0,.15);border:3px solid var(--ink)}
+  h1{margin:4px 0 6px;font-size:30px}
+  p{margin:6px 0;line-height:1.4}
+  .big-capy{width:220px;max-width:70vw;height:auto;display:block;margin:6px auto}
+  button{font:inherit;font-weight:bold;font-size:20px;border:3px solid var(--ink);background:var(--accent);color:#fff;padding:12px 26px;border-radius:999px;margin-top:10px;cursor:pointer;box-shadow:0 5px 0 var(--ink);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+  button:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+  .rules{font-size:15px;text-align:left;display:inline-block;margin:4px 0}
+  .hidden{display:none!important}
+
+  .bubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-weight:bold;font-size:20px;margin:6px auto 0;max-width:320px}
+  .bubble::after{content:"";position:absolute;left:50%;bottom:-14px;margin-left:-10px;border:10px solid transparent;border-top-color:var(--ink)}
+  .win-text{font-size:28px;color:var(--accent);text-shadow:0 2px 0 var(--ink);animation:pulse .6s ease-in-out infinite alternate}
+  @keyframes pulse{to{transform:scale(1.08)}}
+
+  /* tari */
+  .dance{animation:dance .5s ease-in-out infinite alternate;transform-origin:50% 90%}
+  @keyframes dance{0%{transform:rotate(-12deg) translateY(0)}50%{transform:rotate(0) translateY(-18px)}100%{transform:rotate(12deg) translateY(0)}}
+  .dance .leg-f{animation:kick .25s ease-in-out infinite alternate;transform-origin:top}
+  .dance .leg-b{animation:kick .25s ease-in-out infinite alternate-reverse;transform-origin:top}
+  @keyframes kick{to{transform:rotate(25deg)}}
+  .dance .yuzu{animation:bob .25s ease-in-out infinite alternate}
+  @keyframes bob{to{transform:translateY(-8px)}}
+
+  /* ledekan */
+  .mock{animation:mock .35s ease-in-out infinite alternate;transform-origin:50% 90%}
+  @keyframes mock{from{transform:translateX(-6px) rotate(-3deg)}to{transform:translateX(6px) rotate(3deg)}}
+  .tongue{display:none}
+  .mock .tongue{display:inline;animation:tongue .3s ease-in-out infinite alternate;transform-origin:top}
+  @keyframes tongue{to{transform:scaleY(1.35)}}
+  .mock .eye-open{display:none}
+  .eye-squint{display:none}
+  .mock .eye-squint{display:inline}
+  .mock .shades{display:none}
+  .shades{display:none}
+  .dance .shades{display:inline}
+  .dance .eye-open{display:none}
+
+  .confetti{position:absolute;width:10px;height:14px;top:-20px;z-index:9;animation:fall linear forwards;pointer-events:none}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  .laugh{position:absolute;font-weight:bold;font-size:26px;color:var(--bad);z-index:9;animation:float 1.6s ease-out forwards;pointer-events:none}
+  @keyframes float{from{opacity:1}to{transform:translateY(-120px) rotate(-15deg);opacity:0}}
+</style>
+</head>
+<body>
+<div id="game">
+  <div class="cloud" style="width:120px;height:36px;top:12%;animation-duration:38s;animation-delay:-10s"></div>
+  <div class="cloud" style="width:90px;height:28px;top:26%;animation-duration:52s;animation-delay:-30s"></div>
+  <div class="cloud" style="width:150px;height:42px;top:40%;animation-duration:64s;animation-delay:-5s"></div>
+  <div id="ground"></div>
+
+  <div id="hud" class="hidden">
+    <span class="pill">🍊 <span id="score">0</span>/<span id="target">15</span></span>
+    <span class="pill" id="lives">❤️❤️❤️</span>
+    <span class="pill">⏱ <span id="time">40</span></span>
+  </div>
+
+  <div id="player"></div>
+
+  <!-- Layar awal -->
+  <div class="screen" id="start">
+    <div class="card">
+      <h1>Kapibara Jeruk 🍊</h1>
+      <div id="capyStart"></div>
+      <div class="bubble">Halo Mona! Bantu aku tangkap jeruk ya~</div>
+      <p class="rules">
+        👉 Geser jari / mouse, atau pakai ← →<br>
+        🍊 Tangkap <b>15 jeruk</b> dalam <b>40 detik</b><br>
+        🪨 🐊 Hindari batu & buaya (nyawa cuma 3)
+      </p>
+      <br><button id="btnStart">Main!</button>
+    </div>
+  </div>
+
+  <!-- Kalah -->
+  <div class="screen hidden" id="lose">
+    <div class="card">
+      <h1>Yahhh kalah 😝</h1>
+      <div class="bubble" id="taunt">Wkwkwk</div>
+      <div id="capyLose"></div>
+      <p id="loseInfo"></p>
+      <button id="btnRetry">Coba lagi deh</button>
+    </div>
+  </div>
+
+  <!-- Menang -->
+  <div class="screen hidden" id="win">
+    <div class="card">
+      <div class="win-text">Selamat Mona,<br>kamu menang! 🎉</div>
+      <div id="capyWin"></div>
+      <div class="bubble">Ayo joget bareng! 💃🕺</div>
+      <p id="winInfo"></p>
+      <button id="btnAgain">Main lagi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- gambar kapibara (SVG) ----------
+function capySVG(cls){
+  return `
+<svg class="${cls||''}" viewBox="0 0 220 176" xmlns="http://www.w3.org/2000/svg">
+  <g class="body-g">
+    <!-- kaki belakang -->
+    <rect class="leg-b" x="40" y="128" width="20" height="34" rx="9" fill="#7a5233"/>
+    <rect class="leg-f" x="140" y="128" width="20" height="34" rx="9" fill="#7a5233"/>
+    <!-- badan -->
+    <ellipse cx="100" cy="112" rx="78" ry="46" fill="#a8744a"/>
+    <ellipse cx="96" cy="124" rx="56" ry="26" fill="#bf8a5c"/>
+    <!-- kaki depan -->
+    <rect class="leg-f" x="62" y="134" width="20" height="32" rx="9" fill="#8c5f3b"/>
+    <rect class="leg-b" x="122" y="134" width="20" height="32" rx="9" fill="#8c5f3b"/>
+    <!-- kepala -->
+    <g class="head">
+      <rect x="132" y="44" width="78" height="72" rx="30" fill="#a8744a"/>
+      <rect x="168" y="62" width="46" height="56" rx="20" fill="#8c5f3b"/>
+      <!-- telinga -->
+      <ellipse cx="146" cy="46" rx="10" ry="8" fill="#7a5233"/>
+      <ellipse cx="146" cy="47" rx="5" ry="4" fill="#5c3c24"/>
+      <!-- mata -->
+      <g class="eye-open">
+        <circle cx="166" cy="70" r="6" fill="#2a1a0e"/>
+        <circle cx="168" cy="68" r="2" fill="#fff"/>
+      </g>
+      <path class="eye-squint" d="M158 72 L166 66 L174 72" stroke="#2a1a0e" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- kacamata (menang) -->
+      <g class="shades">
+        <rect x="152" y="62" width="28" height="16" rx="6" fill="#111"/>
+        <rect x="182" y="62" width="24" height="16" rx="6" fill="#111"/>
+        <rect x="178" y="67" width="6" height="3" fill="#111"/>
+        <rect x="156" y="65" width="8" height="3" rx="1" fill="#fff" opacity=".6"/>
+      </g>
+      <!-- hidung & mulut -->
+      <ellipse cx="200" cy="78" rx="4" ry="3" fill="#2a1a0e"/>
+      <path d="M188 100 Q198 106 208 98" stroke="#2a1a0e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path class="tongue" d="M189 100 Q199 134 210 100 Z" fill="#ff6f91" stroke="#2a1a0e" stroke-width="2"/>
+      <!-- pipi -->
+      <ellipse cx="176" cy="92" rx="7" ry="4" fill="#ff9e9e" opacity=".55"/>
+    </g>
+    <!-- jeruk di kepala -->
+    <g class="yuzu">
+      <circle cx="166" cy="34" r="16" fill="#ffa21f" stroke="#c86c00" stroke-width="2"/>
+      <path d="M166 18 q6 -8 14 -4 q-6 6 -14 4" fill="#4caf50"/>
+      <circle cx="160" cy="29" r="3" fill="#fff" opacity=".6"/>
+    </g>
+  </g>
+</svg>`;
+}
+
+const $ = id => document.getElementById(id);
+$('player').innerHTML = capySVG();
+$('capyStart').innerHTML = capySVG('big-capy');
+$('capyLose').innerHTML = capySVG('big-capy mock');
+$('capyWin').innerHTML = capySVG('big-capy dance');
+
+// ---------- suara ----------
+let actx;
+function beep(freq, dur, type='square', vol=.08){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + dur);
+  }catch(e){}
+}
+function melody(notes, step=.15, type='triangle'){
+  notes.forEach((f,i)=> setTimeout(()=> f && beep(f, step*0.9, type, .1), i*step*1000));
+}
+function say(text, pitch=1.4, rate=1){
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'id-ID'; u.pitch = pitch; u.rate = rate;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+let danceTimer;
+function danceMusic(){
+  const loop = [523,0,659,0,784,659,523,0, 587,0,698,0,880,698,587,0];
+  let i = 0;
+  clearInterval(danceTimer);
+  danceTimer = setInterval(()=>{
+    const f = loop[i++ % loop.length];
+    if(f) beep(f, .12, 'square', .05);
+    if(i % 2) beep(110, .08, 'sine', .12);
+  }, 160);
+}
+
+// ---------- game ----------
+const TARGET = 15, DURATION = 40, LIVES = 3;
+$('target').textContent = TARGET;
+const game = $('game'), player = $('player');
+let W, H, px, targetX, items, score, lives, timeLeft, running, last, spawnT, raf, keys = {};
+
+function resize(){ W = game.clientWidth; H = game.clientHeight; }
+addEventListener('resize', resize); resize();
+
+function setPlayer(){
+  player.style.setProperty('--x', px+'px');
+  player.style.transform = `translateX(${px}px)`;
+}
+
+function start(){
+  ['start','lose','win'].forEach(s=>$(s).classList.add('hidden'));
+  $('hud').classList.remove('hidden');
+  clearInterval(danceTimer);
+  laughTimers.forEach(clearTimeout); laughTimers = [];
+  document.querySelectorAll('.laugh,.confetti').forEach(e=>e.remove());
+  try{ speechSynthesis.cancel(); }catch(e){}
+  items && items.forEach(it=>it.el.remove());
+  items = []; score = 0; lives = LIVES; timeLeft = DURATION; spawnT = 0;
+  px = targetX = W/2 - 60; setPlayer();
+  updHud(); running = true; last = performance.now();
+  beep(660,.1); setTimeout(()=>beep(880,.15),100);
+  cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+}
+
+function updHud(){
+  $('score').textContent = score;
+  $('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(LIVES-lives);
+  $('time').textContent = Math.ceil(timeLeft);
+}
+
+function spawn(){
+  const r = Math.random();
+  const progress = 1 - timeLeft/DURATION;
+  const badChance = .25 + progress*.2;
+  let kind = r < badChance ? (Math.random()<.5?'🪨':'🐊') : (Math.random()<.08?'🍉':'🍊');
+  const el = document.createElement('div');
+  el.className = 'item'; el.textContent = kind;
+  game.appendChild(el);
+  items.push({el, kind, x: Math.random()*(W-44), y:-50,
+    vy: 150 + Math.random()*90 + progress*170, rot: Math.random()*360, vr:(Math.random()-.5)*200});
+}
+
+function popText(txt, x, y, color){
+  const p = document.createElement('div');
+  p.className='pop'; p.textContent = txt; p.style.left = x+'px'; p.style.top = y+'px'; p.style.color = color;
+  game.appendChild(p); setTimeout(()=>p.remove(),700);
+}
+
+function loop(t){
+  if(!running) return;
+  const dt = Math.min(.05, (t-last)/1000); last = t;
+  timeLeft -= dt;
+
+  // gerak
+  const speed = 520;
+  if(keys.ArrowLeft) targetX -= speed*dt;
+  if(keys.ArrowRight) targetX += speed*dt;
+  targetX = Math.max(-10, Math.min(W-110, targetX));
+  px += (targetX - px) * Math.min(1, dt*14);
+  setPlayer();
+
+  // spawn
+  spawnT -= dt;
+  if(spawnT <= 0){ spawn(); spawnT = .55 - (1-timeLeft/DURATION)*.25 + Math.random()*.25; }
+
+  // hitbox kapibara
+  const pTop = H - H*.11 - 96, pL = px+15, pR = px+115;
+  for(let i=items.length-1;i>=0;i--){
+    const it = items[i];
+    it.y += it.vy*dt; it.rot += it.vr*dt;
+    it.el.style.transform = `translate(${it.x}px,${it.y}px) rotate(${it.rot}deg)`;
+    const cx = it.x+20, cy = it.y+20;
+    if(cy > pTop+10 && cy < pTop+90 && cx > pL && cx < pR){
+      if(it.kind==='🍊' || it.kind==='🍉'){
+        const pts = it.kind==='🍉'?3:1;
+        score += pts; beep(880+score*20,.08,'triangle',.1);
+        popText('+'+pts, cx, pTop, '#ff8a1f');
+      }else{
+        lives--; beep(140,.3,'sawtooth',.12);
+        popText(it.kind==='🐊'?'Aduh digigit!':'Duk!', cx-30, pTop, '#e2483d');
+        player.classList.remove('hit'); void player.offsetWidth; player.classList.add('hit');
+        if(navigator.vibrate) navigator.vibrate(120);
+      }
+      it.el.remove(); items.splice(i,1); updHud();
+      continue;
+    }
+    if(it.y > H){ it.el.remove(); items.splice(i,1); }
+  }
+  updHud();
+
+  if(score >= TARGET) return end(true);
+  if(lives <= 0 || timeLeft <= 0) return end(false);
+  raf = requestAnimationFrame(loop);
+}
+
+const taunts = [
+  "Wkwkwk, segitu doang? 😝",
+  "Jeruknya kabur semua, Mona~",
+  "Aku aja yang rebahan bisa lebih jago 😴",
+  "Hahaha, buayanya menang!",
+  "Ciee kalah sama kapibara 🤭",
+  "Tangannya licin ya? Wkwk",
+  "Eh eh, jeruknya bukan buat ditonton!",
+];
+
+function end(won){
+  running = false; cancelAnimationFrame(raf);
+  items.forEach(it=>it.el.remove()); items = [];
+  $('hud').classList.add('hidden');
+  if(won){
+    $('win').classList.remove('hidden');
+    $('winInfo').textContent = `🍊 ${score} jeruk, sisa waktu ${Math.ceil(timeLeft)} detik. Mantap!`;
+    melody([523,659,784,1047,0,784,1047],.13);
+    setTimeout(danceMusic, 1000);
+    say('Selamat Mona, kamu menang!', 1.5, 1);
+    confetti();
+  }else{
+    $('lose').classList.remove('hidden');
+    const tx = taunts[Math.floor(Math.random()*taunts.length)];
+    $('taunt').textContent = tx;
+    $('loseInfo').textContent = lives<=0
+      ? `Nyawa habis! Baru dapat ${score} dari ${TARGET} jeruk.`
+      : `Waktu habis! Baru dapat ${score} dari ${TARGET} jeruk.`;
+    melody([392,370,349,0,330],.22,'sawtooth');
+    say('Wek wek wek! ' + tx.replace(/[^\p{L}\p{N}\s,.!?~]/gu,''), 1.8, 1.1);
+    laughs();
+  }
+}
+
+function confetti(){
+  const colors = ['#ff8a1f','#ffd23f','#3bceac','#ee4266','#540d6e','#4cc9f0'];
+  for(let i=0;i<90;i++){
+    const c = document.createElement('div');
+    c.className='confetti';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = colors[i%colors.length];
+    c.style.animationDuration = (2+Math.random()*2.5)+'s';
+    c.style.animationDelay = (Math.random()*1.5)+'s';
+    game.appendChild(c); setTimeout(()=>c.remove(),6000);
+  }
+}
+let laughTimers = [];
+function laughs(){
+  const words = ['WKWK','HAHA','😝','WEK','HIHI','🤭','LOL'];
+  for(let i=0;i<12;i++){
+    laughTimers.push(setTimeout(()=>{
+      const l = document.createElement('div');
+      l.className='laugh'; l.textContent = words[i%words.length];
+      l.style.left = (10+Math.random()*75)+'vw'; l.style.top = (40+Math.random()*45)+'vh';
+      game.appendChild(l); setTimeout(()=>l.remove(),1700);
+    }, i*220));
+  }
+}
+
+// ---------- kontrol ----------
+function pointer(e){
+  if(!running) return;
+  const x = (e.touches ? e.touches[0].clientX : e.clientX);
+  targetX = x - 60;
+}
+game.addEventListener('pointermove', pointer);
+game.addEventListener('pointerdown', pointer);
+game.addEventListener('touchmove', e=>{pointer(e); e.preventDefault();}, {passive:false});
+addEventListener('keydown', e=>{ keys[e.key]=true; if(e.key.startsWith('Arrow')) e.preventDefault(); });
+addEventListener('keyup', e=>{ keys[e.key]=false; });
+
+$('btnStart').onclick = start;
+$('btnRetry').onclick = start;
+$('btnAgain').onclick = start;
+</script>
+</body>
+</html>
