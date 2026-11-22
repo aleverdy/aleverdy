@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffe4ec">
+<title>Tangkap Kucing Mona</title>
+<style>
+:root{
+  --bg1:#ffe4ec; --bg2:#fff4e0; --ink:#5b3a4a; --soft:#a27a8b;
+  --pink:#ff8fb1; --pink-d:#ef5f8e; --card:#ffffffd9; --line:#f6c9d7;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(circle at 20% 10%,#fff 0,transparent 40%),linear-gradient(160deg,var(--bg1),var(--bg2));
+  background-color:var(--bg1);
+  overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;
+}
+.app{position:relative;max-width:520px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;padding:14px 16px calc(14px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font-size:20px;margin:0;letter-spacing:.3px}
+h1 small{display:block;font-size:12px;font-weight:normal;color:var(--soft)}
+.iconbtn{border:0;background:var(--card);border-radius:50%;width:40px;height:40px;font-size:18px;box-shadow:0 2px 8px #e7a3b955;cursor:pointer}
+.progress{display:flex;gap:6px;justify-content:center;margin:12px 0 6px}
+.paw{width:30px;height:30px;border-radius:50%;background:#ffffff99;display:grid;place-items:center;font-size:16px;opacity:.45;transition:transform .3s,opacity .3s,background .3s}
+.paw.on{opacity:1;background:#fff;transform:scale(1.12)}
+.hint{text-align:center;font-size:14px;color:var(--soft);min-height:20px;margin-bottom:8px}
+.field{position:relative;flex:1;border-radius:26px;background:
+  radial-gradient(circle at 15% 85%,#ffd6e3 0 60px,transparent 61px),
+  radial-gradient(circle at 90% 20%,#fff0c9 0 50px,transparent 51px),
+  #fffaf6cc;border:2px dashed var(--line);overflow:hidden}
+.cat{position:absolute;width:96px;height:96px;border:0;padding:0;background:none;cursor:pointer;
+  animation:pop .35s cubic-bezier(.3,1.6,.5,1) both, bob 1.4s ease-in-out .35s infinite;transform-origin:50% 90%}
+.cat svg{width:100%;height:100%;pointer-events:none;filter:drop-shadow(0 4px 4px #c98aa044)}
+.cat.bye{animation:hide .3s ease-in forwards}
+.cat.caught{animation:caught .45s ease-out forwards}
+@keyframes pop{from{transform:scale(0) translateY(20px)}to{transform:scale(1)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+@keyframes hide{to{transform:scale(0) translateY(20px);opacity:0}}
+@keyframes caught{0%{transform:scale(1)}40%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(0) translateY(-40px);opacity:0}}
+.float{position:absolute;pointer-events:none;font-size:22px;font-weight:bold;color:var(--pink-d);animation:up 1s ease-out forwards}
+@keyframes up{to{transform:translateY(-70px) scale(1.3);opacity:0}}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#ffe4ecee;z-index:5}
+.overlay[hidden]{display:none}
+.card{background:#fff;border-radius:28px;padding:26px 22px;text-align:center;box-shadow:0 10px 30px #e7a3b966;max-width:380px;width:100%;animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
+.card h2{margin:6px 0 8px;font-size:24px}
+.card p{margin:0 0 18px;line-height:1.5;color:var(--soft)}
+.btn{border:0;background:var(--pink);color:#fff;font-size:18px;font-weight:bold;padding:14px 30px;border-radius:999px;cursor:pointer;box-shadow:0 5px 0 var(--pink-d);font-family:inherit}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--pink-d)}
+.bigcat{width:200px;height:200px;margin:-10px auto 0;animation:wiggle 2s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-6px)}}
+.msg{font-size:19px!important;color:var(--ink)!important;font-weight:bold}
+.msg span{color:var(--pink-d)}
+canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+@media (prefers-reduced-motion:reduce){.cat,.bigcat{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Tangkap Kucing 🐾<small>khusus buat Mona</small></h1>
+    <button class="iconbtn" id="sound" aria-label="Suara">🔊</button>
+  </header>
+  <div class="progress" id="progress"></div>
+  <div class="hint" id="hint">Ketuk kucingnya sebelum dia sembunyi ya!</div>
+  <div class="field" id="field"></div>
+
+  <div class="overlay" id="start">
+    <div class="card">
+      <div class="bigcat" id="startCat"></div>
+      <h2>Hai, Mona! 👋</h2>
+      <p>Ada 8 kucing iseng yang lagi main petak umpet.<br>Ketuk mereka satu per satu. Santai aja, nggak ada kalah kok 💕</p>
+      <button class="btn" id="play">Ayo main!</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="win" hidden>
+    <div class="card">
+      <div class="bigcat" id="winCat"></div>
+      <p class="msg">🎉 Selamat! <span>Mona</span> Bad mood berhasil dikalahkan, jangan lupa istirahat &amp; senyum hari ini ya. 😊</p>
+      <button class="btn" id="again">Main lagi</button>
+    </div>
+  </div>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const GOAL = 8;
+const COLORS = [
+  {fur:'#f7b267',dark:'#e08a3c'},  // oranye
+  {fur:'#d9d9d9',dark:'#a8a8a8'},  // abu
+  {fur:'#fff3e6',dark:'#f0c9a0'},  // krem
+  {fur:'#5c5c66',dark:'#3d3d45'},  // hitam
+  {fur:'#f2c6a0',dark:'#c98f63'},  // coklat muda
+];
+const LINES = ['Meong! 💕','Ketangkep! 🐾','Gemesss 😻','Hihi 💗','Pintar! ✨','Purr~ 💞','Yeay! 🌸','Imutnya 🥰'];
+
+function catSVG(c, opts={}){
+  const happy = opts.happy;
+  const eyes = happy
+    ? `<path d="M36 52 q6 -7 12 0" stroke="#3a2530" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+       <path d="M64 52 q6 -7 12 0" stroke="#3a2530" stroke-width="3.5" fill="none" stroke-linecap="round"/>`
+    : `<ellipse cx="42" cy="52" rx="6" ry="7.5" fill="#3a2530"/><ellipse cx="70" cy="52" rx="6" ry="7.5" fill="#3a2530"/>
+       <circle cx="44" cy="49" r="2.4" fill="#fff"/><circle cx="72" cy="49" r="2.4" fill="#fff"/>
+       <circle cx="40" cy="55" r="1.2" fill="#fff"/><circle cx="68" cy="55" r="1.2" fill="#fff"/>`;
+  const heart = opts.heart
+    ? `<path d="M56 108 c-10 -8 -18 -13 -18 -21 a8 8 0 0 1 18 -3 a8 8 0 0 1 18 3 c0 8 -8 13 -18 21z" fill="#ff6f9a" stroke="#fff" stroke-width="2"/>`
+    : '';
+  return `<svg viewBox="0 0 112 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M86 98 q24 -4 18 -26" stroke="${c.dark}" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <ellipse cx="56" cy="96" rx="30" ry="20" fill="${c.fur}"/>
+    <path d="M18 34 L22 6 L44 24 Z" fill="${c.fur}"/><path d="M94 34 L90 6 L68 24 Z" fill="${c.fur}"/>
+    <path d="M23 28 L25 14 L37 24 Z" fill="#ffb3c7"/><path d="M89 28 L87 14 L75 24 Z" fill="#ffb3c7"/>
+    <ellipse cx="56" cy="52" rx="40" ry="34" fill="${c.fur}"/>
+    <path d="M48 20 q8 6 16 0" stroke="${c.dark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M52 26 q4 3 8 0" stroke="${c.dark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${eyes}
+    <ellipse cx="30" cy="64" rx="7" ry="4.5" fill="#ff9fbd" opacity=".7"/><ellipse cx="82" cy="64" rx="7" ry="4.5" fill="#ff9fbd" opacity=".7"/>
+    <path d="M53 60 h6 l-3 3.5z" fill="#ff7a9e"/>
+    <path d="M56 63.5 q-3 5 -7 2 M56 63.5 q3 5 7 2" stroke="#3a2530" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M14 58 h14 M14 65 l14 -3 M98 58 h-14 M98 65 l-14 -3" stroke="${c.dark}" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="42" cy="110" rx="9" ry="6" fill="${c.fur}" stroke="${c.dark}" stroke-width="1.2"/>
+    <ellipse cx="70" cy="110" rx="9" ry="6" fill="${c.fur}" stroke="${c.dark}" stroke-width="1.2"/>
+    ${heart}
+  </svg>`;
+}
+
+const field = document.getElementById('field');
+const progress = document.getElementById('progress');
+const hint = document.getElementById('hint');
+let caught = 0, running = false, spawnTimer = null, soundOn = true, audio;
+
+document.getElementById('startCat').innerHTML = catSVG(COLORS[0]);
+document.getElementById('winCat').innerHTML = catSVG({fur:'#fff3e6',dark:'#f0b98f'}, {happy:true, heart:true});
+
+function drawProgress(){
+  progress.innerHTML = '';
+  for(let i=0;i<GOAL;i++){
+    const d = document.createElement('div');
+    d.className = 'paw' + (i<caught ? ' on' : '');
+    d.textContent = i<caught ? '😺' : '🐾';
+    progress.appendChild(d);
+  }
+}
+
+function meow(){
+  if(!soundOn) return;
+  try{
+    audio = audio || new (window.AudioContext||window.webkitAudioContext)();
+    const t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(700,t);
+    o.frequency.exponentialRampToValueAtTime(1100,t+0.12);
+    o.frequency.exponentialRampToValueAtTime(600,t+0.35);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.18,t+0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);
+    o.connect(g).connect(audio.destination); o.start(t); o.stop(t+0.42);
+  }catch(e){}
+}
+
+function spawn(){
+  if(!running) return;
+  const W = field.clientWidth, H = field.clientHeight, S = 96;
+  const el = document.createElement('button');
+  el.className = 'cat';
+  el.setAttribute('aria-label','Kucing');
+  el.style.left = Math.random()*(W-S) + 'px';
+  el.style.top  = Math.random()*(H-S) + 'px';
+  el.innerHTML = catSVG(COLORS[Math.floor(Math.random()*COLORS.length)]);
+  // makin lama kucingnya makin lama nongol: dibuat gampang
+  const stay = 2600 + Math.random()*900;
+  const away = setTimeout(()=>{ el.classList.add('bye'); setTimeout(()=>el.remove(),300); }, stay);
+  el.addEventListener('pointerdown', e=>{
+    if(el.dataset.done) return;
+    el.dataset.done = 1; clearTimeout(away);
+    catchCat(el, e);
+  });
+  field.appendChild(el);
+  spawnTimer = setTimeout(spawn, 900 + Math.random()*500);
+}
+
+function catchCat(el, e){
+  meow();
+  el.classList.add('caught');
+  setTimeout(()=>el.remove(),450);
+  const r = field.getBoundingClientRect();
+  const f = document.createElement('div');
+  f.className = 'float';
+  f.textContent = LINES[caught % LINES.length];
+  f.style.left = (e.clientX - r.left - 30) + 'px';
+  f.style.top  = (e.clientY - r.top - 20) + 'px';
+  field.appendChild(f); setTimeout(()=>f.remove(),1000);
+  caught++; drawProgress();
+  hint.textContent = caught < GOAL ? `Tinggal ${GOAL-caught} kucing lagi 💕` : 'Semua ketangkep! 🎉';
+  if(caught >= GOAL) win();
+}
+
+function start(){
+  caught = 0; running = true; field.innerHTML = '';
+  drawProgress(); hint.textContent = 'Ketuk kucingnya sebelum dia sembunyi ya!';
+  document.getElementById('start').hidden = true;
+  document.getElementById('win').hidden = true;
+  clearTimeout(spawnTimer); setTimeout(spawn, 300);
+}
+
+function win(){
+  running = false; clearTimeout(spawnTimer);
+  setTimeout(()=>{
+    field.innerHTML = '';
+    document.getElementById('win').hidden = false;
+    confetti();
+  }, 600);
+}
+
+function confetti(){
+  const cv = document.getElementById('confetti'), cx = cv.getContext('2d');
+  cv.width = innerWidth*devicePixelRatio; cv.height = innerHeight*devicePixelRatio;
+  cx.scale(devicePixelRatio, devicePixelRatio);
+  const items = ['💗','🌸','🐾','✨','💕','⭐'];
+  const ps = Array.from({length:60},()=>({
+    x:Math.random()*innerWidth, y:-20-Math.random()*innerHeight*.6,
+    v:1.5+Math.random()*2.5, s:14+Math.random()*14, r:Math.random()*6, dr:(Math.random()-.5)*.1,
+    t:items[Math.floor(Math.random()*items.length)], sw:Math.random()*Math.PI*2
+  }));
+  let frame = 0;
+  (function tick(){
+    cx.clearRect(0,0,innerWidth,innerHeight);
+    ps.forEach(p=>{
+      p.y += p.v; p.sw += .04; p.r += p.dr;
+      cx.save(); cx.translate(p.x + Math.sin(p.sw)*20, p.y); cx.rotate(p.r);
+      cx.font = p.s+'px serif'; cx.fillText(p.t,0,0); cx.restore();
+    });
+    if(++frame < 360) requestAnimationFrame(tick); else cx.clearRect(0,0,innerWidth,innerHeight);
+  })();
+}
+
+document.getElementById('play').onclick = start;
+document.getElementById('again').onclick = start;
+document.getElementById('sound').onclick = e=>{
+  soundOn = !soundOn; e.currentTarget.textContent = soundOn ? '🔊' : '🔇';
+};
+drawProgress();
+</script>
+</body>
+</html>
