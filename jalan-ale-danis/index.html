@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misi Museum Ale & Danis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7ec; --ink:#2b2140; --muted:#6d6283; --card:#ffffff;
+  --ale:#3d7bff; --danis:#ff5fa2; --sun:#ffc23d; --mint:#2ec4a6;
+  --line:#ffd9b8; --shadow:0 6px 0 #2b214022;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 60px}
+
+/* HERO */
+.hero{text-align:center;padding:28px 0 8px;position:relative}
+.ticket{display:inline-block;background:var(--sun);font-family:"Baloo 2";font-weight:800;padding:4px 14px;border-radius:999px;transform:rotate(-3deg);box-shadow:var(--shadow);font-size:14px;letter-spacing:.5px}
+h1{font-family:"Baloo 2";font-size:clamp(34px,8vw,56px);line-height:1;margin:14px 0 6px}
+h1 .a{color:var(--ale)} h1 .d{color:var(--danis)}
+.sub{color:var(--muted);margin:0 auto;max-width:520px}
+
+/* CHARACTERS */
+.duo{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin:18px 0 4px}
+.char{display:flex;flex-direction:column;align-items:center;cursor:pointer;user-select:none}
+.char svg{width:140px;height:auto;animation:bob 2.4s ease-in-out infinite;transform-origin:bottom center}
+.char.d svg{animation-delay:-1.2s}
+.char:active svg{transform:scale(.95)}
+.name{font-family:"Baloo 2";font-weight:800;font-size:20px;margin-top:-4px}
+.char.a .name{color:var(--ale)} .char.d .name{color:var(--danis)}
+.heart{font-size:30px;animation:pulse 1.2s ease-in-out infinite;margin-bottom:60px}
+.bubble{min-height:46px;background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:8px 14px;max-width:420px;margin:10px auto 0;font-weight:700;position:relative;box-shadow:var(--shadow)}
+.bubble:before{content:"";position:absolute;top:-12px;left:50%;margin-left:-10px;border:10px solid transparent;border-bottom-color:var(--ink);border-top:0}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(1.5deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+
+/* PROFILE CARDS */
+.profiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0}
+.prof{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+.prof h3{font-family:"Baloo 2";margin:0 0 4px;font-size:20px}
+.prof.a h3{color:var(--ale)} .prof.d h3{color:var(--danis)}
+.prof ul{margin:0;padding-left:18px;font-size:14px}
+.prof li{margin:2px 0}
+@media (max-width:520px){.profiles{grid-template-columns:1fr}.char svg{width:115px}}
+
+/* TIMELINE */
+h2{font-family:"Baloo 2";font-size:28px;margin:34px 0 6px;text-align:center}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0}
+.bar{height:16px;border:3px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,var(--mint) 0 10px,#5be0c5 10px 20px);transition:width .4s}
+.ptxt{font-size:13px;font-weight:800;text-align:center;margin-top:4px}
+
+.tl{position:relative;margin-top:14px;padding-left:34px}
+.tl:before{content:"";position:absolute;left:12px;top:6px;bottom:6px;border-left:4px dashed var(--line)}
+.stop{position:relative;background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:14px 14px 12px;margin:0 0 16px;box-shadow:var(--shadow);transition:transform .15s,opacity .3s}
+.stop:hover{transform:translateY(-2px)}
+.stop .dot{position:absolute;left:-34px;top:16px;width:28px;height:28px;border-radius:50%;background:var(--sun);border:3px solid var(--ink);display:grid;place-items:center;font-size:14px}
+.stop.done{opacity:.6}
+.stop.done .dot{background:var(--mint)}
+.stop.done .ttl{text-decoration:line-through;text-decoration-thickness:3px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.time{font-family:"Baloo 2";font-weight:800;background:var(--ink);color:#fff;border-radius:10px;padding:0 10px;font-size:17px}
+.ttl{font-family:"Baloo 2";font-weight:800;font-size:20px;margin:0;flex:1;min-width:180px}
+.emo{font-size:26px}
+.chat{margin:10px 0 0;display:grid;gap:6px}
+.msg{font-size:14.5px;padding:6px 12px;border-radius:14px;max-width:92%;width:fit-content}
+.msg b{font-family:"Baloo 2"}
+.msg.a{background:#e6eeff;border:2px solid var(--ale)}
+.msg.d{background:#ffe6f1;border:2px solid var(--danis);margin-left:auto}
+.msg.n{background:#fff4d6;border:2px dashed #e0a800;font-style:italic;max-width:100%}
+.tip{font-size:13px;color:var(--muted);margin-top:8px}
+.check{margin-top:10px;font-family:"Baloo 2";font-weight:700;border:3px solid var(--ink);background:var(--sun);border-radius:12px;padding:3px 12px;cursor:pointer;font-size:15px;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
+.check:active{transform:translateY(3px);box-shadow:none}
+.stop.done .check{background:var(--mint)}
+
+/* BINGO */
+.bingo{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.cell{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:10px 6px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:background .2s}
+.cell span{font-size:24px}
+.cell.on{background:var(--danis);color:#fff}
+.bmsg{text-align:center;font-weight:800;margin-top:10px;min-height:24px}
+
+/* BAWAAN */
+.pack{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);margin-top:12px}
+.pack label{display:flex;gap:10px;align-items:center;padding:4px 0;cursor:pointer;font-weight:600}
+.pack input{width:20px;height:20px;accent-color:var(--mint)}
+
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:36px}
+.confetti{position:fixed;top:-20px;font-size:22px;pointer-events:none;z-index:50;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section class="hero">
+  <span class="ticket">🎟️ TIKET PETUALANGAN · 1 HARI</span>
+  <h1><span class="a">Ale</span> &amp; <span class="d">Danis</span><br>Misi Museum</h1>
+  <p class="sub">Dari Lebak Bulus ke Museum Nasional: naik busway, MRT, lihat arca, nonton immersive, terus pulang. Kalau ada drama di jalan, itu bonus.</p>
+
+  <div class="duo">
+    <div class="char a" id="ale" title="Klik Ale">
+      <!-- ALE -->
+      <svg viewBox="0 0 140 190" aria-label="Karakter Ale">
+        <ellipse cx="70" cy="184" rx="40" ry="5" fill="#2b214022"/>
+        <rect x="52" y="140" width="14" height="40" rx="6" fill="#2b2140"/>
+        <rect x="74" y="140" width="14" height="40" rx="6" fill="#2b2140"/>
+        <rect x="46" y="176" width="22" height="9" rx="4" fill="#fff" stroke="#2b2140" stroke-width="3"/>
+        <rect x="72" y="176" width="22" height="9" rx="4" fill="#fff" stroke="#2b2140" stroke-width="3"/>
+        <path d="M38 100 q32-14 64 0 v46 h-64z" fill="#3d7bff" stroke="#2b2140" stroke-width="3"/>
+        <text x="70" y="132" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="16" fill="#fff">A</text>
+        <rect x="24" y="104" width="14" height="34" rx="7" fill="#f2c39b" stroke="#2b2140" stroke-width="3" transform="rotate(12 31 104)"/>
+        <rect x="102" y="104" width="14" height="34" rx="7" fill="#f2c39b" stroke="#2b2140" stroke-width="3" transform="rotate(-30 109 104)"/>
+        <circle cx="70" cy="62" r="36" fill="#f2c39b" stroke="#2b2140" stroke-width="3"/>
+        <path d="M34 58 q2-34 36-36 q34 2 36 30 q-14-10-22-6 q-8-12-20-6 q-14-8-30 18z" fill="#2b2140"/>
+        <rect x="46" y="56" width="20" height="14" rx="5" fill="#fff" stroke="#2b2140" stroke-width="3"/>
+        <rect x="74" y="56" width="20" height="14" rx="5" fill="#fff" stroke="#2b2140" stroke-width="3"/>
+        <line x1="66" y1="62" x2="74" y2="62" stroke="#2b2140" stroke-width="3"/>
+        <circle cx="57" cy="63" r="3" fill="#2b2140"/><circle cx="85" cy="63" r="3" fill="#2b2140"/>
+        <path d="M58 82 q12 10 24 0" fill="none" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="46" cy="76" r="4" fill="#ff9a8a" opacity=".6"/><circle cx="94" cy="76" r="4" fill="#ff9a8a" opacity=".6"/>
+      </svg>
+      <div class="name">Ale</div>
+    </div>
+    <div class="heart">💗</div>
+    <div class="char d" id="danis" title="Klik Danis">
+      <!-- DANIS -->
+      <svg viewBox="0 0 140 190" aria-label="Karakter Danis">
+        <ellipse cx="70" cy="184" rx="40" ry="5" fill="#2b214022"/>
+        <rect x="56" y="146" width="11" height="34" rx="5" fill="#f5cfa9" stroke="#2b2140" stroke-width="3"/>
+        <rect x="73" y="146" width="11" height="34" rx="5" fill="#f5cfa9" stroke="#2b2140" stroke-width="3"/>
+        <rect x="50" y="176" width="20" height="9" rx="4" fill="#ff5fa2" stroke="#2b2140" stroke-width="3"/>
+        <rect x="70" y="176" width="20" height="9" rx="4" fill="#ff5fa2" stroke="#2b2140" stroke-width="3"/>
+        <path d="M30 26 q40-24 80 0 q16 40 6 92 h-92 q-10-52 6-92z" fill="#5a3420" stroke="#2b2140" stroke-width="3"/>
+        <path d="M44 100 q26-12 52 0 l12 52 h-76z" fill="#ff5fa2" stroke="#2b2140" stroke-width="3"/>
+        <circle cx="62" cy="122" r="3" fill="#fff"/><circle cx="78" cy="132" r="3" fill="#fff"/><circle cx="66" cy="140" r="3" fill="#fff"/>
+        <rect x="26" y="102" width="13" height="32" rx="6" fill="#f5cfa9" stroke="#2b2140" stroke-width="3" transform="rotate(30 32 102)"/>
+        <rect x="101" y="102" width="13" height="32" rx="6" fill="#f5cfa9" stroke="#2b2140" stroke-width="3" transform="rotate(-12 108 102)"/>
+        <circle cx="70" cy="62" r="34" fill="#f5cfa9" stroke="#2b2140" stroke-width="3"/>
+        <path d="M36 56 q6-30 34-30 q30 0 34 30 q-20-4-34-18 q-14 14-34 18z" fill="#5a3420"/>
+        <circle cx="104" cy="40" r="9" fill="#ffc23d" stroke="#2b2140" stroke-width="3"/>
+        <circle cx="58" cy="64" r="4" fill="#2b2140"/><circle cx="82" cy="64" r="4" fill="#2b2140"/>
+        <path d="M52 58 l-4 -3 M88 58 l4 -3" stroke="#2b2140" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M62 80 q8 7 16 0" fill="#ff7a7a" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="48" cy="74" r="5" fill="#ff8fb5" opacity=".7"/><circle cx="92" cy="74" r="5" fill="#ff8fb5" opacity=".7"/>
+      </svg>
+      <div class="name">Danis</div>
+    </div>
+  </div>
+  <div class="bubble" id="bubble">Klik Ale atau Danis biar mereka ngomong 👆</div>
+</section>
+
+<section class="profiles">
+  <div class="prof a">
+    <h3>🧢 Ale</h3>
+    <ul>
+      <li><b>Peran:</b> Pemandu tur, merangkap pembawa tas</li>
+      <li><b>Keahlian:</b> Hafal rute MRT, nggak hafal nama arca</li>
+      <li><b>Kelemahan:</b> Sok tenang padahal panik kalau saldo kartu tinggal 2 ribu</li>
+      <li><b>Senjata rahasia:</b> Power bank & jokes bapak-bapak</li>
+    </ul>
+  </div>
+  <div class="prof d">
+    <h3>🎀 Danis</h3>
+    <ul>
+      <li><b>Peran:</b> Fotografer resmi, juri pose Ale</li>
+      <li><b>Keahlian:</b> Nemu angle foto bagus di mana aja</li>
+      <li><b>Kelemahan:</b> Laper tiap 2 jam</li>
+      <li><b>Senjata rahasia:</b> Bilang "terserah" lalu nolak semua pilihan</li>
+    </ul>
+  </div>
+</section>
+
+<h2>🗺️ Jadwal Misi</h2>
+<div class="progress">
+  <div class="bar"><i id="pbar"></i></div>
+  <div class="ptxt" id="ptxt">0 / 10 misi selesai. Belum berangkat nih.</div>
+</div>
+
+<div class="tl" id="tl"></div>
+
+<h2>🎯 Bingo Museum</h2>
+<p class="sub" style="text-align:center">Centang kalau kejadian. Tiga sejajar, Ale yang traktir es krim. 🍦</p>
+<div class="bingo" id="bingo"></div>
+<div class="bmsg" id="bmsg"></div>
+
+<h2>🎒 Jangan Lupa Bawa</h2>
+<div class="pack" id="pack"></div>
+
+<footer>Dibuat buat Ale &amp; Danis 💙💗 · Jadwal bisa molor, yang penting nggak bete.</footer>
+</div>
+
+<script>
+const stops = [
+  {t:"10.00", e:"🚏", ttl:"Ketemuan di Halte Busway Lebak Bulus",
+   chat:[["a","Aku udah di halte, pakai baju biru biar gampang dicari."],["d","Aku masih di ojol, 5 menit lagi. Beneran 5 menit."],["n","Ale sudah ngecek jam 4 kali padahal baru 3 menit."]],
+   tip:"Tentuin titik ketemu yang jelas, misal pintu masuk halte, biar nggak saling nyari."},
+  {t:"10.15", e:"🚇", ttl:"Berangkat ke MRT, arah Bundaran HI",
+   chat:[["d","Duduk atau berdiri?"],["a","Berdiri aja. Biar keliatan kuat."],["n","Kereta ngerem, Ale nyaris pegangan ke bapak-bapak."]],
+   tip:"Cek saldo kartu (KMT/e-money) sebelum tap. Dari Lebak Bulus sampai Bundaran HI kurang lebih 30 menit."},
+  {t:"10.45", e:"🏙️", ttl:"Sampai di MRT Bundaran HI",
+   chat:[["d","Foto dulu di depan Bundaran HI!"],["a","Siap, mode fotografer dimulai. 37 foto, 1 dipakai."]],
+   tip:"Ini spot foto pertama yang paling ikonik, jangan dilewatin."},
+  {t:"10.50", e:"🚌", ttl:"Naik busway ke Museum Nasional",
+   chat:[["a","Dari sini tinggal sebentar kok."],["d","Kamu bilang gitu juga waktu itu, ujungnya nyasar 40 menit."],["a","...itu masa lalu."]],
+   tip:"Ambil koridor 1 arah Kota, turun di halte terdekat Museum Nasional / Monas."},
+  {t:"11.00", e:"🏛️", ttl:"Sampai di Museum Nasional",
+   chat:[["d","Wah gedungnya bagus banget."],["a","Kayak aku, kuno tapi berkelas."],["n","Danis pura-pura nggak denger."]],
+   tip:"Cari patung gajah di depan buat foto wajib."},
+  {t:"11.10", e:"🎟️", ttl:"Beli tiket",
+   chat:[["a","Biar aku yang bayar."],["d","Ih, gentleman. Tumben."],["n","Ale senyum sambil diam-diam ngecek saldo."]],
+   tip:"Kalau bisa beli online dulu dari rumah, biar nggak antre."},
+  {t:"11.20", e:"🗿", ttl:"Masuk ke museum dan keliling",
+   chat:[["d","Arca ini umurnya ribuan tahun loh."],["a","Pantes mirip aku jam 6 pagi."],["d","Fokus, Ale."]],
+   tip:"Ada waktu sekitar 70 menit. Pilih 2–3 ruangan favorit daripada lari-lari ke semua."},
+  {t:"12.30", e:"🍜", ttl:"Makan siang",
+   chat:[["a","Mau makan apa?"],["d","Terserah."],["a","Bakso?"],["d","Jangan."],["n","Proses negosiasi makan berlangsung 12 menit."]],
+   tip:"Waktunya cuma 30 menit. Tentuin tempat makan dari sekarang, jangan pas laper."},
+  {t:"13.00", e:"🌌", ttl:"Nonton Immersive",
+   chat:[["d","Wah, kayak masuk ke dunia lain!"],["a","Kalau aku takut, boleh pegangan?"],["d","Ini bukan film horor, Ale."]],
+   tip:"Cek jam tayang dan tiketnya pas beli tiket masuk, kadang dijual terpisah."},
+  {t:"15.00", e:"🏠", ttl:"Siap-siap pulang",
+   chat:[["d","Hari ini seru juga ya."],["a","Episode 2 kapan?"],["n","To be continued..."]],
+   tip:"Kabarin kalau udah sampai rumah, ya. Penting ini."}
+];
+
+const tl = document.getElementById("tl");
+let done = new Set();
+try{ done = new Set(JSON.parse(localStorage.getItem("ad-done")||"[]")); }catch(e){}
+
+stops.forEach((s,i)=>{
+  const el = document.createElement("div");
+  el.className = "stop" + (done.has(i)?" done":"");
+  el.innerHTML = `<div class="dot">${i+1}</div>
+    <div class="row"><span class="time">${s.t}</span><h3 class="ttl">${s.ttl}</h3><span class="emo">${s.e}</span></div>
+    <div class="chat">${s.chat.map(([w,m])=>`<div class="msg ${w}">${w==="a"?"<b>Ale:</b> ":w==="d"?"<b>Danis:</b> ":"🎬 "}${m}</div>`).join("")}</div>
+    <div class="tip">💡 ${s.tip}</div>
+    <button class="check">${done.has(i)?"✅ Beres!":"Tandai beres"}</button>`;
+  el.querySelector(".check").onclick = ()=>{
+    if(done.has(i)) done.delete(i); else { done.add(i); boom(6); }
+    el.classList.toggle("done", done.has(i));
+    el.querySelector(".check").textContent = done.has(i)?"✅ Beres!":"Tandai beres";
+    save(); prog();
+  };
+  tl.appendChild(el);
+});
+
+function save(){ try{ localStorage.setItem("ad-done", JSON.stringify([...done])); }catch(e){} }
+function prog(){
+  const n = done.size, tot = stops.length;
+  document.getElementById("pbar").style.width = (n/tot*100)+"%";
+  const lines = ["Belum berangkat nih.","Petualangan dimulai!","Udah jalan, mantap.","Udah sepertiga jalan.","Lancar jaya.","Udah setengah jalan!","Kaki mulai pegel.","Dikit lagi!","Hampir beres!","Satu lagi, semangat!","MISI SELESAI! 🎉"];
+  document.getElementById("ptxt").textContent = `${n} / ${tot} misi selesai. ${lines[n]}`;
+  if(n===tot) boom(40);
+}
+prog();
+
+/* Character quotes */
+const quotes = {
+  ale:["Tenang, rutenya udah aku hafalin. Kayaknya.","Danis, kamu mau aku fotoin? Aku udah latihan.","Kalau capek bilang ya, nanti aku... juga capek.","Saldo aman. Insya Allah.","Aku tahu fakta sejarah! ...lupa lagi."],
+  danis:["Ale, fotonya ulang ya, mataku merem.","Laper. Bukan kode. Beneran laper.","Terserah. Tapi jangan yang itu.","Museumnya keren, kamu lumayan lah.","Jangan jalan cepet-cepet dong!"]
+};
+const bubble = document.getElementById("bubble");
+function say(who){
+  const q = quotes[who][Math.floor(Math.random()*quotes[who].length)];
+  bubble.innerHTML = `<b style="color:var(--${who==="ale"?"ale":"danis"})">${who==="ale"?"Ale":"Danis"}:</b> ${q}`;
+}
+document.getElementById("ale").onclick = ()=>say("ale");
+document.getElementById("danis").onclick = ()=>say("danis");
+
+/* Bingo */
+const bingo = [
+  ["📸","Danis minta foto ulang"],["🗺️","Ale salah belok"],["😂","Ketawa gara-gara hal receh"],
+  ["🐘","Foto di patung gajah"],["🍜","Debat mau makan apa"],["🤳","Selfie berdua"],
+  ["🔋","Baterai HP tinggal 20%"],["🥵","Bilang \"panas banget\""],["🫣","Ale pura-pura ngerti sejarah"]
+];
+const bWrap = document.getElementById("bingo");
+let bOn = new Set();
+try{ bOn = new Set(JSON.parse(localStorage.getItem("ad-bingo")||"[]")); }catch(e){}
+bingo.forEach(([e,t],i)=>{
+  const c = document.createElement("div");
+  c.className = "cell"+(bOn.has(i)?" on":"");
+  c.innerHTML = `<span>${e}</span>${t}`;
+  c.onclick = ()=>{ bOn.has(i)?bOn.delete(i):bOn.add(i); c.classList.toggle("on"); try{localStorage.setItem("ad-bingo",JSON.stringify([...bOn]))}catch(e){} checkBingo(); };
+  bWrap.appendChild(c);
+});
+function checkBingo(){
+  const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  const win = L.some(l=>l.every(x=>bOn.has(x)));
+  document.getElementById("bmsg").textContent = win ? "🎉 BINGO! Ale wajib traktir es krim!" : (bOn.size? `${bOn.size} kejadian tercentang...` : "");
+  if(win) boom(25);
+}
+checkBingo();
+
+/* Packing */
+const items = ["Kartu e-money / KMT, saldonya cukup","HP + power bank","Botol minum","Uang tunai buat jaga-jaga","Payung lipat (Jakarta suka tiba-tiba hujan)","Sepatu yang enak buat jalan","Mood bagus 😄"];
+const pack = document.getElementById("pack");
+let pOn = new Set();
+try{ pOn = new Set(JSON.parse(localStorage.getItem("ad-pack")||"[]")); }catch(e){}
+items.forEach((t,i)=>{
+  const l = document.createElement("label");
+  l.innerHTML = `<input type="checkbox" ${pOn.has(i)?"checked":""}> ${t}`;
+  l.querySelector("input").onchange = ev=>{ ev.target.checked?pOn.add(i):pOn.delete(i); try{localStorage.setItem("ad-pack",JSON.stringify([...pOn]))}catch(e){} };
+  pack.appendChild(l);
+});
+
+/* Confetti */
+function boom(n){
+  const em = ["💙","💗","✨","🎉","⭐","🎈"];
+  for(let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className="confetti";
+    s.textContent = em[Math.floor(Math.random()*em.length)];
+    s.style.left = Math.random()*100+"vw";
+    s.style.animationDuration = (1.8+Math.random()*1.8)+"s";
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),3800);
+  }
+}
+</script>
+</body>
+</html>
