@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tes Gaya Kelekatan</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#22201c;--muted:#6b665e;--line:#e4ded4;--accent:#1f8a8a;--accent-soft:#dff1f0;--a:#d9822b;--b:#2f8f5b;--c:#4a6fb3}
+@media (prefers-color-scheme:dark){:root{--bg:#161513;--card:#201f1c;--ink:#efebe4;--muted:#a39d93;--line:#34312c;--accent:#4cc2c2;--accent-soft:#1d3434;--a:#f0a35a;--b:#5cc08a;--c:#86a6e6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 120px}
+h1{font-size:1.6rem;margin:.2em 0 .1em}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}
+label.name{display:block;font-weight:600;margin-bottom:6px}
+input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.page{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:26px 4px 8px}
+.q{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:8px;cursor:pointer;transition:background .15s,border-color .15s}
+.q:hover{border-color:var(--accent)}
+.q input{appearance:none;flex:0 0 24px;width:24px;height:24px;margin-top:1px;border:2px solid var(--muted);border-radius:7px;display:grid;place-content:center;cursor:pointer}
+.q input:checked{background:var(--accent);border-color:var(--accent)}
+.q input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.q.on{background:var(--accent-soft);border-color:var(--accent)}
+.num{color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.6em}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px}
+.bar .in{max-width:680px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;background:var(--accent);color:#fff}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.count{color:var(--muted);font-size:.9rem}
+#result{display:none}
+.res-row{margin:12px 0}
+.res-head{display:flex;justify-content:space-between;font-weight:600}
+.track{height:12px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.fill{height:100%;border-radius:6px;width:0;transition:width .6s}
+.dom{font-size:1.25rem;margin:4px 0 6px}
+.desc{color:var(--muted);margin:6px 0 0}
+.note{font-size:.85rem;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Apa Attachment Style-ku?</h1>
+  <p class="lead">Centang setiap pernyataan yang <b>benar</b> menggambarkan dirimu dalam hubungan. Biarkan kosong jika tidak sesuai. Tidak ada jawaban benar atau salah.</p>
+
+  <div class="card">
+    <label class="name" for="nama">Nama (opsional)</label>
+    <input type="text" id="nama" placeholder="Misal: Rina">
+  </div>
+
+  <form id="quiz"></form>
+
+  <div class="card" id="result">
+    <div class="note">Hasil<span id="resName"></span></div>
+    <div class="dom" id="dominant"></div>
+    <div id="bars"></div>
+    <p class="desc" id="domDesc"></p>
+    <div class="actions">
+      <button type="button" id="share">Kirim hasil via WhatsApp</button>
+      <button type="button" class="ghost" id="copy">Salin hasil</button>
+      <button type="button" class="ghost" id="reset">Ulangi</button>
+    </div>
+    <p class="note" style="margin-top:16px">Kunci penilaian: semakin banyak pernyataan yang dicentang dalam satu kategori, semakin kuat karakteristik gaya kelekatan tersebut. Kategori A = <i>anxious</i>, B = <i>secure</i>, C = <i>avoidant</i>.<br>*Diadaptasi dari Fraley, Waller, dan Brennan's (2000) Kuesioner ECR-R. Ini alat refleksi diri, bukan diagnosis.</p>
+  </div>
+</div>
+
+<div class="bar"><div class="in">
+  <span class="count" id="count">0 dari 42 dicentang</span>
+  <button type="button" id="submit">Lihat hasil</button>
+</div></div>
+
+<script>
+// Urutan dan kategori sesuai buku, hlm. 43–47.
+const PAGES = [
+ [43, [
+  ["A","Sering kali aku khawatir pasanganku akan berhenti mencintaiku."],
+  ["B","Mudah bagiku untuk menunjukkan kasih sayang pada pasangan."],
+  ["A","Aku khawatir setelah seseorang mengenal diriku yang sebenarnya, dia tak akan menyukaiku."],
+  ["C","Aku merasa diriku cepat bangkit lagi setelah putus hubungan. Aneh rasanya mengingat aku bisa melupakan seseorang secepat itu."],
+  ["A","Saat tidak menjalin hubungan, bisa dibilang aku merasa cemas dan hampa."],
+  ["C","Aku kesulitan untuk memberikan dukungan emosional pada pasangan saat dia merasa sedih."]]],
+ [44, [
+  ["A","Saat pasanganku pergi, aku khawatir dia akan terpikat oleh orang lain."],
+  ["B","Aku merasa nyaman bergantung pada pasangan."],
+  ["C","Bagiku, kemandirian lebih penting dibanding hubungan."],
+  ["C","Aku lebih memilih untuk tidak menceritakan perasaan terdalamku pada pasangan."],
+  ["A","Jika aku menunjukkan perasaanku pada pasangan, aku khawatir dia tidak merasakan hal yang sama terhadap diriku."],
+  ["B","Pada dasarnya aku puas dengan hubungan asmaraku."],
+  ["B","Aku merasa tak perlu banyak merajuk dalam menjalin hubungan asmara."],
+  ["A","Aku sering memikirkan hubunganku."],
+  ["C","Aku kesulitan untuk bergantung pada pasangan."],
+  ["A","Aku cenderung sangat cepat merasakan kelekatan pada pasangan."],
+  ["B","Aku cukup nyaman mengungkapkan kebutuhan dan keinginanku pada pasangan."],
+  ["C","Terkadang aku merasa marah atau kesal pada pasangan tanpa tahu penyebabnya."],
+  ["A","Aku sangat sensitif menangkap suasana hati pasangan."]]],
+ [45, [
+  ["B","Aku yakin sebagian besar orang pada dasarnya jujur dan bisa diandalkan."],
+  ["C","Aku lebih memilih hubungan tanpa status, dibanding hubungan intim dengan satu orang."],
+  ["B","Aku merasa nyaman menceritakan perasaan dan isi pikiran pribadiku pada pasangan."],
+  ["A","Aku khawatir jika pasanganku meninggalkanku, mungkin aku tidak akan pernah menemukan sosok baru."],
+  ["C","Aku merasa gugup saat pasanganku terlalu dekat."],
+  ["A","Saat terjadi konflik, aku cenderung melakukan atau mengatakan sesuatu secara impulsif yang akan kusesali alih-alih memikirkan semuanya dengan kepala jernih."],
+  ["B","Pertengkaran dengan pasangan biasanya tidak menyebabkan aku mempertanyakan seluruh hubungan kami."],
+  ["C","Sering kali pasanganku ingin aku lebih intim dari yang kurasa nyaman."],
+  ["A","Aku khawatir penampilanku kurang menarik."],
+  ["B","Orang kerap menganggapku membosankan karena aku jarang menciptakan drama dalam hubungan."],
+  ["C","Aku merindukan pasangan saat kami terpisah, tetapi merasa perlu melarikan diri saat kami bersama."]]],
+ [46, [
+  ["B","Saat tidak sepakat dengan seseorang, aku merasa nyaman untuk menyampaikan pendapat."],
+  ["C","Aku tak suka saat merasa ada orang lain yang mengandalkanku."],
+  ["B","Jika aku melihat seseorang yang kusukai melirik orang lain, aku tak akan merasa gentar. Mungkin aku akan merasa sedikit cemburu, tetapi hanya sesaat."],
+  ["C","Jika aku melihat seseorang yang kusukai melirik orang lain, aku merasa lega—itu artinya dia tidak ingin menjalin hubungan secara eksklusif."],
+  ["A","Jika aku melihat seseorang yang kusukai melirik orang lain, aku merasa tertekan."],
+  ["B","Jika seseorang yang kukencani mulai bersikap dingin dan menjaga jarak, mungkin aku akan mempertanyakan apa yang terjadi, tetapi aku yakin kemungkinan besar bukan aku penyebabnya."],
+  ["C","Jika seseorang yang kukencani mulai bersikap dingin dan menjaga jarak, mungkin aku akan bersikap tak acuh, bahkan mungkin akan merasa lega."],
+  ["A","Jika seseorang yang kukencani mulai bersikap dingin dan menjaga jarak, aku pasti khawatir sudah melakukan kesalahan."]]],
+ [47, [
+  ["A","Jika pasanganku ingin putus denganku, sebisa mungkin aku akan berusaha untuk menunjukkan padanya apa yang akan hilang dari hidupnya (tak ada salahnya jika dia merasa sedikit cemburu)."],
+  ["B","Jika seseorang yang kupacari selama beberapa bulan memberitahuku bahwa dia tidak mau menemuiku lagi, awalnya aku akan sakit hati, tetapi akan kulupakan pada akhirnya."],
+  ["C","Terkadang saat mendapatkan apa yang kuinginkan dalam hubungan, aku tak yakin lagi apa yang sebenarnya kuinginkan."],
+  ["B","Bagiku tak ada masalah untuk bertukar kabar dengan mantan kekasih (sepenuhnya platonis)—bagaimanapun, kami memiliki banyak kesamaan."]]]
+];
+const INFO = {
+ A:{name:"Anxious (Cemas)",color:"var(--a)",desc:"Cenderung sangat butuh kedekatan, mudah khawatir soal perasaan pasangan, dan peka terhadap tanda-tanda penolakan."},
+ B:{name:"Secure (Aman)",color:"var(--b)",desc:"Nyaman dengan keintiman maupun kemandirian, terbuka mengungkapkan kebutuhan, dan tidak mudah goyah oleh konflik."},
+ C:{name:"Avoidant (Menghindar)",color:"var(--c)",desc:"Menjaga jarak emosional, sangat menghargai kemandirian, dan cenderung tidak nyaman bila hubungan terasa terlalu dekat."}
+};
+const form = document.getElementById('quiz');
+let n = 0; const TOTAL = PAGES.reduce((s,p)=>s+p[1].length,0); const PER = {A:0,B:0,C:0};
+PAGES.forEach(([pg, items]) => {
+  const h = document.createElement('div'); h.className='page'; h.textContent='Halaman '+pg; form.appendChild(h);
+  items.forEach(([cat, text]) => {
+    n++; PER[cat]++;
+    const l = document.createElement('label'); l.className='q';
+    l.innerHTML = `<input type="checkbox" data-cat="${cat}"><span class="num">${n}.</span><span></span>`;
+    l.lastChild.textContent = text; form.appendChild(l);
+  });
+});
+const boxes = [...form.querySelectorAll('input')];
+const countEl = document.getElementById('count');
+form.addEventListener('change', e => {
+  e.target.closest('.q').classList.toggle('on', e.target.checked);
+  countEl.textContent = boxes.filter(b=>b.checked).length + ' dari ' + TOTAL + ' dicentang';
+});
+let lastText = '';
+document.getElementById('submit').onclick = () => {
+  const s = {A:0,B:0,C:0}; boxes.forEach(b=>{ if(b.checked) s[b.dataset.cat]++; });
+  const nama = document.getElementById('nama').value.trim();
+  const max = Math.max(s.A,s.B,s.C);
+  const top = max===0 ? [] : Object.keys(s).filter(k=>s[k]===max);
+  document.getElementById('resName').textContent = nama ? ' — ' + nama : '';
+  const dom = document.getElementById('dominant'), dd = document.getElementById('domDesc');
+  if (!top.length) { dom.textContent='Belum ada pernyataan yang dicentang.'; dd.textContent=''; }
+  else if (top.length>1) { dom.textContent='Seimbang antara ' + top.map(k=>INFO[k].name).join(' & '); dd.textContent='Skor tertinggi sama. Lihat kembali pernyataan mana yang paling terasa kuat untukmu.'; }
+  else { dom.innerHTML='Cenderung <b style="color:'+INFO[top[0]].color+'">'+INFO[top[0]].name+'</b>'; dd.textContent=INFO[top[0]].desc; }
+  document.getElementById('bars').innerHTML = ['A','B','C'].map(k=>`<div class="res-row"><div class="res-head"><span>${k} · ${INFO[k].name}</span><span>${s[k]} / ${PER[k]}</span></div><div class="track"><div class="fill" data-w="${s[k]/PER[k]*100}" style="background:${INFO[k].color}"></div></div></div>`).join('');
+  const r = document.getElementById('result'); r.style.display='block';
+  requestAnimationFrame(()=>r.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+  lastText = `Hasil Tes Attachment Style${nama?' ('+nama+')':''}\nA - Anxious: ${s.A}/${PER.A}\nB - Secure: ${s.B}/${PER.B}\nC - Avoidant: ${s.C}/${PER.C}\nKesimpulan: ${top.length===1?INFO[top[0]].name:top.length?'Seimbang '+top.map(k=>INFO[k].name).join(' & '):'-'}`;
+  r.scrollIntoView({behavior:'smooth'});
+};
+document.getElementById('share').onclick = () => window.open('https://wa.me/?text='+encodeURIComponent(lastText),'_blank');
+document.getElementById('copy').onclick = async e => { try{ await navigator.clipboard.writeText(lastText); e.target.textContent='Tersalin ✓'; }catch(_){ prompt('Salin hasil:', lastText); } };
+document.getElementById('reset').onclick = () => { boxes.forEach(b=>{b.checked=false;b.closest('.q').classList.remove('on');}); countEl.textContent='0 dari '+TOTAL+' dicentang'; document.getElementById('result').style.display='none'; window.scrollTo({top:0,behavior:'smooth'}); };
+</script>
+</body>
+</html>
